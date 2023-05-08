@@ -10,23 +10,23 @@ import org.hibernate.annotations.DynamicInsert;
 @NoArgsConstructor
 @DynamicInsert
 @Getter @Setter @Entity
-@Table(name = "TB_ACCOUNT") // indexes 기능도 고려해보기
+@Table(name = "account") // indexes 기능도 고려해보기
 public class Account {
-        @Column(name="ACCOUNT_IDX")
+        @Column(name="account_id")
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @Column(name="ACCOUNT_EMAIL", unique = true)
+        @Column(name="account_email", unique = true)
         private String email;
 
-        @Column(name="ACCOUNT_NAME")
+        @Column(name="account_name")
         private String name;
 
-        @Column(name="ACCOUNT_PWD")
+        @Column(name="account_pwd")
         private String password;
 
         @Enumerated(EnumType.STRING)
-        @Column(name="ACCOUNT_ROLE")
+        @Column(name="account_role")
         private AccountType accountType;
 
 }
