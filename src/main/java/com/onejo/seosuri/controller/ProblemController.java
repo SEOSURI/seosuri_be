@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @Tag(name = "문제 생성 및 수정 API")
@@ -27,11 +29,12 @@ public class ProblemController {
 
     private final ProblemService problemService;
 
-    @Operation(summary = "문제 생성", description = "최초 10문제 생서하여 클라에게 보내줌.\nDB에 생성된 문제 정보 저장.")
+    @Operation(summary = "문제 생성", description = "최초 문제 리스트(10문제).\nDB에 생성된 문제 정보 저장.")
     @PostMapping("/create")
-    public BaseResponse<String> createProblems(@RequestBody CreateProbReq createProbReq){
+    public BaseResponse<List<CreateProbRes>> createProblems(@RequestBody CreateProbReq createProbReq){
         try{
-            return new BaseResponse<>("tmp");
+            List<CreateProbRes> problemList = problemService.createProblem(createProbReq.getCategoryTitle(), createProbReq.getLevel());
+            return new BaseResponse<>(problemList);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }

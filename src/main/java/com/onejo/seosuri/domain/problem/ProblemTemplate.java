@@ -37,6 +37,9 @@ public class ProblemTemplate extends BaseTimeEntity {
     @Column(name="prob_temp_explanation")
     private String explanation;
 
+    @Column(name="prob_sentence_category_list")
+    private String sentenceCategoryList;
+
     @OneToMany(mappedBy = "probTemp")
     private List<Problem> problems = new ArrayList<>();
 }

@@ -25,8 +25,9 @@ public class Category {
     @JoinColumn(name="small_unit_id")
     private SmallUnit smallUnit;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="category_title")
-    private String title;
+    private CategoryTitle title;
 
     @OneToMany(mappedBy = "category")
     private List<TestPaper> testPapers = new ArrayList<>();

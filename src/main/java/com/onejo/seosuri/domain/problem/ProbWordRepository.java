@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ProbWordNameRepository extends JpaRepository<ProbWordName, Long> {
-    Optional<ProbWordName> findById(Long id);
+public interface ProbWordRepository extends JpaRepository<ProbWord, Long> {
+    Optional<ProbWord> findById(Long id);
 }

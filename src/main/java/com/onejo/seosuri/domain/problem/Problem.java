@@ -45,8 +45,6 @@ public class Problem extends BaseTimeEntity {
     private String explanation;
 
     @OneToMany(mappedBy = "prob")
-    private List<ProbWordName> probWordNames = new ArrayList<>();
+    private List<ProbWord> probWords = new ArrayList<>();
 
-    @OneToMany(mappedBy = "prob")
-    private List<ProbWordObj> probWordObjs = new ArrayList<>();
 }

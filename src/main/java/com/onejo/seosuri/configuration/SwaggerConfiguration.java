@@ -1,6 +1,6 @@
 package com.onejo.seosuri.configuration;
 
-// http://localhost:8080/swagger-ui/index.html
+// http://localhost:9500/swagger-ui/index.html
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
