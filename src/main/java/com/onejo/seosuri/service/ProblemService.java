@@ -25,7 +25,7 @@ public class ProblemService {
 
     @Transactional
     public List<CreateProbRes> createProblem(String categoryTitle, String level){
-        //~ 문제 리스트 생성 로직 ~
+        //~ 문제 리스트 생성 로직 (필요에 따라 수정하셔도 됩니다) ~
         List<CreateProbRes> problemList = new ArrayList<>();
 
         // 시험지 entity 생성 및 DB 저장

@@ -25,7 +25,7 @@ public class Word {
     @Column(name="word_num_end")
     private Long numEnd;
 
-    @Column(name="word_extra_condnition")
+    @Column(name="word_extra_condition")
     private String condition;
 
     @Column(name="word_type")

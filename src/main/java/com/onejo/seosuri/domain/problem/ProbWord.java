@@ -16,7 +16,7 @@ import java.util.List;
 @Getter @Setter @Entity
 @Table(name = "prob_word")
 public class ProbWord extends BaseTimeEntity{
-    @Column(name="prob_word_obj_id")
+    @Column(name="prob_word_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +29,6 @@ public class ProbWord extends BaseTimeEntity{
     @JoinColumn(name="word_id")
     private Word word;
 
-    @Column(name="word")
+    @Column(name="word_position")
     private String position;
 }
