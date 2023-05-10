@@ -1,6 +1,5 @@
 package com.onejo.seosuri.domain.testpaper;
 
-import com.onejo.seosuri.domain.problem.ProbWordObj;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
