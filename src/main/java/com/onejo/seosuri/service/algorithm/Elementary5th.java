@@ -104,7 +104,6 @@ public class Elementary5th {
         int start_index = (condition_inx + prob_sentence_num - 1) % prob_sentence_num;
         for(int i = start_index; i >= 0; i--){    // condition_inx - 1   ~   0
             explanation += sentence_ls[i][1] + "\n";   // 상황 문장 explanation
-            System.out.println("i = " + i);
         }
         for(int i = sentence_ls.length - 1; i >= condition_inx; i--){                     // 끝   ~   condition_inx
             explanation += sentence_ls[i][1] + "\n";   // 상황 문장 exlanation
