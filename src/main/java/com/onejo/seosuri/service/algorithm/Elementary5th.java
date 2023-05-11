@@ -201,6 +201,7 @@ public class Elementary5th {
 
         String c_mult_token = "의 "+ var1_token +"배 한 것";
         String c_mult_end_token = "과 같습니다.";
+        String c_mult_end_wa_token = "와 같습니다.";
         String c_pm_token = "보다 " + var2_token + "살 ";
         String c_add_token = "많습니다.";
         String c_minus_token = "적습니다.";
@@ -218,7 +219,9 @@ public class Elementary5th {
                 content = "sign value error\n";
             }
         } else{
-            if(sign == PLUS_SIGN){   // 보다 {var2}살 많습니다.
+            if(useAddMinus == false){   // 와 같습니다.
+                content += c_mult_end_wa_token;
+            } else if(sign == PLUS_SIGN){   // 보다 {var2}살 많습니다.
                 content += c_pm_token + c_add_token;
             } else if(sign == MINUS_SIGN){   // 보다 {var2}살 적습니다.
                 content += c_pm_token + c_minus_token;
@@ -233,7 +236,11 @@ public class Elementary5th {
                 +AGE_STR+"%d}+{"+YEAR_STR+"}]";
         */
         String ex_expression_token = year_past_token + name1_age_token
-                + EQUAL_BLANK_SYM + year_past_token + name2_age_token + MULT_BLANK_STR + var1_token + sign_blank_token + var2_token;
+                + EQUAL_BLANK_SYM + year_past_token + name2_age_token;
+        if(useMult)
+            ex_expression_token += MULT_BLANK_STR + var1_token;
+        if(useAddMinus)
+            ex_expression_token += sign_blank_token + var2_token;
 
         String ex_age1_after_year_token = year_past_token + name1_age_token
                 + EQUAL_BLANK_SYM + age1_token + PLUS_BLANK_STR + year_token
@@ -241,15 +248,21 @@ public class Elementary5th {
         String ex_age2_after_year_token = year_past_token + name2_age_token
                 + EQUAL_BLANK_SYM + age2_token + PLUS_BLANK_STR + year_token
                 + EQUAL_BLANK_SYM + EXPRESSION_START + age2_token + PLUS_SYM + year_token + EXPRESSION_END;
+        String ex_age1_after_year_same_age_token = EQUAL_BLANK_SYM + year_past_token + name2_age_token;
+        String ex_age2_after_year_same_age_token = EQUAL_BLANK_SYM + year_past_token + name1_age_token;
 
         String ex_after_year_to_age1_token = name1_age_token
                 + EQUAL_BLANK_SYM + year_past_token + name1_age_token + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + PLUS_SYM + year_token + EXPRESSION_END + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + age1_token;
-        String ex_after_year_to_age2_token = name2_age_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + "(" + age2_token + PLUS_SYM + year_token + ")" + MULT_SYM + var1_token + sign_token + var2_token + EXPRESSION_END + MINUS_BLANK_STR + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + "(" + age2_token + PLUS_SYM + year_token + ")" + MULT_SYM + var1_token + sign_token + var2_token + MINUS_SYM + year_token + EXPRESSION_END;
+        String ex_after_year_to_age2_with_plus_sign_token = name2_age_token
                 + EQUAL_BLANK_SYM + year_past_token + name2_age_token + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age2_token + PLUS_SYM + year_token + EXPRESSION_END + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + age2_token;
+                + EQUAL_BLANK_SYM + EXPRESSION_START + "(" + age1_token + PLUS_SYM + year_token + MINUS_SYM + var2_token + ")" + DIVIDE_SYM + var1_token + EXPRESSION_END + MINUS_BLANK_STR + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + "(" + age1_token + PLUS_SYM + year_token + MINUS_SYM + var2_token + ")" + DIVIDE_SYM + var1_token + MINUS_SYM + year_token + EXPRESSION_END;
+        String ex_after_year_to_age2_with_minus_sign_token = name2_age_token
+                + EQUAL_BLANK_SYM + year_past_token + name2_age_token + MINUS_BLANK_STR + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + "(" + age1_token + PLUS_SYM + year_token + PLUS_SYM + var2_token + ")" + DIVIDE_SYM + var1_token + EXPRESSION_END + MINUS_BLANK_STR + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + "(" + age1_token + PLUS_SYM + year_token + PLUS_SYM + var2_token + ")" + DIVIDE_SYM + var1_token + MINUS_SYM + year_token + EXPRESSION_END;
 
         // (%s%s의 나이) = (%s%s의 나이) * %d %s %d = %d * %d %s %d = %d
         // y년후 name1의 나이 = y년후 name2의나이 * var1 +- var2 = [age2+year] * var1 +- var2 = age1
@@ -264,6 +277,7 @@ public class Elementary5th {
 
         // if var2 != 0
         // (year년 후 name1의 나이) -+ var2 = age1 + year -+ var2
+        String ex_cond1_compute_b4_divide_with_zero_var2_token = year_past_token + name2_age_token + EQUAL_BLANK_SYM;
         String ex_cond1_compute_b4_divide_with_plus_sign_token = year_past_token + name1_age_token + MINUS_BLANK_STR + var2_token
                 + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + PLUS_SYM + year_token + MINUS_SYM + var2_token + EXPRESSION_END;
         String ex_cond1_compute_b4_divide_with_minus_sign_token = year_past_token + name1_age_token + PLUS_BLANK_STR + var2_token
@@ -289,27 +303,37 @@ public class Elementary5th {
         // explanation
         String explanation = ex_expression_token + "\n";
         if(cond_inx == 0){  // age1 given, find age2
-            if(useYear){
-                explanation += ex_age1_after_year_token + "\n";
-                if(sign == PLUS_SIGN){
-                    explanation += ex_cond1_compute_b4_divide_with_plus_sign_token + "\n" + ex_cond1_compute_divide_with_plus_sign_token + "\n";
-                } else if(sign == MINUS_SIGN){
-                    explanation += ex_cond1_compute_b4_divide_with_minus_sign_token + "\n" + ex_cond1_compute_divide_with_minus_sign_token + "\n";
-                }
-                explanation += ex_after_year_to_age2_token + "\n";
+            explanation += ex_age1_after_year_token;
+            if(useMult == false && useAddMinus == false)
+                explanation += ex_age1_after_year_same_age_token;
+            explanation += "\n";
+
+            if(useMult == false && useAddMinus == true)
+                explanation += ex_cond1_compute_b4_divide_with_zero_var2_token;
+            if(sign == PLUS_SIGN){
+                explanation += ex_cond1_compute_b4_divide_with_plus_sign_token + "\n"
+                        + ex_cond1_compute_divide_with_plus_sign_token + "\n"
+                        + ex_after_year_to_age2_with_plus_sign_token + "\n";
+            } else if(sign == MINUS_SIGN){
+                explanation += ex_cond1_compute_b4_divide_with_minus_sign_token + "\n"
+                        + ex_cond1_compute_divide_with_minus_sign_token + "\n"
+                        + ex_after_year_to_age2_with_minus_sign_token + "\n";
             }
         } else{ // age2 given, find age1
-            if(useYear){
-                explanation += ex_age2_after_year_token + "\n";
-                if(sign == PLUS_SIGN){
-                    explanation += ex_cond2_compute_with_plus_sign_token + "\n";
-                } else if(sign == MINUS_SIGN){
-                    explanation += ex_cond2_compute_with_minus_sign_token + "\n";
-                } else{
-                    explanation = "sign value error";
-                }
-                explanation += ex_after_year_to_age1_token + "\n";
+            explanation += ex_age2_after_year_token;
+            if(useMult == false && useAddMinus == false)
+                explanation += ex_age2_after_year_same_age_token;
+            explanation += "\n";
+
+            if(sign == PLUS_SIGN){
+                explanation += ex_cond2_compute_with_plus_sign_token + "\n";
+            } else if(sign == MINUS_SIGN){
+                explanation += ex_cond2_compute_with_minus_sign_token + "\n";
+            } else{
+                explanation = "sign value error";
             }
+
+            explanation += ex_after_year_to_age1_token + "\n";
         }
 
         return new String[] {content, explanation};     // {content, explanation}
