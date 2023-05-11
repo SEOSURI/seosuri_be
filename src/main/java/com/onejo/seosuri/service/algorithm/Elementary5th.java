@@ -2,6 +2,7 @@
 
 package com.onejo.seosuri.service.algorithm;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /*
@@ -11,9 +12,8 @@ import java.util.Random;
 0. 난이도 기준 마련
     - 템플릿 난이도
         상황 문장 갯수
-
     - 숫자 난이도
-1. 랜덤 숫자 뽑기
+1. 랜덤 숫자 뽑기 - 무한루프 문제
 2. 숫자에 맞는 단어 뽑기
 3. 템플릿 -> 실제 문장으로 변경
 
@@ -67,6 +67,17 @@ public class Elementary5th {
         int answer_inx = random.nextInt(age_ls.length);  // 구하는 나이의 인덱스
         int condition_inx = (random.nextInt(age_ls.length-1) + answer_inx) % age_ls.length;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
 
+        boolean[] useYear_ls = new boolean[prob_sentence_num];
+        boolean[] useMult_ls = new boolean[prob_sentence_num];
+        boolean[] useAddMinus_ls = new boolean[prob_sentence_num];
+        int[] sign_ls = new int[prob_sentence_num];
+        for(int i = 0; i < prob_sentence_num; i++){
+            useYear_ls[i] =random.nextBoolean();
+            useMult_ls[i] = random.nextBoolean();
+            useAddMinus_ls[i] = random.nextBoolean();
+            sign_ls[i] = random.nextInt(2);
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////
         // 문장 생성
 
@@ -85,7 +96,8 @@ public class Elementary5th {
         if(prob_sentence_num==1)    cond_inx_for_sentence = condition_inx;
         for(int i = 0; i < prob_sentence_num; i++){
             // create_age_sentence(유형id, 값 참조 시작하는 인덱스, answer_index, condition_index) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
-            sentence_ls[i] = create_age_sentence(sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence);  // sentence_ls[i] = {content, explanation}
+            sentence_ls[i] = create_age_sentence(sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+                    useYear_ls[i], useMult_ls[i], useAddMinus_ls[i], sign_ls[i]);  // sentence_ls[i] = {content, explanation}
         }
 
 
@@ -111,15 +123,22 @@ public class Elementary5th {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         // 결과 : {문제, explanation, answer, prob_sentence_category_list}
-        String[] result_ls = new String[] {content, explanation, answer, sentence_category_id_ls.toString()};
+        String[] result_ls = new String[] {content, explanation, answer, Arrays.toString(sentence_category_id_ls), Arrays.toString(sign_ls)};
 
+        /*
+        int age_ls_length, int var_ls_length, int num_var_per_sentence,
+                                    int year_min_value, int year_max_value,
+                                    int[] sentence_category_ls, int[] sign_ls,
+                                    int[] age_min_value_ls, int[] age_max_value_ls, int[] var_min_value_ls, int[] var_max_value_ls
+         */
         System.out.println(content);
         System.out.println("------------------------------------");
         System.out.println(explanation);
         System.out.println("------------------------------------");
         System.out.println(answer);
         System.out.println("------------------------------");
-        System.out.println(sentence_category_id_ls.toString());
+        System.out.println(Arrays.toString(sentence_category_id_ls));
+        System.out.println(Arrays.toString(sign_ls));
     }
 
     // 이은 색테이프 문제 알고리즘
@@ -136,15 +155,12 @@ public class Elementary5th {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 나이 문제 - 상황문장 생성
     // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
-    private String[] create_age_sentence(int category_id, int index, int var_num_per_sentence, int cond_inx){
-        boolean useYear=true;
-        boolean useMult=true;
-        boolean useAddMinus=true;
-        int sign= PLUS_SIGN;
+    private String[] create_age_sentence(int category_id, int index, int var_num_per_sentence, int cond_inx,
+                                         boolean useYear, boolean useMult, boolean useAddMinus, int sign){
         if(category_id == AGE_CATEGORY_ID_YX){
-            return create_age_sentence_yx(index, var_num_per_sentence, cond_inx, useYear, useMult, useAddMinus, sign);               // {content, explanation}
+            return create_age_sentence_yx(index, var_num_per_sentence, cond_inx, useYear, useMult, useAddMinus, sign);               // {content, explanation, sign}
         } else if (category_id == AGE_CATEGORY_ID_SUM_DIFFERENCE){
-            return create_age_sentence_sum_difference(index, var_num_per_sentence, cond_inx, sign);   // {content, explanation}
+            return create_age_sentence_sum_difference(index, var_num_per_sentence, cond_inx, sign);   // {content, explanation, sign}
         } else{
             return null;
         }
@@ -414,27 +430,56 @@ public class Elementary5th {
     /////////////////////////////////////////////////////////////////////////////////////////
     // 나이문제 - 랜덤 숫자 뽑기
 
+    private int[] age_ls;
+    private int[] var_ls;
     // 숫자 뽑기 연속
-    private int[] getRandomAgeValue(int cond_inx, int[] sentence_category_ls){
-        int[] age_ls;
-        int[] var_ls;
-        for(int i = 0; i < sentence_category_ls.length; i++){
-            // age, var 생성
+    private void getRandomAgeValue(int age_ls_length, int var_ls_length, int num_var_per_sentence,
+                                    int year_min_value, int year_max_value,
+                                    int[] sentence_category_ls, int[] sign_ls,
+                                    int[] age_min_value_ls, int[] age_max_value_ls, int[] var_min_value_ls, int[] var_max_value_ls){
+        age_ls = new int[age_ls_length];
+        var_ls = new int[var_ls_length];
+
+        int year = random.nextInt(year_max_value+1) + year_min_value;
+        int age0 = random.nextInt(age_max_value_ls[0]+1) + age_min_value_ls[0];
+        int given_age = age0;
+        for(int i = sentence_category_ls.length - 1; i >= 0; i--){
+            int age1_index = i;
+            int age2_index = (i + 1) % age_ls.length;
+            int var1_index = age1_index * num_var_per_sentence;
+            int var2_index = var1_index + 1;
+            if(sentence_category_ls[i] == AGE_CATEGORY_ID_YX){
+                int[] ret_var = getRandomAgeYXValue(given_age, year, sign_ls[i],
+                        age_min_value_ls[age1_index], age_max_value_ls[age1_index],
+                        var_min_value_ls[var1_index], var_max_value_ls[var1_index],
+                        var_min_value_ls[var2_index], var_max_value_ls[var2_index]);
+                age_ls[age1_index] = ret_var[0];
+                age_ls[age2_index] = ret_var[1];
+                var_ls[var1_index] = ret_var[2];
+                var_ls[var2_index] = ret_var[3];
+            } else if(sentence_category_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE){
+                int[] ret_var = getRandomAgeX1X2Value(given_age, sign_ls[i], age_min_value_ls[age1_index], age_max_value_ls[age1_index]);
+                age_ls[age1_index] = ret_var[0];
+                age_ls[age2_index] = ret_var[1];
+                var_ls[var1_index] = ret_var[2];
+            } else{
+                System.out.println("ERROR:: invalid category id");
+            }
         }
-        return new int[] {};
     }
 
     // age1 + year = (age2 + year) * var1 +- var2
-    // return new int[] {sign, age1, age2, var1, var2};
-    private int[] getRandomAgeYXValue(int given_age, int year){ // age2, year given
+    // return new int[] {age1, age2, var1, var2};
+    private int[] getRandomAgeYXValue(int given_age, int year, int sign,
+                                      int age1_min_value,  int age1_max_value,
+                                      int var1_min_value, int var1_max_value,
+                                      int var2_min_value, int var2_max_value){ // age2, year given
         int var1=0, var2=0, age1=0, age2=given_age;
 
-        int sign = random.nextInt(1);
-
         // age1 = age2 * var1 +- var2
-        while(age1 <= 0) {
-            var1 = random.nextInt(4) + 2;
-            var2 = random.nextInt(20) + 1;
+        while(age1 < age1_min_value || age1 > age1_max_value) {
+            var1 = random.nextInt(var1_max_value+1) + var1_min_value;
+            var2 = random.nextInt(var2_max_value+1) + var2_min_value;
             if(sign == PLUS_SIGN) {
                 age1 = (age2 + year) * var1 + var2 - year;
             } else{
@@ -442,34 +487,26 @@ public class Elementary5th {
             }
         }
 
-        return new int[] {sign, age1, age2, var1, var2};
+        return new int[] {age1, age2, var1, var2};
     }
 
     // age1 +- age2 = var1
     // 단, age1 - age2의 경우, age1 > age2
-    // return new int[] {sign, age1, age2, var1};
-    private int[] getRandomAgeX1X2Value(int given_age, int given_inx){
-        int age1, age2;
-        /* 랜덤 값 범위 수정 필요
-            세자리수 -> 높은 난이도
-            두자리수 -> 낮은 난이도
-         */
-        if(given_inx == 0) {
-            age1 = given_age;
-            age2 = random.nextInt(50) + given_age; // age1 > age2 유지
-        } else{
-            age1 = random.nextInt(50) + given_age; // age1 > age2 유지
-            age2 = given_age;
-        }
+    // return new int[] {age1, age2, var1};
+    private int[] getRandomAgeX1X2Value(int given_age, int sign,
+                                        int age1_min_value, int age1_max_value){ // age2 given
+        int age1 = random.nextInt(age1_max_value+1) + age1_min_value;
+        int age2 = given_age;
 
-        int sign = random.nextInt(2);
-        int var1 = 0;
-        if(sign == PLUS_SIGN){  // age1 + age2 = var1
-            var1 = age1 + age2;
-        } else { // age1 - age2 = var1
-            var1 = age1 - age2;
+        int var1 = -1;
+        while (var1 < 0){
+            if(sign == PLUS_SIGN){  // age1 + age2 = var1
+                var1 = age1 + age2;
+            } else { // age1 - age2 = var1
+                var1 = age1 - age2;
+            }
         }
-        return new int[] {sign, age1, age2, var1};
+        return new int[] {age1, age2, var1};
     }
 
 
