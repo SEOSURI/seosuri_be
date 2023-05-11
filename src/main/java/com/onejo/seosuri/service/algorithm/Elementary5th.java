@@ -6,10 +6,8 @@ import java.util.Random;
 
 public class Elementary5th {
     Random random;
-    static final int PLUS = 0;
-    static final int MINUS = 1;
-    //static final String PLUS = "+";
-    //static final String MINUS = "-";
+    static final int PLUS_SIGN = 0;
+    static final int MINUS_SIGN = 1;
 
     // 상황 문장 id
     static final int AGE_CATEGORY_ID_YX = 0;
@@ -19,6 +17,16 @@ public class Elementary5th {
     static final String AGE_STR = "age";    // age 변수 : {age0}, {age1}, {age2}, ...
     static final String NAME_STR = "name";  // name 변수 : {name0}, {name1}, {name2}, ...
     static final String VAR_STR = "var";    // 상수 변수 : {var0}, {var1}, {var2}, ...
+    static final String YEAR_STR = "year";  // year 변수
+    static final String VAR_START = "{";
+    static final String VAR_END = "}";
+    static final String EXPRESSION_START = "[";
+    static final String EXPRESSION_END = "]";
+    static final String PLUS_STR = "+";
+    static final String MINUS_STR = "-";
+    static final String MULT_STR = "*";
+    static final String DIVIDE_STR = "/";
+    static final String EQUAL_STR = " = ";
 
     // 나이 구하기 문제 알고리즘
     public void ageProblem() {
@@ -44,13 +52,13 @@ public class Elementary5th {
         // 문장 생성
 
         // condition 문장 생성
-        String condition = "이때, {name"+condition_inx+"}의 나이는 {age"+condition_inx+"}살 입니다.";
+        String condition = "이때, {"+NAME_STR+condition_inx+"}의 나이는 {"+AGE_STR+condition_inx+"}살 입니다.";
 
         // question 문장 생성
-        String question = "그렇다면 {name"+answer_inx+"}의 나이는 몇 살입니까?";
+        String question = "그렇다면 {"+NAME_STR+answer_inx+"}의 나이는 몇 살입니까?";
 
         // answer 문장 생성
-        String answer = "{age"+answer_inx+"}살";
+        String answer = "{"+AGE_STR+answer_inx+"}살";
 
         // 상황 문장 생성 : {content, explanation}
         String[][] sentence_ls = new String[prob_sentence_num][2];
@@ -65,10 +73,10 @@ public class Elementary5th {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // 상황 문장 연결
 
-        // content : sentece 순서대로 + condition + question
+        // content : sentences + condition + question
         String content = "";
-        for(int i = 0; i < sentence_ls.length; i++){
-            content += sentence_ls[i][0];   // 상황 문장 content
+        for(int i = 0; i < sentence_ls.length; i++){ // 상황 문장 content - 순서 섞으면 난이도 올라감
+            content += sentence_ls[i][0];
         }
         content = content + condition + question;
 
@@ -87,12 +95,25 @@ public class Elementary5th {
         String[] result_ls = new String[] {content, explanation, answer, sentence_category_id_ls.toString()};
     }
 
+    // 이은 색테이프 문제 알고리즘
+    public void colorTapeProblem() {}
+
+    // 어떤 수 문제 알고리즘
+    public void anyNumberProblem() {}
+
+    // 도형에서의 혼합 계산 응용 알고리즘
+    public void geometryCalculation() {}
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // 나이 문제 - 상황문장 생성
     // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
     private String[] create_age_sentence(int category_id, int index, int cond_inx){
         boolean useYear=true;
         boolean useMult=true;
         boolean useAddMinus=true;
-        int sign=PLUS;
+        int sign= PLUS_SIGN;
         if(index == AGE_CATEGORY_ID_YX){
             return create_age_sentence_yx(index, cond_inx, useYear, useMult, useAddMinus, sign);               // {content, explanation}
         } else if (index == AGE_CATEGORY_ID_SUM_DIFFERENCE){
@@ -120,327 +141,216 @@ public class Elementary5th {
         int index2 = ls_index + 1;
         int var_index1 = ls_index * 2;
         int var_index2 = ls_index * 2 + 1;
-        String year_token = "{year}년 후 ";
+
+        String name1_token = VAR_START + NAME_STR + index1 + VAR_END;
+        String name2_token = VAR_START + NAME_STR + index2 + VAR_END;
+        String age1_token = VAR_START + AGE_STR + index1 + VAR_END;
+        String age2_token = VAR_START + AGE_STR + index2 + VAR_END;
+        String var1_token = VAR_START + VAR_STR + index1 + VAR_END;
+        String var2_token = VAR_START + VAR_STR + index2 + VAR_END;
+        String year_token = VAR_START + YEAR_STR + VAR_END;
+
+        String year_past_token = year_token + "년 후 ";
         if(useYear == false){
-            year_token = "";
+            year_past_token = "";
         }
-        String name1_token = "{"+NAME_STR+index1+"}의 나이는 ";
-        String name2_token = "{"+NAME_STR+index2+"}의 나이";
-        String mult_token = "의 {"+VAR_STR+var_index1+"}배 한 것";
-        String mult_end_token = "과 같습니다.";
-        String pm_token = "보다 {"+VAR_STR+var_index2+"}살 ";
-        String add_token = "많습니다.";
-        String minus_token = "적습니다.";
+        String c_name1_token = name1_token + "의 나이는 ";
+        String c_name2_token = name2_token + "의 나이";
+        String c_mult_token = "의 "+ var1_token +"배 한 것";
+        String c_mult_end_token = "과 같습니다.";
+        String c_pm_token = "보다 " + var2_token + "살 ";
+        String c_add_token = "많습니다.";
+        String c_minus_token = "적습니다.";
 
         // content
-        String content = year_token + name1_token + year_token + name2_token;
+        String content = year_past_token + name1_token + year_past_token + name2_token;   // {name1}의 나이는 {name2}의 나이
         if(useMult){
-            if(useAddMinus == false){
-                content += mult_token + mult_end_token;
-            } else if(sign == PLUS){
-                content += mult_token + pm_token + add_token;
-            } else if(sign == MINUS){
-                content += mult_token + pm_token + minus_token;
+            if(useAddMinus == false){   // 의 {var1}배 한 것과 같습니다.
+                content += c_mult_token + c_mult_end_token;
+            } else if(sign == PLUS_SIGN){    // 의 {var1}배한 것보다 {var2}살 많습니다.
+                content += c_mult_token + c_pm_token + c_add_token;
+            } else if(sign == MINUS_SIGN){   // 의 {var1}배한 것보다 {var2}살 적습니다.
+                content += c_mult_token + c_pm_token + c_minus_token;
             } else{
                 content = "sign value error\n";
             }
         } else{
-            if(sign == PLUS){
-                content += pm_token + add_token;
-            } else if(sign == MINUS){
-                content += pm_token + minus_token;
+            if(sign == PLUS_SIGN){   // 보다 {var2}살 많습니다.
+                content += c_pm_token + c_add_token;
+            } else if(sign == MINUS_SIGN){   // 보다 {var2}살 적습니다.
+                content += c_pm_token + c_minus_token;
             } else{
                 content = "sign value error\n";
             }
         }
 
         // explanation token
-        String ex_age_after_year_token = year_token+"{"+NAME_STR+"%d}의 나이 = {"+AGE_STR+"%d} + {year} = [{"+AGE_STR+"%d}+{year}]";
-        String ex_age1_after_year_token = String.format(ex_age_after_year_token, index1, index1, index1);
-        String ex_age2_after_year_token = String.format(ex_age_after_year_token, index2, index2, index2);
+        /*
+        String ex_age_after_year_token = year_past_token +"{"+NAME_STR+"%d}의 나이 = {"+AGE_STR+"%d} + {"+YEAR_STR+"} = [{"
+                +AGE_STR+"%d}+{"+YEAR_STR+"}]";
+        */
+        String ex_age1_after_year_token = year_past_token + name1_token + "의 나이 "
+                + EQUAL_STR + age1_token + PLUS_STR + year_token
+                + EQUAL_STR + EXPRESSION_START + age1_token + PLUS_STR + year_token + EXPRESSION_END;
+        String ex_age2_after_year_token = year_past_token + name2_token + "의 나이 "
+                + EQUAL_STR + age2_token + PLUS_STR + year_token
+                + EQUAL_STR + EXPRESSION_START + age2_token + PLUS_STR + year_token + EXPRESSION_END;
 
-        String ex_after_year_to_age_token = "{"+NAME_STR+"%d}의 나이 = "+year_token+"{"+NAME_STR+"%d}의 나이 - {year} = "+"[{"+AGE_STR+"%d}+{year}]"+" - {year} = {"+AGE_STR+"%d}";
+        String ex_after_year_to_age_token = "{"+NAME_STR+"%d}의 나이 = "+year_past_token+"{"+NAME_STR+"%d}의 나이 - {"+YEAR_STR+"} = "
+                +"[{"+AGE_STR+"%d}+{"+YEAR_STR+"}]"+" - {"+YEAR_STR+"} = {"+AGE_STR+"%d}";
         String ex_after_year_to_age1_token = String.format(ex_after_year_to_age_token, index1, index1, index1, index1);
         String ex_after_year_to_age2_token = String.format(ex_after_year_to_age_token, index2, index2, index2, index2);
 
         // (%s%s의 나이) = (%s%s의 나이) * %d %s %d = %d * %d %s %d = %d
         char minus_sign_token = '-';
         char plus_sign_token = '+';
+
         // y년후 name1의 나이 = y년후 name2의나이 * var1 +- var2 = [age2+year] * var1 +- var2 = age1
-        String ex_cond2_compute_token = year_token+"{"+NAME_STR+index1+"}의 나이 = "
-                +year_token+"{"+NAME_STR+index2+"}의 나이 * {"+VAR_STR+var_index1+"} %c {"+VAR_STR+var_index2+"} = {"
-                + "[{"+AGE_STR+index2+"}+{year}] * {"+VAR_STR+var_index1+"} %c {"+VAR_STR+var_index2+"} = {"
-                + "[({"+AGE_STR+index2+"}+{year})*{"+VAR_STR+var_index1+"}%c{"+VAR_STR+var_index2+"}]";
+        String ex_cond2_compute_token = year_past_token+"{"+NAME_STR+index1+"}의 나이 = "
+                +year_past_token+"{"+NAME_STR+index2+"}의 나이 * {"+VAR_STR+var_index1+"} %c {"+VAR_STR+var_index2+"} = {"
+                + "[{"+AGE_STR+index2+"}+{"+YEAR_STR+"}] * {"+VAR_STR+var_index1+"} %c {"+VAR_STR+var_index2+"} = {"
+                + "[({"+AGE_STR+index2+"}+{"+YEAR_STR+"})*{"+VAR_STR+var_index1+"}%c{"+VAR_STR+var_index2+"}]";
         String ex_cond2_compute_with_plus_sign_token = String.format(ex_cond2_compute_token, plus_sign_token, plus_sign_token, plus_sign_token);
         String ex_cond2_compute_with_minus_sign_token = String.format(ex_cond2_compute_token, minus_sign_token, minus_sign_token, minus_sign_token);
 
-        //"(%s%s의 나이) = %d / %d = %d\n"
-        String ex_cond1_compute_divide_token = "";
-        String ex_cond1_compute_token = "";
-        String ex_cond1_compute_with_plus_sign_token = "";
-        String ex_cond1_compute_with_minus_sign_token = "";
+        // if var2 != 0
+        // (%s%s의 나이) -+ var2 = age1 + year -+ var2
+        String ex_cond1_compute_b4_divide_token = year_past_token+"{"+NAME_STR+index2+"}의 나이 %c {"+VAR_STR+var_index2+"} = [{"+
+                AGE_STR+index1+"}%c{"+VAR_STR+var_index2+"}]";
+        String ex_cond1_compute_b4_divide_with_plus_sign_token = String.format(ex_cond1_compute_b4_divide_token, minus_sign_token, minus_sign_token);
+        String ex_cond1_compute_b4_divide_with_minus_sign_token = String.format(ex_cond1_compute_b4_divide_token, plus_sign_token, plus_sign_token);
+        if(useAddMinus==false){
+            ex_cond1_compute_b4_divide_with_plus_sign_token="";
+            ex_cond1_compute_b4_divide_with_minus_sign_token="";
+        }
 
+        // if var1 != 1
+        //"(%s%s의 나이) = {age1 + year -+ var2} / var1 = %d\n"
+        String ex_cond1_compute_divide_token = year_past_token+"{"+NAME_STR+index2+"}의 나이 = [{"
+                +AGE_STR+index1+"}+{"+YEAR_STR+"}%c{"+VAR_STR+var_index2+"}] / {"+VAR_STR+var_index1+"} = [({"+
+                AGE_STR+index1+"}+{"+YEAR_STR+"}%c{"+VAR_STR+var_index2+"})/{"+VAR_STR+var_index1+"}]";
+        String ex_cond1_compute_divide_with_plus_sign_token = String.format(ex_cond1_compute_divide_token, minus_sign_token, minus_sign_token);
+        String ex_cond1_compute_divide_with_minus_sign_token = String.format(ex_cond1_compute_divide_token, plus_sign_token, plus_sign_token);
+        if(useMult==false) {
+            ex_cond1_compute_divide_with_plus_sign_token="";
+            ex_cond1_compute_divide_with_minus_sign_token="";
+        }
 
         // explanation
         String explanation = "";
         if(cond_inx == 0){  // age1 given, find age2
             if(useYear){
-                // age
-                // compute
-                // age
+                explanation += ex_age1_after_year_token;
+                if(sign == PLUS_SIGN){
+                    explanation += ex_cond1_compute_b4_divide_with_plus_sign_token + ex_cond1_compute_divide_with_plus_sign_token;
+                } else if(sign == MINUS_SIGN){
+                    explanation += ex_cond1_compute_b4_divide_with_minus_sign_token + ex_cond1_compute_divide_with_minus_sign_token;
+                }
+                explanation += ex_after_year_to_age1_token;
             }
         } else{ // age2 given, find age1
             if(useYear){
-
+                explanation += ex_age2_after_year_token;
+                if(sign == PLUS_SIGN){
+                    explanation += ex_cond2_compute_with_plus_sign_token;
+                } else if(sign == MINUS_SIGN){
+                    explanation += ex_cond2_compute_with_minus_sign_token;
+                } else{
+                    explanation = "sign value error";
+                }
+                explanation += ex_after_year_to_age2_token;
             }
         }
-
-        /*
-        String sign_str = "+";
-        String sign_inv_str = "-";
-        if(sign == MINUS) {
-            sign_str = "-";
-            sign_inv_str = "+";
-        }
-
-        if(cond_inx==1){ // age2가 주어지고 age1을 답으로 구하는 경우
-            // age1 + year = (age2 + year) * var1 +- var2
-            if(useYear){  // 나이 -> n년 후 나이 계산
-                explanation += String.format("%s%s의 나이 = %d + %d = %d\n", token0, name2, age2, year, age2+year);
-            }
-            explanation += String.format("(%s%s의 나이) = (%s%s의 나이) * %d %s %d = %d * %d %s %d = %d\n", token0, name1, token0, name2, var1, sign_str, var2, age2+year, var1, sign_str, var2, age1+year);
-            if(useYear){  // n년 후 나이 -> 나이 계산
-                explanation += String.format("%s의 나이 = %s%s의 나이 - %d = %d\n", name1, token0, name1, year, age1);
-            }
-        } else{ // age1이 주어지고 age2를 답으로 구하는 경우
-            // age2 = (age1 -+ var2) / var1
-            int temp1 = age1 + year - var2;
-            if(sign == MINUS) temp1 = age1 + year + var2;
-            if(year != 0){  // 나이 -> n년 후 나이 계산
-                explanation += String.format("%s%s의 나이 = %d + %d = %d\n", token0, name1, age1, year, age1+year);
-            }
-            if(var2 != 0) {
-                explanation += String.format("(%s%s의 나이) %s %d = %d\n", token0, name1, sign_inv_str, var2, temp1);
-            }
-            explanation += String.format("(%s%s의 나이) = %d / %d = %d\n", token0, name2, temp1, var1, temp1/var1);
-            if(year != 0){  // n년 후 나이 -> 나이 계산
-                explanation += String.format("%s의 나이 = %s%s의 나이 - %d = %d", name2, token0, name2, year, age2);
-            }
-        }
-*/
-
 
         return new String[] {content, explanation};     // {content, explanation}
-    }
-    private String[] create_age_sentence_sum_difference(int index, int cond_inx, int sign){
-        return new String[] {};     // {content, explanation}
-    }
-
-    // 이은 색테이프 문제 알고리즘
-    public void colorTapeProblem() {}
-
-    // 어떤 수 문제 알고리즘
-    public void anyNumberProblem() {}
-
-    // 도형에서의 혼합 계산 응용 알고리즘
-    public void geometryCalculation() {}
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // 문제 생성 - 추후 난이도 관련 업데이트 필요
-    // return new String[] {content, explanation, answer, answer_inx_str, condition_inx_str};
-    //
-    //////////////////////////////////////////////////////////////////////////////////
-
-    /*
-        // 1. 상황 문장 갯수 설정 : prob_sentence_num
-
-        // 2. 각 상황 문장 종류 결정
-        //  유형 종류
-        //      (age1 + year) = (age2 + year) * var1 +- var2
-        //      age1 +- age2 = var1
-        //  상황 문장 종류는 list에 저장 필요
-        //      sentence_category_list = {prob_sentence_num, sentence_id_1, sentence_id_2, ...}
-
-        // 3. answer_inx, condition_inx 설정
-
-        // 4. 상황 문장 생성 : content, conditon, explanation, answer
-
-        // 5. 상황 문장 연결
-        // 문제 : content + conditon + answer_content
-        //      content : 순서대로 연결
-        //      condition : condition_inx에 해당하는 상황문장의 condition String
-        //      answer_content : "이때, {ans_inx}의 값은 얼마입니까?"
-        // explanation : conditon_inx -> condition_inx + 1 -> ... -> 끝 index -> 1 -> 2 -> ... -> condition_inx - 1 순서로 연결
-        // answer : ans_inx에 해당하는 값
-
-        // 6. return new String[] {문제, explanation, answer, prob_sentence_category_list}
-        //      상황 문장 유형
-        //      prob_sentence_category_list = "{sentence_num, sentence_id_1, sentence_id_2, ...}"
-        //      "3 1 1 2"
-    */
-
-    /*
-        ///////////////////////////////////////////////////////////////////////
-        // 템플릿 이용해서 문제 생성하는 방법
-        // 1. 값 생성 - 상황 문장 유형에 따라
-        // 2. 명사(이름) 설정 - 값에 따라
-        //      ex) 아버지의 나이 > 동생의 나이 와 같은 규칙이 지켜지도록
-        //          이를 위해 이름 DB는 {이름 명사, 나이대, 최소값, 최대값}
-        //              나이대 = 0 : 조카        <-- 초등 대상 문제이므로 제외하는 게 나을듯? (제외한다면, 나이대별로 최소값, 최대값 지정도 쉬워짐)
-        //                      1 : 동생 < 8
-        //                      2 : 나 = 초등학생 : 8~13
-        //                      3 : 언니, 오빠, 누나, 형 13~25
-        //                      4:  막내이모, 막내삼촌 : 25~35
-        //                      4 : 어머니, 아버지, 이모, 고모, 삼촌 : 35~60
-        //                      5 : 할아버지, 할머니   : 60~90
-        //                      6 : 증조 할아버지, 증조 할머니 : 90~120
-        //                      7 : 구미호, 도깨비...? :  120~
-        //  "{name1}이 ~~ {name2}~~"
-        //        row_id name1 fk_id1
-        //        row_id name2 fk_id2
-    */
-
-    /* 유형1
-        ex) 지수의 나이는 동생 보다 2배한 것 보다 3살 적습니다. 아버지의 나이가 동생 나이의 3배한 것 보다 5살 많을 때 지수의 나이가 15세 라면 아버지의 연세는 얼마일까요?
-        {name1}의 나이는 {name2} 나이의 {var1}배한 것 보다 {var2}살 많(적)습니다.
-        {name2(3)}의 나이는 {name3(2)}나이의 {var3}배한 것 보다 {var4}살 많(적)습니다.
-        이때, name1(2, 3)의 나이가 var4살이라면 name2(1,3)의 나이는 얼마일까요?
-        10년 후 지수의 나이는 10년 후 동생의 나이의 2배한 것보다 3살 적습니다.
-        name1 = name2 * var1 +- var2
-        name2(3) = name3(2) * var3 +- var4
-
-        (y + year) = (x + year) * var1 +- var2
-
-        age1, age2, age3
-        age1, age2 문장
-        age2, age3
-        // 단어 대체목록
-        나이 <-> 연세 (아버지, 어머니, 할머니, 할아버지, 삼촌 등등)
-    */
-    public String[] ageProb1(int level){
-        String content="", explanation="", answer="", condition="";
-        String[] name_ls = {"아버지", "어머니", "동생"};
-        int[] age_ls = new int[3];
-        int[] var_ls = new int[6];
-        int sign1=PLUS, sign2=PLUS;
-
-        while(true) {
-            int[] value_ls;
-            int[] value_ls2;
-            int given_age = random.nextInt(20) + 5; // age3 given
-            int year1 = random.nextInt(10) + 1;  // year given
-            int year2 = 0;
-            value_ls = getRandomAgeYXValue(given_age, year1);   // {sign, age2, age3, var3, var4}
-            if(value_ls[1] <= 0) continue;
-            while (true) {
-                value_ls2 = getRandomAgeYXValue(value_ls[1], year2);   // {sign, age1, age2, var1, var2}
-                if(value_ls2[1] > 0 ) break;
-            }
-            age_ls[0] = value_ls2[1];   // age1
-            age_ls[1] = value_ls2[2];   // age2
-            age_ls[2] = value_ls[2];    // age3
-            var_ls[0] = value_ls2[3];   // var1
-            var_ls[1] = value_ls2[4];   // var2
-            var_ls[2] = value_ls[3];    // var3
-            var_ls[3] = value_ls[4];    // var4
-            var_ls[4] = year1;    // year1
-            var_ls[5] = year2;   // year2
-            sign1 = value_ls2[0];
-            sign2 = value_ls[0];
-            break;
-        }
-
-        // sentence_ls[i] = {content, condition, explanation, answer}
-        String[][] sentence_ls = new String[2][3];
-        for(int i = 0; i < level; i++){
-            sentence_ls[i] = new String[3];
-        }
-
-        int rand = random.nextInt(3);
-        int rand_inx = random.nextInt(1) + 1;
-        int ans_inx = (rand + rand_inx) % 3;
-        int cond_inx = (rand + rand_inx + 1) % 3;
-        int rand1=1, rand2=1;
-        if(cond_inx == 2){ // age3 given
-            rand1 = 0;  // age3 -> age2 given, find age1
-            rand2 = 0; // age3 given, find age2
-        }
-        else{   // age1 or age2 given
-            if(cond_inx == 0){ // age1 given
-                rand1 = 1; // age1 given, find age2
-            }
-            else if(cond_inx == 1){   // age2 given
-                rand1 = 0; // age2 given, find age1
-            }
-            rand2 = 1;  // age 1 or age2 -> age2 given, find age3
-        }
-
-        sentence_ls[1] = ageSentence(name_ls[1], name_ls[2], age_ls[1], age_ls[2], var_ls[2], var_ls[3], var_ls[5], rand1, sign2);
-        sentence_ls[0] = ageSentence(name_ls[0], name_ls[1], age_ls[0], age_ls[1], var_ls[0], var_ls[1], var_ls[4], rand2, sign1);
-        // sentence_ls[i] = {content, condition, explanation, answer}
-
-        content = sentence_ls[0][0] + sentence_ls[1][0];
-        if(cond_inx == 2){
-            content += sentence_ls[1][1];   // condition 추가
-            explanation = sentence_ls[1][2] + sentence_ls[0][2];
-        }
-        else{
-            content += sentence_ls[0][1];   // condition 추가
-            explanation = sentence_ls[0][2] + sentence_ls[1][2];
-        }
-
-        content += String.format("이때, %s의 나이는 몇 살입니까?", name_ls[rand]);
-        answer = String.valueOf(age_ls[ans_inx])+"살";
-
-        System.out.printf("%s의 나이 = %d\n", name_ls[0], age_ls[0]);
-        System.out.printf("%s의 나이 = %d\n", name_ls[1], age_ls[1]);
-        System.out.printf("%s의 나이 = %d\n", name_ls[2], age_ls[2]);
-        System.out.printf("var1 = %d,\t var2 = %d, \t var3 = %d, \t var4 = %d\n", var_ls[0], var_ls[1], var_ls[2], var_ls[3]);
-
-        String answer_inx_str = String.valueOf(ans_inx);
-        String condition_inx_str = String.valueOf(cond_inx);
-
-        return new String[] {content, explanation, answer, answer_inx_str, condition_inx_str};
     }
 
     /* 유형 2 : 두 나이의 합 차만 주어진 경우
             x + y = var1
             x - y = var2
          */
-    public String[] ageProb2(int level){
-        int age1 = random.nextInt(100) + 5;
-        int age2 = random.nextInt(100) + 5;
-        if(age2 > age1){
-            int temp = age1;
-            age1 = age2;
-            age2 = temp;
-        }
-        int ans_inx = random.nextInt(2);
-        int cond_inx = (ans_inx + 1) % 2;
-        int sign = random.nextInt(2);
-        String[] name = {"아버지", "어머니"};
-        String[] ret_str = ageSentence2(name[0], name[1], age1, age2, ans_inx, sign); // {content, condition, explanation, answer}
-        String content = ret_str[0] + ret_str[1] + String.format("%s의 나이는 몇 살입니까?", name[ans_inx]);
-        String explanation = ret_str[2];
-        String answer = ret_str[3];
-        String answer_inx_str = String.valueOf(ans_inx);
-        String condition_inx_str = String.valueOf(cond_inx);
+    private String[] create_age_sentence_sum_difference(int index, int cond_inx, int sign){
+        int index1 = index;
+        int index2 = index + 1;
+        int var_index = index * 2;
 
-        return new String[] {content, explanation, answer, answer_inx_str, condition_inx_str};
+        String name1_token = VAR_START + NAME_STR + index1 + VAR_END;
+        String name2_token = VAR_START + NAME_STR + index2 + VAR_END;
+        String age1_token = VAR_START + AGE_STR + index1 + VAR_END;
+        String age2_token = VAR_START + AGE_STR + index2 + VAR_END;
+        String var1_token = VAR_START + VAR_STR + index1 + VAR_END;
+
+        String name1_age_token = name1_token + "의 나이";
+        String name2_age_token = name2_token + "의 나이";
+
+        String content="";
+        String age_start_token = name1_age_token + "와 " + name2_age_token + "를 ";
+        String sum_token = "합한 ";
+        String difference_token = "뺀 ";
+        String age_end_token = "값은 " + var1_token + "와 같습니다.";
+        if(sign == PLUS_SIGN){
+            content =  age_start_token + sum_token + age_end_token;
+        } else{
+            content = age_start_token + difference_token + age_end_token;
+        }
+
+        String sign_token = "", inv_sign_token = "";
+        if(sign== PLUS_SIGN) {
+            sign_token = PLUS_STR;
+            inv_sign_token = MINUS_STR;
+        }
+        else if(sign== MINUS_SIGN) {
+            sign_token = MINUS_STR;
+            inv_sign_token = PLUS_STR;
+        }
+        else sign_token = "!!!!!!!SIGN_ERROR!!!!";
+
+
+        //(name1의 나이) +- (name2의 나이) = %d
+        // (name1의 나이) = %d -+ (name2의 나이) = %d
+        // (name2의 나이) = %d - name1의 나이 = %d
+        String ex_expr_token = name1_age_token + sign_token + name2_age_token
+                + EQUAL_STR + EXPRESSION_START + age1_token + sign_token + age2_token + EXPRESSION_END;
+        String ex_age1_token = name1_age_token + EQUAL_STR + var1_token + inv_sign_token + name2_age_token
+                + EQUAL_STR + var1_token + inv_sign_token + age2_token
+                + EQUAL_STR + EXPRESSION_START + var1_token + inv_sign_token + age2_token + EXPRESSION_END;
+
+        String ex_age2_with_difference_token = name2_age_token + EQUAL_STR + var1_token + MINUS_STR + name1_age_token
+                + EQUAL_STR + var1_token + MINUS_STR + age1_token
+                + EQUAL_STR + EXPRESSION_START + var1_token + MINUS_STR + age1_token + EXPRESSION_END;
+
+        String explanation = "";
+        if(cond_inx == 0) {  // age1 given, find age2
+            if(sign == MINUS_SIGN) {
+                explanation = ex_expr_token + ex_age2_with_difference_token;
+            } else if(sign == PLUS_SIGN) {
+                explanation = "VALUE ERROR:: should do minus from bigger to smaller";
+            } else{
+                explanation = "SIGN VALUE ERROR";
+            }
+        } else if(cond_inx == 1){   // age2 given, find age1
+            explanation = ex_expr_token + ex_age1_token;
+        }
+
+        return new String[] {content, explanation};     // {content, explanation}
     }
 
 
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // 랜덤 숫자 뽑기
-    // return new int[] {sign, age1, age2, var1, var2};
-    // return new int[] {sign, age1, age2, var1};
-    //
-    //////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // 나이문제 - 랜덤 숫자 뽑기
+
+    // 숫자 뽑기 연속
+    private int[] getRandomAgeValue(int cond_inx, int[] sentence_category_ls){
+        int[] age_ls;
+        int[] var_ls;
+        for(int i = 0; i < sentence_category_ls.length; i++){
+            // age, var 생성
+        }
+        return new int[] {};
+    }
 
     // age1 + year = (age2 + year) * var1 +- var2
+    // return new int[] {sign, age1, age2, var1, var2};
     private int[] getRandomAgeYXValue(int given_age, int year){ // age2, year given
         int var1=0, var2=0, age1=0, age2=given_age;
 
@@ -450,7 +360,7 @@ public class Elementary5th {
         while(age1 <= 0) {
             var1 = random.nextInt(4) + 2;
             var2 = random.nextInt(20) + 1;
-            if(sign == PLUS) {
+            if(sign == PLUS_SIGN) {
                 age1 = (age2 + year) * var1 + var2 - year;
             } else{
                 age1 = (age2 + year) * var1 - var2 - year;
@@ -461,6 +371,8 @@ public class Elementary5th {
     }
 
     // age1 +- age2 = var1
+    // 단, age1 - age2의 경우, age1 > age2
+    // return new int[] {sign, age1, age2, var1};
     private int[] getRandomAgeX1X2Value(int given_age, int given_inx){
         int age1, age2;
         /* 랜덤 값 범위 수정 필요
@@ -477,141 +389,13 @@ public class Elementary5th {
 
         int sign = random.nextInt(2);
         int var1 = 0;
-        if(sign == PLUS){  // age1 + age2 = var1
+        if(sign == PLUS_SIGN){  // age1 + age2 = var1
             var1 = age1 + age2;
         } else { // age1 - age2 = var1
             var1 = age1 - age2;
         }
         return new int[] {sign, age1, age2, var1};
     }
-
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //
-    // 문장 생성
-    // return new String[] {content, condition, explanation, answer};
-    //
-    //////////////////////////////////////////////////////////////////////////////////
-
-    public String[] ageSentence(String name1, String name2, int age1, int age2, int var1, int var2, int year, int ans_inx, int sign){
-        // name1 = name2 * var1 +- var2
-        // {year}년 후 {name1}의 나이는 {name2}의 나이의 {var1}배한 것과 같습니다.
-        // {year}년 후 {name1}의 나이는 {name2}의 나이의 {var1}배한 것보다 {var2}살 많습니다(적습니다).
-        String content="";
-        String year_token = "{"+year+"}년 후 ";
-        if(year == 0){
-            year_token = "";
-        }
-        String name1_token = "{"+name1+"}의 나이는 ";
-        String name2_token = "{"+name2+"}의 나이";
-        String mult_token = "의 {"+var1+"}배 한 것";
-        String mult_end_token = "과 같습니다.";
-        String pm_token = "보다 {"+var2+"}살 ";
-        String add_token = "많습니다.";
-        String minus_token = "적습니다.";
-        content = year_token + name1_token + year_token + name2_token;
-        if(var1 == 1){
-            if(sign == PLUS){
-                content += pm_token + add_token;
-            } else if(sign == MINUS){
-                content += pm_token + minus_token;
-            }
-        } else{
-            if(var2 == 0){
-                content += mult_token + mult_end_token;
-            } else if(sign == PLUS){
-                content += mult_token + pm_token + add_token;
-            } else if(sign == MINUS){
-                content += mult_token + pm_token + minus_token;
-            }
-        }
-
-        // age1 = age2 * var1 +- var2
-        String explanation="";
-        String answer="";
-        String condition="";
-        String sign_str = "+";
-        String sign_inv_str = "-";
-        if(sign == MINUS) {
-            sign_str = "-";
-            sign_inv_str = "+";
-        }
-
-        if(ans_inx==0){ // age2가 주어지고 age1을 답으로 구하는 경우
-            // age1 = age2 * var1 +- var2
-            condition = "이때, "+name2+"의 나이는 "+age2+"살입니다. ";
-            answer = String.valueOf(age1);
-            if(year != 0){  // 나이 -> n년 후 나이 계산
-                //explanation += year_token+name2+"의 나이 = "+age2+" + "+year+" = "+"{"+age2 + year_str+"}";
-                explanation += String.format("%s%s의 나이 = %s + %s = %s\n", year_token, name2, age2, year, age2+year);
-            }
-            explanation += String.format("(%s%s의 나이) = (%s%s의 나이) * %s %s %s = %s * %s %s %s = %s\n", year_token, name1, year_token, name2, var1, sign_str, var2, age2+year, var1, sign_str, var2, age1+year);
-            if(year != 0){  // n년 후 나이 -> 나이 계산
-                explanation += String.format("%s의 나이 = %s%s의 나이 - %d = %d\n", name1, year_token, name1, year, age1);
-            }
-        } else{ // age1이 주어지고 age2를 답으로 구하는 경우
-            // age2 = (age1 -+ var2) / var1
-            condition = String.format("이때, %s의 나이는 %d살입니다. ", name1, age1);
-            answer = String.valueOf(age2);
-            int temp1 = age1 + year - var2;
-            if(sign == MINUS) temp1 = age1 + year + var2;
-            if(year != 0){  // 나이 -> n년 후 나이 계산
-                explanation += String.format("%s%s의 나이 = %d + %d = %d\n", year_token, name1, age1, year, age1+year);
-            }
-            if(var2 != 0) {
-                explanation += String.format("(%s%s의 나이) %s %d = %d\n", year_token, name1, sign_inv_str, var2, temp1);
-            }
-            explanation += String.format("(%s%s의 나이) = %d / %d = %d\n", year_token, name2, temp1, var1, temp1/var1);
-            if(year != 0){  // n년 후 나이 -> 나이 계산
-                explanation += String.format("%s의 나이 = %s%s의 나이 - %d = %d", name2, year_token, name2, year, age2);
-            }
-        }
-
-        return new String[] {content, condition, explanation, answer};
-    }
-
-
-    public String[] ageSentence2(String name1, String name2, int age1, int age2, int ans_inx, int sign){
-        int var1 = age1 + age2;
-        int var2 = age1 - age2;
-
-        String content="";
-        if(sign == PLUS){
-            content =  String.format("%s의 나이와 %s의 나이를 합한 값은 %d와 같습니다. ", name1, name2, var1);
-        } else{
-            content = String.format("%s의 나이에서 %s의 나이를 뺀 값은 %d와 같습니다. ", name1, name2, var2);
-        }
-
-        String cond_name = "", ans_name="";
-        int cond_age = 0, ans_age=0;
-        if(ans_inx==0) {    // age2 given, find age1
-            cond_name = name2;  ans_name = name1;
-            cond_age = age2;    ans_age = age1;
-        } else{ // age1 given, find age2
-            cond_name = name1;  ans_name = name2;
-            cond_age = age1;    ans_age = age2;
-        }
-        String condition = String.format("이때, %s의 나이는 %d입니다.\n", cond_name, cond_age);
-
-        String explanation = "";
-        if(sign == PLUS) {
-            explanation = String.format("(%s의 나이) + (%s의 나이) = %d\n", name1, name2, var1);
-            explanation += String.format("(%s의 나이) = %d - (%s의 나이) = %d\n", ans_name, var1, cond_name, var1 - cond_age);
-        } else{
-            explanation = String.format("(%s의 나이) - (%s의 나이) = %d\n", name1, name2, var1);
-            explanation += String.format("(%s의 나이) = %d + (%s의 나이) = %d\n", name1, var1, name2, var1 + age2);
-        }
-
-        String answer="";
-        if(ans_inx == 0){
-            answer = String.valueOf(age1);
-        } else{
-            answer = String.valueOf(age2);
-        }
-
-        return new String[] {content, condition, explanation, answer};
-    }
-
 
 
     /* 유형3 : 대입형 문제 -> 1부터 숫자 넣어가며 푸는 유형 -> 별개 유형으로 취급하기로 함
