@@ -137,7 +137,7 @@ public class Elementary5th {
         for(int i = 0; i < sentence_ls.length; i++){ // 상황 문장 content - 순서 섞으면 난이도 올라감
             content += sentence_ls[i][0] + "\n";
         }
-        content = content + condition + question;
+        content += condition + "\n" + question;
 
         // explanation : conditon_inx -> condition_inx + 1 -> ... -> 끝 index -> 1 -> 2 -> ... -> condition_inx - 1 순서로 연결
         String explanation = "";
@@ -179,7 +179,6 @@ public class Elementary5th {
     public void geometryCalculation() {}
 
 
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 나이 문제 - 상황문장 생성
     // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
@@ -216,6 +215,7 @@ public class Elementary5th {
         int var_index1 = ls_index * var_num_per_sentence;
         int var_index2 = var_index1 + 1;
         int year_index = var_index1 + 2;
+
 
         /*
         // string token used
@@ -412,13 +412,14 @@ public class Elementary5th {
             explanation_ls.add(ex_after_year_to_age1_token);
         }
 
-        content = "";
-        for(int i = 0; i < content_ls.size(); i++){
-            content += content_ls.get(i) + "\n";
+        content = content_ls.get(0);
+        for(int i = 1; i < content_ls.size(); i++){
+            content += "\n" + content_ls.get(i);
         }
-        explanation = "";
-        for(int i = 0; i < explanation_ls.size(); i++){
-            explanation += explanation_ls.get(i) + "\n";
+
+        explanation = explanation_ls.get(0);
+        for(int i = 1; i < explanation_ls.size(); i++){
+            explanation += "\n" + explanation_ls.get(i);
         }
         return new String[] {content, explanation};     // {content, explanation}
     }
