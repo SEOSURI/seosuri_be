@@ -12,12 +12,17 @@ import java.util.Random;
 남은 일
 0. 난이도 기준 마련
     - 템플릿 난이도
-        상황 문장 갯수
+        - 상황 문장 갯수
+        - 상황 문장 난이도
+            useYear
+            useMult
+            useAddMinus
+        - 상황 문장 셔플 여부
     - 숫자 난이도
+        - 자리수 : 한자리, 두자리, 세자리
 1. 랜덤 숫자 뽑기 - 무한루프 문제
 2. 숫자에 맞는 단어 뽑기
 3. 템플릿 -> 실제 문장으로 변경
-
  */
 
 public class Elementary5th {
@@ -87,17 +92,13 @@ public class Elementary5th {
 
         int prob_sentence_num = 5;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
         int var_num_per_sentence = 4;   // var1, var2, year1, year2
-
-        int[] age_ls = new int[prob_sentence_num + 1];  // 상황문장 1개일 때 age 변수는 2개, 상황 문장 하나 추가될 때마다 age 변수 1개씩 추가됨
-        int[] var_ls = new int[prob_sentence_num * var_num_per_sentence];  // yx유형문장은 상수 변수 2개, 합차유형문장은 상수 변수 1개
+        int age_var_num = prob_sentence_num + 1;
         int[] sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
-
-        // 랜덤 값 부여
         for(int i = 0; i < prob_sentence_num; i++){
             sentence_category_id_ls[i] = random.nextInt(SENTENCE_CATEGORY_NUM);
         }
-        int answer_inx = random.nextInt(age_ls.length);  // 구하는 나이의 인덱스
-        int condition_inx = (random.nextInt(age_ls.length-1) + answer_inx) % age_ls.length;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
+        int answer_inx = random.nextInt(age_var_num);  // 구하는 나이의 인덱스
+        int condition_inx = (random.nextInt(age_var_num - 1) + answer_inx) % age_var_num;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
 
         boolean[] useYear_ls = new boolean[prob_sentence_num];
         boolean[] useMult_ls = new boolean[prob_sentence_num];
@@ -117,14 +118,14 @@ public class Elementary5th {
         }
 
         ageProblemTemplate(prob_sentence_num, var_num_per_sentence,
-                age_ls, var_ls, sentence_category_id_ls,
+                sentence_category_id_ls,
                 answer_inx, condition_inx,
                 useYear_ls, useMult_ls, useAddMinus_ls,
                 var_sign_ls, year1_sign_ls, year2_sign_ls);
     }
 
     public void ageProblemTemplate(int prob_sentence_num, int var_num_per_sentence,
-                           int[] age_ls, int[] var_ls, int[] sentence_category_id_ls,
+                           int[] sentence_category_id_ls,
                            int answer_inx, int condition_inx,
                            boolean[] useYear_ls, boolean[] useMult_ls, boolean[] useAddMinus_ls,
                            int[] var_sign_ls, int[] year1_sign_ls, int[] year2_sign_ls) {
@@ -195,7 +196,9 @@ public class Elementary5th {
     public void colorTapeProblem() {}
 
     // 어떤 수 문제 알고리즘
-    public void anyNumberProblem() {}
+    public void anyNumberProblem() {
+
+    }
 
     // 도형에서의 혼합 계산 응용 알고리즘
     public void geometryCalculation() {}
