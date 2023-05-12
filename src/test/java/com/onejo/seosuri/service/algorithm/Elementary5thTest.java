@@ -2,8 +2,6 @@ package com.onejo.seosuri.service.algorithm;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class Elementary5thTest {
 
     @Test
@@ -12,12 +10,23 @@ class Elementary5thTest {
         elementary5th.ageProblem();
     }
 
+    String age_category_token = "나이";
+    String age_unit_token = "살";
+    String year_unit_token = "년";
+    String time_after_token = "후";
+    String time_before_token = "전";
 
     @Test
     void create_age_sentence_yx() {
         Elementary5th elementary5th = new Elementary5th();
         int ls_index = 1;
         int var_num_per_sentence = 1;
+
+        String name_category_token = age_category_token; // "의 나이"
+        String name_unit_token = age_unit_token;
+        String var34_unit_token = year_unit_token;
+        String after_str_token = time_after_token;
+        String before_str_token = time_before_token;
 
         boolean[] tf_set = new boolean[] {true, false};
         int case_id = 0;
@@ -37,7 +46,10 @@ class Elementary5thTest {
                                     System.out.println("year1_sign = " + year1_sign);
                                     System.out.println("year2_sign = " + year2_sign);
                                     System.out.println("var_sign = " + var_sign);
-                                    String[] sentence_ls = elementary5th.create_age_sentence_yx(ls_index, var_num_per_sentence, cond_inx, useYear, useMult, useAddMinus, var_sign, year1_sign, year2_sign);
+                                    String[] sentence_ls = elementary5th.create_sentence_yx(ls_index, var_num_per_sentence, cond_inx,
+                                            useYear, useMult, useAddMinus,
+                                            var_sign, year1_sign, year2_sign,
+                                            name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
                                     System.out.println("content-------------------------");
                                     System.out.println(sentence_ls[0]);
                                     System.out.println("explanation-------------------------------------");
@@ -47,12 +59,16 @@ class Elementary5thTest {
 
     @Test
     void create_age_sentence_sum_difference() {
+        String name_category_token = age_category_token; // "의 나이"
+        String name_unit_token = age_unit_token;
+
         Elementary5th elementary5th = new Elementary5th();
         int ls_index = 0;
         int var_num_per_sentence = 1;
         for(int cond_inx: new int[] {0, 1})
             for(int sign: new int[] {0, 1}) {
-                String[] sentence_ls = elementary5th.create_age_sentence_sum_difference(ls_index, var_num_per_sentence, cond_inx, sign);
+                String[] sentence_ls = elementary5th.create_sentence_sum_diff(ls_index, var_num_per_sentence, cond_inx, sign,
+                        name_category_token, name_unit_token);
                 System.out.println("content-------------------------");
                 System.out.println(sentence_ls[0]);
                 System.out.println("explanation-------------------------------------");
