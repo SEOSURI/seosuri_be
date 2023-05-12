@@ -62,6 +62,7 @@ public class Elementary5th {
     String reul_token = "를";
     String eseo_token = "에서";
 
+    String age_category_token = "나이";
     String age_unit_token = "살";
     String bae_token = "배 한 것";
     String than_token = "보다";
@@ -71,8 +72,11 @@ public class Elementary5th {
     String sum_token = "합한";
     String difference_token = "뺀";
     String value_token = "값";
-    String name_to_age_token = "의 나이";
-    String time_past_token = "년 후";
+
+    String year_unit_token = "년";
+    String time_after_token = "후";
+    String time_before_token = "전";
+    //String time_past_token = "년 후";
 
 
     // 나이 구하기 문제 알고리즘
@@ -98,12 +102,14 @@ public class Elementary5th {
         boolean[] useYear_ls = new boolean[prob_sentence_num];
         boolean[] useMult_ls = new boolean[prob_sentence_num];
         boolean[] useAddMinus_ls = new boolean[prob_sentence_num];
-        int[] sign_ls = new int[prob_sentence_num];
+        int[] var_sign_ls = new int[prob_sentence_num];
+        int[] year_sign_ls = new int[prob_sentence_num];
         for(int i = 0; i < prob_sentence_num; i++){
             useYear_ls[i] =random.nextBoolean();
             useMult_ls[i] = random.nextBoolean();
             useAddMinus_ls[i] = random.nextBoolean();
-            sign_ls[i] = random.nextInt(2);
+            var_sign_ls[i] = random.nextInt(2);
+            year_sign_ls[i] = random.nextInt(2);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,7 +131,7 @@ public class Elementary5th {
         for(int i = 0; i < prob_sentence_num; i++){
             // create_age_sentence(유형id, 값 참조 시작하는 인덱스, answer_index, condition_index) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
             sentence_ls[i] = create_age_sentence(sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
-                    useYear_ls[i], useMult_ls[i], useAddMinus_ls[i], sign_ls[i]);  // sentence_ls[i] = {content, explanation}
+                    useYear_ls[i], useMult_ls[i], useAddMinus_ls[i], var_sign_ls[i], year_sign_ls[i]);  // sentence_ls[i] = {content, explanation}
         }
 
 
@@ -151,12 +157,12 @@ public class Elementary5th {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         // 결과 : {문제, explanation, answer, prob_sentence_category_list}
-        String[] result_ls = new String[] {content, explanation, answer, Arrays.toString(sentence_category_id_ls), Arrays.toString(sign_ls)};
+        String[] result_ls = new String[] {content, explanation, answer, Arrays.toString(sentence_category_id_ls), Arrays.toString(var_sign_ls)};
 
         /*
         int age_ls_length, int var_ls_length, int num_var_per_sentence,
                                     int year_min_value, int year_max_value,
-                                    int[] sentence_category_ls, int[] sign_ls,
+                                    int[] sentence_category_ls, int[] var_sign_ls,
                                     int[] age_min_value_ls, int[] age_max_value_ls, int[] var_min_value_ls, int[] var_max_value_ls
          */
         System.out.println(content);
@@ -166,7 +172,7 @@ public class Elementary5th {
         System.out.println(answer);
         System.out.println("------------------------------");
         System.out.println(Arrays.toString(sentence_category_id_ls));
-        System.out.println(Arrays.toString(sign_ls));
+        System.out.println(Arrays.toString(var_sign_ls));
     }
 
     // 이은 색테이프 문제 알고리즘
@@ -183,11 +189,11 @@ public class Elementary5th {
     // 나이 문제 - 상황문장 생성
     // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
     private String[] create_age_sentence(int category_id, int index, int var_num_per_sentence, int cond_inx,
-                                         boolean useYear, boolean useMult, boolean useAddMinus, int sign){
+                                         boolean useYear, boolean useMult, boolean useAddMinus, int var_sign, int year_sign){
         if(category_id == AGE_CATEGORY_ID_YX){
-            return create_age_sentence_yx(index, var_num_per_sentence, cond_inx, useYear, useMult, useAddMinus, sign);               // {content, explanation, sign}
+            return create_age_sentence_yx(index, var_num_per_sentence, cond_inx, useYear, useMult, useAddMinus, var_sign, year_sign);               // {content, explanation, sign}
         } else if (category_id == AGE_CATEGORY_ID_SUM_DIFFERENCE){
-            return create_age_sentence_sum_difference(index, var_num_per_sentence, cond_inx, sign);   // {content, explanation, sign}
+            return create_age_sentence_sum_difference(index, var_num_per_sentence, cond_inx, var_sign);   // {content, explanation, sign}
         } else{
             return null;
         }
@@ -205,7 +211,7 @@ public class Elementary5th {
         // pm_token + add_token                 : 덧셈만
         // pm_token + minus_token               : 뺄셈만
      */
-    public String[] create_age_sentence_yx(int ls_index, int var_num_per_sentence, int cond_inx, boolean useYear, boolean useMult, boolean useAddMinus, int sign){
+    public String[] create_age_sentence_yx(int ls_index, int var_num_per_sentence, int cond_inx, boolean useYear, boolean useMult, boolean useAddMinus, int var2_sign, int year_sign){
         ArrayList<String> content_ls = new ArrayList<>(1);
         ArrayList<String> explanation_ls = new ArrayList<>(10);
 
@@ -216,6 +222,8 @@ public class Elementary5th {
         int var_index2 = var_index1 + 1;
         int year_index = var_index1 + 2;
 
+        String name_category_token = age_category_token; // "의 나이"
+        String name_unit_token = age_unit_token;
 
         /*
         // string token used
@@ -239,25 +247,32 @@ public class Elementary5th {
         // token 조합
         String name1_token = VAR_START + NAME_STR + index1 + VAR_END;
         String name2_token = VAR_START + NAME_STR + index2 + VAR_END;
-        String name1_age_token = name1_token + name_to_age_token;
-        String name2_age_token = name2_token + name_to_age_token;
+        String name1_age_token = name1_token + ui_token + blank_token +  name_category_token;
+        String name2_age_token = name2_token + ui_token + blank_token +  name_category_token;
         String age1_token = VAR_START + AGE_STR + index1 + VAR_END;
         String age2_token = VAR_START + AGE_STR + index2 + VAR_END;
         String var1_token = VAR_START + VAR_STR + var_index1 + VAR_END;
         String var2_token = VAR_START + VAR_STR + var_index2 + VAR_END;
         String year_token = VAR_START + VAR_STR + year_index + VAR_END;
         //String year_token = VAR_START + YEAR_STR + VAR_END;
-        String year_past_token = year_token + time_past_token + blank_token;
-        if(useYear == false){
-            year_past_token = "";
+
+        String name_add_str_token = "";
+        if(useYear){
+            if(year_sign == PLUS_SIGN){
+                name_add_str_token = year_token + year_unit_token + blank_token + time_after_token + blank_token; // "{year}년 후 "
+            } else if(year_sign == MINUS_SIGN){
+                name_add_str_token = year_token + year_unit_token + blank_token + time_before_token + blank_token; // "{year}년 후 "
+            } else{
+                System.out.println("ERROR:: invalid year sign");
+            }
         }
 
         String sign_token = "", sign_blank_token = "";
         String inv_sign_token = "", inv_sign_blank_token = "";
-        if(sign == PLUS_SIGN){
+        if(var2_sign == PLUS_SIGN){
             sign_token = PLUS_SYM;  sign_blank_token = PLUS_BLANK_STR;
             inv_sign_token = MINUS_SYM; inv_sign_blank_token = MINUS_BLANK_STR;
-        } else if(sign == MINUS_SIGN){
+        } else if(var2_sign == MINUS_SIGN){
             sign_token = MINUS_SYM; sign_blank_token = MINUS_BLANK_STR;
             inv_sign_token = PLUS_SYM;  inv_sign_blank_token = PLUS_BLANK_STR;
         } else{
@@ -270,30 +285,30 @@ public class Elementary5th {
         String c_mult_token = ui_token + blank_token + var1_token + bae_token;  //"의 {var1}배 한 것"
         String c_mult_end_token = gwa_token + bae_token + same_token; //"과 같습니다.";
         String c_mult_end_wa_token = wa_token + blank_token + same_token; //"와 같습니다.";
-        String c_pm_token = than_token + blank_token + var2_token + age_unit_token + blank_token;   //"보다 " + var2_token + "살 ";
+        String c_pm_token = than_token + blank_token + var2_token + name_unit_token + blank_token;   //"보다 " + var2_token + "살 ";
 
         // content
         String content="";
-        content = year_past_token + name1_age_token + neun_token + blank_token + year_past_token + name2_age_token;   // {name1}의 나이는 {name2}의 나이
+        content = name_add_str_token + name1_age_token + neun_token + blank_token + name_add_str_token + name2_age_token;   // {name1}의 나이는 {name2}의 나이
         if(useMult){
             if(useAddMinus == false){   // 의 {var1}배 한 것과 같습니다.
                 content += c_mult_token + c_mult_end_token;
-            } else if(sign == PLUS_SIGN){    // 의 {var1}배한 것보다 {var2}살 많습니다.
+            } else if(var2_sign == PLUS_SIGN){    // 의 {var1}배한 것보다 {var2}살 많습니다.
                 content += c_mult_token + c_pm_token + more_amount_token;
-            } else if(sign == MINUS_SIGN){   // 의 {var1}배한 것보다 {var2}살 적습니다.
+            } else if(var2_sign == MINUS_SIGN){   // 의 {var1}배한 것보다 {var2}살 적습니다.
                 content += c_mult_token + c_pm_token + less_amount_token;
             } else{
-                content = "sign value error\n";
+                content = "var2_sign value error\n";
             }
         } else{
             if(useAddMinus == false){   // 와 같습니다.
                 content += c_mult_end_wa_token;
-            } else if(sign == PLUS_SIGN){   // 보다 {var2}살 많습니다.
+            } else if(var2_sign == PLUS_SIGN){   // 보다 {var2}살 많습니다.
                 content += c_pm_token + more_amount_token;
-            } else if(sign == MINUS_SIGN){   // 보다 {var2}살 적습니다.
+            } else if(var2_sign == MINUS_SIGN){   // 보다 {var2}살 적습니다.
                 content += c_pm_token + less_amount_token;
             } else{
-                content = "sign value error\n";
+                content = "var2_sign value error\n";
             }
         }
         content_ls.add(content);
@@ -301,56 +316,63 @@ public class Elementary5th {
 
         // explanation token
         /*
-        String ex_age_after_year_token = year_past_token +"{"+NAME_STR+"%d}의 나이 = {"+AGE_STR+"%d} + {"+YEAR_STR+"} = [{"
+        String ex_age_after_year_token = name_add_str_token +"{"+NAME_STR+"%d}의 나이 = {"+AGE_STR+"%d} + {"+YEAR_STR+"} = [{"
                 +AGE_STR+"%d}+{"+YEAR_STR+"}]";
         */
-        String ex_expression_token = year_past_token + name1_age_token
-                + EQUAL_BLANK_SYM + year_past_token + name2_age_token;
+        String ex_expression_token = name_add_str_token + name1_age_token
+                + EQUAL_BLANK_SYM + name_add_str_token + name2_age_token;
         if(useMult)
             ex_expression_token += MULT_BLANK_STR + var1_token;
         if(useAddMinus)
             ex_expression_token += sign_blank_token + var2_token;
 
-        String ex_age1_after_year_token = year_past_token + name1_age_token
-                + EQUAL_BLANK_SYM + age1_token + PLUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + PLUS_SYM + year_token + EXPRESSION_END;
-        String ex_age2_after_year_token = year_past_token + name2_age_token
-                + EQUAL_BLANK_SYM + age2_token + PLUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age2_token + PLUS_SYM + year_token + EXPRESSION_END;
-        String ex_age1_after_year_same_age_token = EQUAL_BLANK_SYM + year_past_token + name2_age_token;
-        String ex_age2_after_year_same_age_token = EQUAL_BLANK_SYM + year_past_token + name1_age_token;
+        String year_sign_token = PLUS_SYM, year_inv_sign_token = MINUS_SYM;
+        String year_sign_blank_token = PLUS_BLANK_STR, year_inv_sign_blank_token = MINUS_BLANK_STR;
+        if(year_sign == MINUS_SIGN) {
+            year_sign_token = MINUS_SYM;    year_inv_sign_token = PLUS_SYM;
+            year_sign_blank_token = MINUS_BLANK_STR;    year_inv_sign_blank_token = PLUS_BLANK_STR;
+        }
+
+        String ex_age1_after_year_token = name_add_str_token + name1_age_token
+                + EQUAL_BLANK_SYM + age1_token + year_sign_blank_token + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + year_sign_token + year_token + EXPRESSION_END;
+        String ex_age2_after_year_token = name_add_str_token + name2_age_token
+                + EQUAL_BLANK_SYM + age2_token + year_sign_blank_token + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + age2_token + year_sign_token + year_token + EXPRESSION_END;
+        String ex_age1_after_year_same_age_token = EQUAL_BLANK_SYM + name_add_str_token + name2_age_token;
+        String ex_age2_after_year_same_age_token = EQUAL_BLANK_SYM + name_add_str_token + name1_age_token;
 
         String ex_after_year_to_age1_token = name1_age_token
-                + EQUAL_BLANK_SYM + year_past_token + name1_age_token + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age2_token + PLUS_SYM + year_token + BRACKET_END + MULT_SYM + var1_token + sign_token + var2_token + EXPRESSION_END + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age2_token + PLUS_SYM + year_token + BRACKET_END + MULT_SYM + var1_token + sign_token + var2_token + MINUS_SYM + year_token + EXPRESSION_END;
+                + EQUAL_BLANK_SYM + name_add_str_token + name1_age_token + year_inv_sign_blank_token + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age2_token + year_inv_sign_token + year_token + BRACKET_END + MULT_SYM + var1_token + sign_token + var2_token + EXPRESSION_END + year_inv_sign_blank_token + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age2_token + year_inv_sign_token + year_token + BRACKET_END + MULT_SYM + var1_token + sign_token + var2_token + year_inv_sign_token + year_token + EXPRESSION_END;
         String ex_after_year_to_age2_with_plus_sign_token = name2_age_token
-                + EQUAL_BLANK_SYM + year_past_token + name2_age_token + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + PLUS_SYM + year_token + MINUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + PLUS_SYM + year_token + MINUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + MINUS_SYM + year_token + EXPRESSION_END;
+                + EQUAL_BLANK_SYM + name_add_str_token + name2_age_token + year_inv_sign_blank_token + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + year_inv_sign_token + year_token + MINUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END + year_inv_sign_blank_token + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + year_inv_sign_token + year_token + MINUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + year_inv_sign_token + year_token + EXPRESSION_END;
         String ex_after_year_to_age2_with_minus_sign_token = name2_age_token
-                + EQUAL_BLANK_SYM + year_past_token + name2_age_token + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + PLUS_SYM + year_token + PLUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END + MINUS_BLANK_STR + year_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + PLUS_SYM + year_token + PLUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + MINUS_SYM + year_token + EXPRESSION_END;
+                + EQUAL_BLANK_SYM + name_add_str_token + name2_age_token + year_inv_sign_blank_token + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + year_inv_sign_token + year_token + PLUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END + year_inv_sign_blank_token + year_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + year_inv_sign_token + year_token + PLUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + year_inv_sign_token + year_token + EXPRESSION_END;
 
         // (%s%s의 나이) = (%s%s의 나이) * %d %s %d = %d * %d %s %d = %d
         // y년후 name1의 나이 = y년후 name2의나이 * var1 +- var2 = [age2+year] * var1 +- var2 = age1
-        String ex_cond2_compute_with_plus_sign_token = year_past_token + name1_age_token
-                + EQUAL_BLANK_SYM + year_past_token + name2_age_token + MULT_BLANK_STR + var1_token + sign_blank_token + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age2_token + PLUS_SYM + year_token + EXPRESSION_END + MULT_BLANK_STR + var1_token + sign_blank_token + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age2_token + PLUS_SYM + year_token + BRACKET_END + MULT_SYM + var1_token + sign_token + var2_token + EXPRESSION_END;
-        String ex_cond2_compute_with_minus_sign_token = year_past_token + name1_age_token
-                + EQUAL_BLANK_SYM + year_past_token + name2_age_token + MULT_BLANK_STR + var1_token + inv_sign_blank_token + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age2_token + PLUS_SYM + year_token + EXPRESSION_END + MULT_BLANK_STR + var1_token + inv_sign_blank_token + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age2_token + PLUS_SYM + year_token + BRACKET_END + MULT_SYM + var1_token + sign_token + var2_token + EXPRESSION_END;
+        String ex_cond2_compute_with_plus_sign_token = name_add_str_token + name1_age_token
+                + EQUAL_BLANK_SYM + name_add_str_token + name2_age_token + MULT_BLANK_STR + var1_token + sign_blank_token + var2_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + age2_token + year_sign_token + year_token + EXPRESSION_END + MULT_BLANK_STR + var1_token + sign_blank_token + var2_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age2_token + year_sign_token + year_token + BRACKET_END + MULT_SYM + var1_token + sign_token + var2_token + EXPRESSION_END;
+        String ex_cond2_compute_with_minus_sign_token = name_add_str_token + name1_age_token
+                + EQUAL_BLANK_SYM + name_add_str_token + name2_age_token + MULT_BLANK_STR + var1_token + inv_sign_blank_token + var2_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + age2_token + year_sign_token + year_token + EXPRESSION_END + MULT_BLANK_STR + var1_token + inv_sign_blank_token + var2_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age2_token + year_sign_token + year_token + BRACKET_END + MULT_SYM + var1_token + sign_token + var2_token + EXPRESSION_END;
 
         // if var2 != 0
         // (year년 후 name1의 나이) -+ var2 = age1 + year -+ var2
-        String ex_cond1_compute_b4_divide_with_zero_var2_token = year_past_token + name2_age_token + EQUAL_BLANK_SYM;
-        String ex_cond1_compute_b4_divide_with_plus_sign_token = year_past_token + name1_age_token + MINUS_BLANK_STR + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + PLUS_SYM + year_token + MINUS_SYM + var2_token + EXPRESSION_END;
-        String ex_cond1_compute_b4_divide_with_minus_sign_token = year_past_token + name1_age_token + PLUS_BLANK_STR + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + PLUS_SYM + year_token + PLUS_SYM + var2_token + EXPRESSION_END;
+        String ex_cond1_compute_b4_divide_with_zero_var2_token = name_add_str_token + name2_age_token + EQUAL_BLANK_SYM;
+        String ex_cond1_compute_b4_divide_with_plus_sign_token = name_add_str_token + name1_age_token + MINUS_BLANK_STR + var2_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + year_sign_token + year_token + MINUS_SYM + var2_token + EXPRESSION_END;
+        String ex_cond1_compute_b4_divide_with_minus_sign_token = name_add_str_token + name1_age_token + PLUS_BLANK_STR + var2_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + year_sign_token + year_token + PLUS_SYM + var2_token + EXPRESSION_END;
         if(useAddMinus==false){
             ex_cond1_compute_b4_divide_with_plus_sign_token="";
             ex_cond1_compute_b4_divide_with_minus_sign_token="";
@@ -358,12 +380,12 @@ public class Elementary5th {
 
         // if var1 != 1
         //"(%s%s의 나이) = {age1 + year -+ var2} / var1 = %d\n"
-        String ex_cond1_compute_divide_with_plus_sign_token = year_past_token + name2_age_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + PLUS_SYM + year_token + MINUS_SYM + var2_token + EXPRESSION_END + DIVIDE_BLANK_STR + var1_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + PLUS_SYM + year_token + MINUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END;
-        String ex_cond1_compute_divide_with_minus_sign_token = year_past_token + name2_age_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + PLUS_SYM + year_token + PLUS_SYM + var2_token + EXPRESSION_END + DIVIDE_BLANK_STR + var1_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + PLUS_SYM + year_token + PLUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END;
+        String ex_cond1_compute_divide_with_plus_sign_token = name_add_str_token + name2_age_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + year_sign_token + year_token + MINUS_SYM + var2_token + EXPRESSION_END + DIVIDE_BLANK_STR + var1_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + year_sign_token + year_token + MINUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END;
+        String ex_cond1_compute_divide_with_minus_sign_token = name_add_str_token + name2_age_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + age1_token + year_sign_token + year_token + PLUS_SYM + var2_token + EXPRESSION_END + DIVIDE_BLANK_STR + var1_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + age1_token + year_sign_token + year_token + PLUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END;
         if(useMult==false) {
             ex_cond1_compute_divide_with_plus_sign_token="";
             ex_cond1_compute_divide_with_minus_sign_token="";
@@ -382,18 +404,18 @@ public class Elementary5th {
             explanation = "";
             if(useMult == false && useAddMinus == true)
                 explanation += ex_cond1_compute_b4_divide_with_zero_var2_token;
-            if(sign == PLUS_SIGN){
+            if(var2_sign == PLUS_SIGN){
                 explanation += ex_cond1_compute_b4_divide_with_plus_sign_token;
                 explanation_ls.add(explanation);
                 explanation_ls.add(ex_cond1_compute_divide_with_plus_sign_token);
                 explanation_ls.add(ex_after_year_to_age2_with_plus_sign_token);
-            } else if(sign == MINUS_SIGN){
+            } else if(var2_sign == MINUS_SIGN){
                 explanation += ex_cond1_compute_b4_divide_with_minus_sign_token;
                 explanation_ls.add(explanation);
                 explanation_ls.add(ex_cond1_compute_divide_with_minus_sign_token);
                 explanation_ls.add(ex_after_year_to_age2_with_minus_sign_token);
             } else {
-                explanation_ls.add("sign value error");
+                explanation_ls.add("var2_sign value error");
             }
         } else{ // age2 given, find age1
             explanation = ex_age2_after_year_token;
@@ -401,12 +423,12 @@ public class Elementary5th {
                 explanation += ex_age2_after_year_same_age_token;
             explanation_ls.add(explanation);
 
-            if(sign == PLUS_SIGN){
+            if(var2_sign == PLUS_SIGN){
                 explanation_ls.add(ex_cond2_compute_with_plus_sign_token);
-            } else if(sign == MINUS_SIGN){
+            } else if(var2_sign == MINUS_SIGN){
                 explanation_ls.add(ex_cond2_compute_with_minus_sign_token);
             } else{
-                explanation_ls.add("sign value error");
+                explanation_ls.add("var2_sign value error");
             }
 
             explanation_ls.add(ex_after_year_to_age1_token);
@@ -429,6 +451,10 @@ public class Elementary5th {
             x - y = var2
          */
     public String[] create_age_sentence_sum_difference(int ls_index, int var_num_per_sentence, int cond_inx, int sign){
+        String name_category_token = age_category_token; // "의 나이"
+        String name_unit_token = age_unit_token;
+
+        // index
         int index1 = ls_index;
         int index2 = ls_index + 1;
         int var_index = ls_index * var_num_per_sentence;
@@ -463,8 +489,8 @@ public class Elementary5th {
         String age2_token = VAR_START + AGE_STR + index2 + VAR_END;
         String var1_token = VAR_START + VAR_STR + var_index + VAR_END;
 
-        String name1_age_token = name1_token + name_to_age_token;
-        String name2_age_token = name2_token + name_to_age_token;
+        String name1_age_token = name1_token + ui_token + blank_token + name_category_token;    // "{name1}의 나이"
+        String name2_age_token = name2_token + ui_token + blank_token + name_category_token;    // "{name2}의 나이"
 
         String content="";
         String age_sum_start_token = name1_age_token + wa_token + blank_token + name2_age_token + reul_token + blank_token;
