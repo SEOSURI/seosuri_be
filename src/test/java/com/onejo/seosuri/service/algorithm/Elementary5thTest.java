@@ -34,7 +34,9 @@ class Elementary5thTest {
                                     System.out.println("useYear = " + useYear);
                                     System.out.println("useMult = " + useMult);
                                     System.out.println("useAddMinus = " + useAddMinus);
-                                    System.out.println("sign = " + var_sign);
+                                    System.out.println("year1_sign = " + year1_sign);
+                                    System.out.println("year2_sign = " + year2_sign);
+                                    System.out.println("var_sign = " + var_sign);
                                     String[] sentence_ls = elementary5th.create_age_sentence_yx(ls_index, var_num_per_sentence, cond_inx, useYear, useMult, useAddMinus, var_sign, year1_sign, year2_sign);
                                     System.out.println("content-------------------------");
                                     System.out.println(sentence_ls[0]);
