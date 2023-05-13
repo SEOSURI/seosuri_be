@@ -35,7 +35,7 @@ public class Elementary5th {
     static final int AGE_CATEGORY_ID_SUM_DIFFERENCE = 1;
 
     // 변수명 string 규칙
-    static final String AGE_STR = "age";    // age 변수 : {age0}, {age1}, {age2}, ...
+    static final String NAME_VAR_STR = "name_var";    // age 변수 : {age0}, {age1}, {age2}, ...
     static final String NAME_STR = "name";  // name 변수 : {name0}, {name1}, {name2}, ...
     static final String VAR_STR = "var";    // 상수 변수 : {var0}, {var1}, {var2}, ...
     static final String YEAR_STR = "year";  // year 변수
@@ -85,6 +85,12 @@ public class Elementary5th {
 
     private static final int SENTENCE_CATEGORY_NUM = 2;  // 상황 문장 유형 갯수
 
+    String content_template = "";
+    String explanation_template = "";
+    String answer_template = "";
+    int[] sentence_category_id_ls;
+    int[] var_sign_ls;
+
     // 나이 구하기 문제 알고리즘
     public void ageProblem(){
         random = new Random(); //랜덤 객체 생성(디폴트 시드값 : 현재시간)
@@ -117,6 +123,7 @@ public class Elementary5th {
             year2_sign_ls[i] = random.nextInt(2);
         }
 
+        // ageProblemTemplate() 실행 결과 class 변수 setting 됨
         ageProblemTemplate(prob_sentence_num, var_num_per_sentence,
                 sentence_category_id_ls,
                 answer_inx, condition_inx,
@@ -133,13 +140,13 @@ public class Elementary5th {
         // 문장 생성
 
         // condition 문장 생성
-        String condition = "이때, {"+NAME_STR+condition_inx+"}의 나이는 {"+AGE_STR+condition_inx+"}살 입니다.";
+        String condition = "이때, {"+NAME_STR+condition_inx+"}의 나이는 {"+ NAME_VAR_STR +condition_inx+"}살 입니다.";
 
         // question 문장 생성
         String question = "그렇다면 {"+NAME_STR+answer_inx+"}의 나이는 몇 살입니까?";
 
         // answer 문장 생성
-        String answer = "{"+AGE_STR+answer_inx+"}살";
+        String answer = "{"+ NAME_VAR_STR +answer_inx+"}살";
 
         // 상황 문장 생성 : {content, explanation}
         String[][] sentence_ls = new String[prob_sentence_num][2];
@@ -173,8 +180,13 @@ public class Elementary5th {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        // 결과 : {문제, explanation, answer, prob_sentence_category_list}
-        String[] result_ls = new String[] {content, explanation, answer, Arrays.toString(sentence_category_id_ls), Arrays.toString(var_sign_ls)};
+        // 결과 : {문제, explanation, answer, prob_sentence_category_list, var_sign_ls}
+        this.content_template = content;
+        this.explanation_template = explanation;
+        this.answer_template = answer;
+        this.sentence_category_id_ls = sentence_category_id_ls;
+        this.var_sign_ls = var_sign_ls;
+        //String[] result_ls = new String[] {content, explanation, answer, Arrays.toString(sentence_category_id_ls), Arrays.toString(var_sign_ls)};
 
         /*
         int age_ls_length, int var_ls_length, int num_var_per_sentence,
@@ -182,14 +194,6 @@ public class Elementary5th {
                                     int[] sentence_category_ls, int[] var_sign_ls,
                                     int[] age_min_value_ls, int[] age_max_value_ls, int[] var_min_value_ls, int[] var_max_value_ls
          */
-        System.out.println(content);
-        System.out.println("------------------------------------");
-        System.out.println(explanation);
-        System.out.println("------------------------------------");
-        System.out.println(answer);
-        System.out.println("------------------------------");
-        System.out.println(Arrays.toString(sentence_category_id_ls));
-        System.out.println(Arrays.toString(var_sign_ls));
     }
 
     // 이은 색테이프 문제 알고리즘
@@ -208,18 +212,32 @@ public class Elementary5th {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 상황 문장 생성
     //
-    /*
-    // age1 + year = (age2 + year) * var1 +- var2
-    // {year}년 후 {name1}의 나이는 {year}년 후 {name2}의 나이의 {var1}배한 것과 같습니다.    year_token +
-    // {year}년 후 {name1}의 나이는 {year}년 후 {name2}의 나이의 {var1}배한 것보다 {var2}살 많습니다(적습니다).
-    // {year}년 후 {name1}의 나이는 {year}년 후 {name2}의 나이보다 {var2}살 많습니다(적습니다).
-    // year_token + name1_token + year_token + name2_token
-        // mult_token + mult_end_token          : 곱셈만
-        // mult_token + pm_token + add_token    : 곱셈 + 덧셈
-        // mult_token + pm_token + minus_token  : 곱셈 + 뺄셈
-        // pm_token + add_token                 : 덧셈만
-        // pm_token + minus_token               : 뺄셈만
-     */
+
+    // 나이 문제 상황 문장 생성
+    // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
+    private String[] create_age_sentence(int category_id, int index, int var_num_per_sentence, int cond_inx,
+                                         boolean useYear, boolean useMult, boolean useAddMinus, int var_sign, int year1_sign, int year2_sign){
+        String name_category_token = age_category_token; // "의 나이"
+        String name_unit_token = age_unit_token;
+        String var34_unit_token = year_unit_token;
+        String after_str_token = time_after_token;
+        String before_str_token = time_before_token;
+
+        if(category_id == AGE_CATEGORY_ID_YX){
+            return create_sentence_yx(index, var_num_per_sentence, cond_inx,
+                    useYear, useMult, useAddMinus,
+                    var_sign, year1_sign, year2_sign,
+                    name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);               // {content, explanation, sign}
+        } else if (category_id == AGE_CATEGORY_ID_SUM_DIFFERENCE){
+            return create_sentence_sum_diff(index, var_num_per_sentence, cond_inx,
+                    var_sign,
+                    name_category_token, name_unit_token);   // {content, explanation, sign}
+        } else{
+            return null;
+        }
+    }
+
+    // (name_var1 +- var3) = (name_var2 +- var4) * var1 +- var2
     public String[] create_sentence_yx(int ls_index, int var_num_per_sentence, int cond_inx,
                                        boolean useYear, boolean useMult, boolean useAddMinus,
                                        int var2_sign, int year1_sign, int year2_sign,
@@ -265,8 +283,8 @@ public class Elementary5th {
         String name2_token = VAR_START + NAME_STR + index2 + VAR_END;
         String name1_with_category_token = name1_token + ui_token + blank_token +  name_category_token;
         String name2_with_category_token = name2_token + ui_token + blank_token +  name_category_token;
-        String name_var1_token = VAR_START + AGE_STR + index1 + VAR_END;
-        String name_var2_token = VAR_START + AGE_STR + index2 + VAR_END;
+        String name_var1_token = VAR_START + NAME_VAR_STR + index1 + VAR_END;
+        String name_var2_token = VAR_START + NAME_VAR_STR + index2 + VAR_END;
         String var1_token = VAR_START + VAR_STR + var_index1 + VAR_END;
         String var2_token = VAR_START + VAR_STR + var_index2 + VAR_END;
         String var3_token = VAR_START + VAR_STR + year1_index + VAR_END;    // year1
@@ -480,10 +498,8 @@ public class Elementary5th {
         }
         return new String[] {content, explanation};     // {content, explanation}
     }
-    /* 유형 2 : 두 나이의 합 차만 주어진 경우
-            x + y = var1
-            x - y = var2
-         */
+
+    // name_var1 +- name_var2 = var1
     public String[] create_sentence_sum_diff(int ls_index, int var_num_per_sentence, int cond_inx, int sign,
                                              String name_category_token,
                                              String name_unit_token){
@@ -521,8 +537,8 @@ public class Elementary5th {
 
         String name1_token = VAR_START + NAME_STR + index1 + VAR_END;
         String name2_token = VAR_START + NAME_STR + index2 + VAR_END;
-        String name_var1_token = VAR_START + AGE_STR + index1 + VAR_END;
-        String name_var2_token = VAR_START + AGE_STR + index2 + VAR_END;
+        String name_var1_token = VAR_START + NAME_VAR_STR + index1 + VAR_END;
+        String name_var2_token = VAR_START + NAME_VAR_STR + index2 + VAR_END;
         String var1_token = VAR_START + VAR_STR + var_index + VAR_END;
 
         String name1_with_category_token = name1_token + ui_token + blank_token + name_category_token;    // "{name1}의 나이"
@@ -584,40 +600,13 @@ public class Elementary5th {
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // 나이 문제 상황 문장 생성
-    // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
-    private String[] create_age_sentence(int category_id, int index, int var_num_per_sentence, int cond_inx,
-                                         boolean useYear, boolean useMult, boolean useAddMinus, int var_sign, int year1_sign, int year2_sign){
-        String name_category_token = age_category_token; // "의 나이"
-        String name_unit_token = age_unit_token;
-        String var34_unit_token = year_unit_token;
-        String after_str_token = time_after_token;
-        String before_str_token = time_before_token;
-
-        if(category_id == AGE_CATEGORY_ID_YX){
-            return create_sentence_yx(index, var_num_per_sentence, cond_inx,
-                    useYear, useMult, useAddMinus,
-                    var_sign, year1_sign, year2_sign,
-                    name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);               // {content, explanation, sign}
-        } else if (category_id == AGE_CATEGORY_ID_SUM_DIFFERENCE){
-            return create_sentence_sum_diff(index, var_num_per_sentence, cond_inx,
-                    var_sign,
-                    name_category_token, name_unit_token);   // {content, explanation, sign}
-        } else{
-            return null;
-        }
-    }
-
-
-
     /////////////////////////////////////////////////////////////////////////////////////////
     // 랜덤 숫자 뽑기
 
     private int[] name_var_ls;   // 결과
     private int[] var_ls;   // 결과
 
-    // 숫자 뽑기 연속
+    // 나이 문제 숫자 뽑기
     private void getRandomAgeValue(int age_ls_length, int num_var_per_sentence,
                                     int year_min_value, int year_max_value,
                                     int[] sentence_category_ls, int[] sign_ls,
@@ -659,9 +648,9 @@ public class Elementary5th {
         }
     }
 
-    // age1 + year = (age2 + year) * var1 +- var2
+    // (name_var1 +- var3) = (name_var2 +- var4) * var1 +- var2
     // name_var2 given
-    // return new int[] {age1, age2, var1, var2};
+    // return new int[] {name_var1, name_var2, var1, var2, var3, var4}
     private int[] getRandomYXValue(int given_name_var2, int sign,
                                    int name_var1_min_value, int given_name_var1_max_value,
                                    int var1_min_value, int var1_max_value,
@@ -686,10 +675,10 @@ public class Elementary5th {
         return new int[] {name_var1, name_var2, var1, var2};
     }
 
-    // age1 +- age2 = var1
-    // 단, age1 - age2의 경우, age1 > age2
+    // name_var1 +- name_var2 = var1
     // name_var2 given
-    // return new int[] {age1, age2, var1};
+    // 단, name_var1 > name_var2 여야 (초등교육과정)
+    // return new int[] {name_var1, name_var2, var1};
     private int[] getRandomX1X2Value(int given_name_var2, int sign,
                                      int name_var1_min_value, int name_var1_max_value){ // age2 given
         int age1 = random.nextInt(name_var1_max_value+1) + name_var1_min_value;
@@ -705,6 +694,61 @@ public class Elementary5th {
         }
         return new int[] {age1, age2, var1};
     }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // 그 외 함수
+
+    private String[] name_ls;   // 아버지, 어머니, ...
+
+    // use name_ls, name_var_ls, var_ls, content_template, explanation_template, answer_template
+    public String[] createRealAgeProb(){
+        // content, explanation, answer
+        String real_content = content_template;
+        String real_explanation = explanation_template;
+        String real_answer = answer_template;
+        for(int i = 0; i < name_ls.length; i++){
+            String regex = "^"+VAR_START+NAME_STR+i+VAR_END+"$";
+            String new_value = name_ls[i];
+            real_content.replaceAll(regex, new_value);
+            real_explanation.replaceAll(regex, new_value);
+            real_answer.replaceAll(regex, new_value);
+        }
+        for(int i = 0; i < name_var_ls.length;i++){
+            String regex = "^"+VAR_START+NAME_VAR_STR+i+VAR_END+"$";
+            String new_value = String.valueOf(name_var_ls[i]);
+            real_content.replaceAll(regex, new_value);
+            real_explanation.replaceAll(regex, new_value);
+            real_answer.replaceAll(regex, new_value);
+        }
+        for(int i = 0; i < var_ls.length; i++){
+            String regex = "^"+VAR_START+VAR_STR+i+VAR_END+"$";
+            String new_value = String.valueOf(var_ls[i]);
+            real_content.replaceAll(regex, new_value);
+            real_explanation.replaceAll(regex, new_value);
+            real_answer.replaceAll(regex, new_value);
+        }
+
+        return new String[] {real_content, real_explanation, real_answer};
+    }
+
+    public void printTemplate(){
+        System.out.println("CONTENT ------------------------------------");
+        System.out.println(content_template);
+        System.out.println("EXPLANATION ------------------------------------");
+        System.out.println(explanation_template);
+        System.out.println("ANSWER ------------------------------------");
+        System.out.println(answer_template);
+        System.out.println("SENTENCE_CATEGORY_ID ------------------------------");
+        System.out.println(Arrays.toString(sentence_category_id_ls));
+        System.out.println("VAR_SIGN ------------------------------------");
+        System.out.println(Arrays.toString(var_sign_ls));
+        System.out.println("\n\n");
+    }
+
+
+
+
 
 
 }
