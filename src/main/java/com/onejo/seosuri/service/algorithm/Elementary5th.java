@@ -49,7 +49,9 @@ public class Elementary5th {
     static final String MINUS_SYM = "-";
     static final String MULT_SYM = "*";
     static final String DIVIDE_SYM = "/";
-    static final String EQUAL_BLANK_SYM = " = ";
+    static final String EQUAL_SYM = "=";
+    static final String BLANK_SYM = " ";
+    static final String EQUAL_BLANK_SYM = "\n= ";
     static final String PLUS_BLANK_STR = " + ";
     static final String MINUS_BLANK_STR = " - ";
     static final String MULT_BLANK_STR = " * ";
@@ -173,10 +175,10 @@ public class Elementary5th {
         String explanation = "";
         int start_index = (condition_inx + prob_sentence_num - 1) % prob_sentence_num;
         for(int i = start_index; i >= 0; i--){    // condition_inx - 1   ~   0
-            explanation += sentence_ls[i][1] + "\n";   // 상황 문장 explanation
+            explanation += sentence_ls[i][1] + "\n\n";   // 상황 문장 explanation
         }
         for(int i = sentence_ls.length - 1; i >= condition_inx; i--){                     // 끝   ~   condition_inx
-            explanation += sentence_ls[i][1] + "\n";   // 상황 문장 exlanation
+            explanation += sentence_ls[i][1] + "\n\n";   // 상황 문장 exlanation
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -372,19 +374,29 @@ public class Elementary5th {
         }
         content_ls.add(content);
 
+        content = content_ls.get(0);
+        for(int i = 1; i < content_ls.size(); i++){
+            content += "\n" + content_ls.get(i);
+        }
+
 
         // explanation token
         /*
         String ex_age_after_year_token = name1_add_str_token +"{"+NAME_STR+"%d}의 나이 = {"+AGE_STR+"%d} + {"+YEAR_STR+"} = [{"
                 +AGE_STR+"%d}+{"+YEAR_STR+"}]";
         */
+        String ex_expression_str_start_token = "\"" + content + "\"라는 문장을 식으로 바꾸면";
         String ex_expression_token = name1_add_str_token + name1_with_category_token
-                + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token;
-        if(useMult)
+                + BLANK_SYM + EQUAL_SYM + BLANK_SYM + name2_add_str_token + name2_with_category_token;
+        if(useMult) {
             ex_expression_token += MULT_BLANK_STR + var1_token;
-        if(useAddMinus)
+        }
+        if(useAddMinus) {
             ex_expression_token += var2_sign_blank_token + var2_token;
+        }
+        String ex_expression_str_end_token = "가 됩니다.";
 
+        String ex_explain_start_token = "이제 이 식을 다음과 같은 순서로 풀 수 있습니다.";
 
         String ex_name_var1_after_year_token = name1_add_str_token + name1_with_category_token
                 + EQUAL_BLANK_SYM + name_var1_token + var3_sign_blank_token + var3_token
@@ -446,8 +458,12 @@ public class Elementary5th {
 
         // explanation
         String explanation="";
-        explanation = ex_expression_token;
-        explanation_ls.add(explanation);
+
+        explanation_ls.add(ex_expression_str_start_token);
+        explanation_ls.add(ex_expression_token);
+        explanation_ls.add(ex_expression_str_end_token);
+
+        explanation_ls.add(ex_explain_start_token);
         if(cond_inx == 0){  // age1 given, find age2
             explanation = ex_name_var1_after_year_token;
             if(useMult == false && useAddMinus == false)
@@ -485,11 +501,6 @@ public class Elementary5th {
             }
 
             explanation_ls.add(ex_after_year_to_name_var1_token);
-        }
-
-        content = content_ls.get(0);
-        for(int i = 1; i < content_ls.size(); i++){
-            content += "\n" + content_ls.get(i);
         }
 
         explanation = explanation_ls.get(0);
@@ -572,8 +583,11 @@ public class Elementary5th {
         //(name1의 나이) +- (name2의 나이) = %d
         // (name1의 나이) = %d -+ (name2의 나이) = %d
         // (name2의 나이) = %d - name1의 나이 = %d
-        String ex_expr_token = name1_with_category_token + sign_blank_token + name2_with_category_token
-                + EQUAL_BLANK_SYM + var1_token;
+        String ex_expression_str_start_token = "\"" + content + "\"라는 문장을 식으로 바꾸면";
+        String ex_expression_token = name1_with_category_token + sign_blank_token + name2_with_category_token
+                + BLANK_SYM + EQUAL_SYM + BLANK_SYM + var1_token;
+        String ex_expression_str_end_token = "가 됩니다.";
+        String ex_explain_start_token = "이제 이 식을 다음과 같은 순서로 풀 수 있습니다.";
         String ex_name_var1_token = name1_with_category_token
                 + EQUAL_BLANK_SYM + var1_token + inv_sign_blank_token + name2_with_category_token
                 + EQUAL_BLANK_SYM + var1_token + inv_sign_blank_token + name_var2_token
@@ -584,16 +598,27 @@ public class Elementary5th {
                 + EQUAL_BLANK_SYM + EXPRESSION_START + var1_token + MINUS_SYM + name_var1_token + EXPRESSION_END;
 
         String explanation = "";
+        ArrayList<String> explanation_ls = new ArrayList<>(10);
+        explanation_ls.add(ex_expression_str_start_token);
+        explanation_ls.add(ex_expression_token);
+        explanation_ls.add(ex_expression_str_end_token);
+
+        explanation_ls.add(ex_explain_start_token);
         if(cond_inx == 0) {  // age1 given, find age2
             if(sign == PLUS_SIGN) {
-                explanation = ex_expr_token + "\n" + ex_name_var2_with_sum_token + "\n";
+                explanation_ls.add(ex_name_var2_with_sum_token);
             } else if(sign == MINUS_SIGN) {
-                explanation = "VALUE ERROR:: should do minus from bigger to smaller";
+                explanation_ls.add("VALUE ERROR:: should do minus from bigger to smaller");
             } else{
-                explanation = "SIGN VALUE ERROR";
+                explanation_ls.add("SIGN VALUE ERROR");
             }
         } else if(cond_inx == 1){   // age2 given, find age1
-            explanation = ex_expr_token + "\n" + ex_name_var1_token + "\n";
+            explanation_ls.add(ex_name_var1_token);
+        }
+
+        explanation = explanation_ls.get(0);
+        for(int i = 1; i < explanation_ls.size(); i++){
+            explanation += "\n" + explanation_ls.get(i);
         }
 
         return new String[] {content, explanation};     // {content, explanation}
