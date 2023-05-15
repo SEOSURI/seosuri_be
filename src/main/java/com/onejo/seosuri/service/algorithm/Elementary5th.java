@@ -100,13 +100,14 @@ public class Elementary5th {
 
         int prob_sentence_num = 5;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
         int var_num_per_sentence = 4;   // var1, var2, year1, year2
-        int age_var_num = prob_sentence_num + 1;
+        int name_var_num = prob_sentence_num + 1;
+        int var_num = prob_sentence_num * var_num_per_sentence;
         int[] sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
         for(int i = 0; i < prob_sentence_num; i++){
             sentence_category_id_ls[i] = random.nextInt(SENTENCE_CATEGORY_NUM);
         }
-        int answer_inx = random.nextInt(age_var_num);  // 구하는 나이의 인덱스
-        int condition_inx = (random.nextInt(age_var_num - 1) + answer_inx) % age_var_num;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
+        int answer_inx = random.nextInt(name_var_num);  // 구하는 나이의 인덱스
+        int condition_inx = (random.nextInt(name_var_num - 1) + answer_inx) % name_var_num;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
 
         boolean[] useYear_ls = new boolean[prob_sentence_num];
         boolean[] useMult_ls = new boolean[prob_sentence_num];
@@ -131,6 +132,33 @@ public class Elementary5th {
                 answer_inx, condition_inx,
                 useYear_ls, useMult_ls, useAddMinus_ls,
                 var_sign_ls, year1_sign_ls, year2_sign_ls);
+
+        /*
+        // 상수 var, name_var 설정
+        int[] age_min_value_ls = new int[name_var_num];
+        int[] age_max_value_ls = new int[name_var_num];
+        String[] name_ls = new String[name_var_num];
+        int[] var_min_ls = new int[var_num];
+        int[] var_max_ls = new int[var_num];
+        for(int i = 0; i < name_var_num; i++){
+            age_min_value_ls[i] = 0;
+            age_max_value_ls[i] = 100;
+            name_ls[i] = i+"사람"+i;
+        }
+        for(int i = 0; i < var_num; i++){
+            var_min_ls[i] = 0;
+            var_max_ls[i] = 5;
+        }
+        getRandomAgeValue(name_var_num, var_num_per_sentence, 0, 10,
+                sentence_category_id_ls, var_sign_ls, age_min_value_ls, age_max_value_ls,
+                var_min_ls, var_max_ls);
+
+        // template -> problem
+        templateToProblem(name_ls, name_var_ls, var_ls,
+                content_template, explanation_template, answer_template);
+
+         */
+
     }
 
     public void ageProblemTemplate(int prob_sentence_num, int var_num_per_sentence,
@@ -727,7 +755,8 @@ public class Elementary5th {
     private String[] name_ls;   // 아버지, 어머니, ...
 
     // use name_ls, name_var_ls, var_ls, content_template, explanation_template, answer_template
-    public String[] createRealAgeProb(){
+    public String[] templateToProblem(String[] name_ls, int[] name_var_ls, int[] var_ls,
+                                      String content_template, String explanation_template, String answer_template){
         // content, explanation, answer
         String real_content = content_template;
         String real_explanation = explanation_template;
