@@ -26,7 +26,7 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @Operation(summary = "테스트", description = "테스트")
+    @Operation(summary = "테스트", description = "테스트 api 입니다")
     @GetMapping("/test")
     public String test() {
         return "success";
