@@ -8,6 +8,7 @@ class Elementary5thTest {
     void ageProblem() {
         Elementary5th elementary5th = new Elementary5th();
         elementary5th.ageProblem();
+        elementary5th.printTemplate();
     }
 
     String age_category_token = "나이";

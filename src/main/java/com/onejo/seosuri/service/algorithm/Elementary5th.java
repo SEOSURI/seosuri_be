@@ -342,7 +342,7 @@ public class Elementary5th {
 
         // content용 토큰
         String c_mult_token = ui_token + blank_token + var1_token + bae_token;  //"의 {var1}배 한 것"
-        String c_mult_end_token = gwa_token + bae_token + same_token; //"과 같습니다.";
+        String c_mult_end_token = gwa_token + blank_token + same_token; //"과 같습니다.";
         String c_mult_end_wa_token = wa_token + blank_token + same_token; //"와 같습니다.";
         String c_pm_token = than_token + blank_token + var2_token + name_unit_token + blank_token;   //"보다 " + var2_token + "살 ";
 
