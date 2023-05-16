@@ -8,7 +8,7 @@ class Elementary5thTest {
     void ageProblem() {
         Elementary5th elementary5th = new Elementary5th();
         elementary5th.ageProblem();
-        elementary5th.printTemplate();
+        //elementary5th.printTemplate();
     }
 
     @Test
@@ -17,23 +17,23 @@ class Elementary5thTest {
         String[] name_ls = new String[] {"어머니", "동생"};
         int[] name_var_ls = new int[] {50, 10};
         int[] var_ls = new int[] {1, 2, 3, 4};
-        String content_template = "{var3}년 후 {name1}의 나이는 {var4}년 후 {name2}의 나이의 {var1}배 한 것보다 {var2}살 많습니다.";
-        String explanation_template = "\"{var3}년 후 {name1}의 나이는 {var4}년 후 {name2}의 나이의 {var1}배 한 것보다 {var2}살 많습니다.\"라는 문장을 식으로 바꾸면\n" +
-                "{var3}년 후 {name1}의 나이 = {var4}년 후 {name2}의 나이 * {var1} + {var2}\n" +
+        String content_template = "{var2}년 후 {name0}의 나이는 {var3}년 후 {name1}의 나이의 {var0}배 한 것보다 {var1}살 많습니다.";
+        String explanation_template = "\"{var2}년 후 {name0}의 나이는 {var3}년 후 {name1}의 나이의 {var0}배 한 것보다 {var1}살 많습니다.\"라는 문장을 식으로 바꾸면\n" +
+                "{var2}년 후 {name0}의 나이 = {var3}년 후 {name1}의 나이 * {var0} + {var1}\n" +
                 "가 됩니다.\n" +
                 "이제 이 식을 다음과 같은 순서로 풀 수 있습니다.\n" +
+                "{var2}년 후 {name0}의 나이\n" +
+                "= {name_var0} + {var2}\n" +
+                "= [{name_var0}+{var2}]\n" +
+                "{var2}년 후 {name0}의 나이 - {var1}\n" +
+                "= [{name_var0}+{var2}-{var1}]\n" +
                 "{var3}년 후 {name1}의 나이\n" +
-                "= {name_var1} + {var3}\n" +
-                "= [{name_var1}+{var3}]\n" +
-                "{var3}년 후 {name1}의 나이 - {var2}\n" +
-                "= [{name_var1}+{var3}-{var2}]\n" +
-                "{var4}년 후 {name2}의 나이\n" +
-                "= [{name_var1}+{var3}-{var2}] / {var1}\n" +
-                "= [({name_var1}+{var3}-{var2})/{var1}]\n" +
-                "{name2}의 나이\n" +
-                "= {var4}년 후 {name2}의 나이 - {var4}\n" +
-                "= [({name_var1}-{var3}-{var2})/{var1}] - {var4}\n" +
-                "= [({name_var1}-{var3}-{var2})/{var1}-{var4}]";
+                "= [{name_var0}+{var2}-{var1}] / {var0}\n" +
+                "= [({name_var0}+{var2}-{var1})/{var0}]\n" +
+                "{name1}의 나이\n" +
+                "= {var3}년 후 {name1}의 나이 - {var4}\n" +
+                "= [({name_var0}-{var2}-{var1})/{var0}] - {var3}\n" +
+                "= [({name_var0}-{var2}-{var1})/{var0}-{var3}]";
         String answer_template = "{name_var1}살";
         String[] real_prob = elementary5th.templateToProblem(name_ls, name_var_ls, var_ls, content_template, explanation_template, answer_template);
         System.out.println(real_prob[0]);   // content

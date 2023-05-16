@@ -2,6 +2,9 @@
 
 package com.onejo.seosuri.service.algorithm;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -138,7 +141,7 @@ public class Elementary5th {
         // ageProblemTemplate() 실행 결과 class 변수 setting 됨
         ageProblemTemplate(prob_sentence_num, var_num_per_sentence, answer_inx, condition_inx);
 
-        //printTemplate();
+        printTemplate();
 
 
         // 상수 var, name_var 설정
@@ -160,9 +163,12 @@ public class Elementary5th {
         String[] real_prob = templateToProblem(name_ls, name_var_ls, var_ls,
                 content_template, explanation_template, answer_template);
 
-        //System.out.println(real_prob[0]);   // real_content
-        //System.out.println(real_prob[1]);   // real_explanation
-        //System.out.println(real_prob[2]);   // real_answer
+        System.out.println("\n\n-----------------------------------------------------");
+        System.out.println(real_prob[0]);   // real_content
+        System.out.println("\n\n-----------------------------------------------------");
+        System.out.println(real_prob[1]);   // real_explanation
+        System.out.println("\n\n-----------------------------------------------------");
+        System.out.println(real_prob[2]);   // real_answer
         // return new String[] {real_content, real_explanation, real_answer};
 
     }
@@ -821,26 +827,40 @@ public class Elementary5th {
         String real_explanation = explanation_template;
         String real_answer = answer_template;
         for(int i = 0; i < name_ls.length; i++){
-            String old_value = "\\" + VAR_START + NAME_STR+i+ "\\" + VAR_END;
+            String old_value = VAR_START + NAME_STR+i + VAR_END;
             String new_value = name_ls[i];
-            real_content.replaceAll(old_value, new_value);
-            real_explanation.replaceAll(old_value, new_value);
-            real_answer.replaceAll(old_value, new_value);
+            real_content = real_content.replace(old_value, new_value);
+            real_explanation = real_explanation.replace(old_value, new_value);
+            real_answer = real_answer.replace(old_value, new_value);
         }
         for(int i = 0; i < name_var_ls.length;i++){
-            String old_value = "\\" + VAR_START + NAME_VAR_STR+i + "\\" + VAR_END;
+            String old_value = VAR_START + NAME_VAR_STR+i + VAR_END;
             String new_value = String.valueOf(name_var_ls[i]);
-            real_content.replaceAll(old_value, new_value);
-            real_explanation.replaceAll(old_value, new_value);
-            real_answer.replaceAll(old_value, new_value);
+            real_content = real_content.replace(old_value, new_value);
+            real_explanation = real_explanation.replace(old_value, new_value);
+            real_answer = real_answer.replace(old_value, new_value);
         }
         for(int i = 0; i < var_ls.length; i++){
-            String old_value = "\\" + VAR_START + VAR_STR+i + "\\" + VAR_END;
+            String old_value = VAR_START + VAR_STR+i + VAR_END;
             String new_value = String.valueOf(var_ls[i]);
-            real_content.replaceAll(old_value, new_value);
-            real_explanation.replaceAll(old_value, new_value);
-            real_answer.replaceAll(old_value, new_value);
+            real_content = real_content.replace(old_value, new_value);
+            real_explanation = real_explanation.replace(old_value, new_value);
+            real_answer = real_answer.replace(old_value, new_value);
         }
+
+        // [] 속 식 계산
+        /*
+        ScriptEngineManager s = new ScriptEngineManager();
+        ScriptEngine engine = s.getEngineByName("JavaScript");
+        String str = "(10+20)*2";
+        int num = 0;
+        try {
+            num = (int)engine.eval(str);
+        } catch (ScriptException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(str + " = " + num);
+         */
 
         return new String[] {real_content, real_explanation, real_answer};
     }
