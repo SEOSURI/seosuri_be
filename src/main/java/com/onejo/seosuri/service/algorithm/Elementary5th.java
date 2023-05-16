@@ -87,11 +87,21 @@ public class Elementary5th {
 
     private static final int SENTENCE_CATEGORY_NUM = 2;  // 상황 문장 유형 갯수
 
-    String content_template = "";
-    String explanation_template = "";
-    String answer_template = "";
-    int[] sentence_category_id_ls;
-    int[] var_sign_ls;
+    private String content_template = "";
+    private String explanation_template = "";
+    private String answer_template = "";
+    private int[] sentence_category_id_ls;
+    private int[] var_sign_ls;  // input
+    private int[] var_min_value_ls; // input
+    private int[] var_max_value_ls; // input
+    private int[] name_var_min_value_ls;    // input
+    private int[] name_var_max_value_ls;    // input
+    private String[] name_ls;
+    private int[] name_var_ls;   // 결과
+    private int[] var_ls;   // 결과
+    boolean[] useYear_ls;
+    boolean[] useMult_ls;
+    boolean[] useAddMinus_ls;
 
     // 나이 구하기 문제 알고리즘
     public void ageProblem(){
@@ -102,70 +112,63 @@ public class Elementary5th {
         int var_num_per_sentence = 4;   // var1, var2, year1, year2
         int name_var_num = prob_sentence_num + 1;
         int var_num = prob_sentence_num * var_num_per_sentence;
-        int[] sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
+        sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
         for(int i = 0; i < prob_sentence_num; i++){
             sentence_category_id_ls[i] = random.nextInt(SENTENCE_CATEGORY_NUM);
         }
         int answer_inx = random.nextInt(name_var_num);  // 구하는 나이의 인덱스
         int condition_inx = (random.nextInt(name_var_num - 1) + answer_inx) % name_var_num;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
 
-        boolean[] useYear_ls = new boolean[prob_sentence_num];
-        boolean[] useMult_ls = new boolean[prob_sentence_num];
-        boolean[] useAddMinus_ls = new boolean[prob_sentence_num];
-        int[] var_sign_ls = new int[prob_sentence_num];
-        int[] year1_sign_ls = new int[prob_sentence_num];
-        int[] year2_sign_ls = new int[prob_sentence_num];
+        useYear_ls = new boolean[prob_sentence_num];
+        useMult_ls = new boolean[prob_sentence_num];
+        useAddMinus_ls = new boolean[prob_sentence_num];
+        var_sign_ls = new int[var_num];
 
         // 랜덤 값 부여
         for(int i = 0; i < prob_sentence_num; i++){
+            int var_index = i * var_num_per_sentence;
             useYear_ls[i] =random.nextBoolean();
             useMult_ls[i] = random.nextBoolean();
             useAddMinus_ls[i] = random.nextBoolean();
+        }
+        for(int i = 0; i < var_num; i++){
             var_sign_ls[i] = random.nextInt(2);
-            year1_sign_ls[i] = random.nextInt(2);
-            year2_sign_ls[i] = random.nextInt(2);
         }
 
         // ageProblemTemplate() 실행 결과 class 변수 setting 됨
-        ageProblemTemplate(prob_sentence_num, var_num_per_sentence,
-                sentence_category_id_ls,
-                answer_inx, condition_inx,
-                useYear_ls, useMult_ls, useAddMinus_ls,
-                var_sign_ls, year1_sign_ls, year2_sign_ls);
+        ageProblemTemplate(prob_sentence_num, var_num_per_sentence, answer_inx, condition_inx);
 
-        /*
+        //printTemplate();
+
+
         // 상수 var, name_var 설정
-        int[] age_min_value_ls = new int[name_var_num];
-        int[] age_max_value_ls = new int[name_var_num];
-        String[] name_ls = new String[name_var_num];
-        int[] var_min_ls = new int[var_num];
-        int[] var_max_ls = new int[var_num];
+        name_var_min_value_ls = new int[name_var_num];
+        name_var_max_value_ls = new int[name_var_num];
+        name_ls = new String[name_var_num];
         for(int i = 0; i < name_var_num; i++){
-            age_min_value_ls[i] = 0;
-            age_max_value_ls[i] = 100;
+            name_var_min_value_ls[i] = 10;
+            name_var_max_value_ls[i] = 100;
             name_ls[i] = i+"사람"+i;
         }
-        for(int i = 0; i < var_num; i++){
-            var_min_ls[i] = 0;
-            var_max_ls[i] = 5;
-        }
-        getRandomAgeValue(name_var_num, var_num_per_sentence, 0, 10,
-                sentence_category_id_ls, var_sign_ls, age_min_value_ls, age_max_value_ls,
-                var_min_ls, var_max_ls);
+        setVarMinMaxLs(prob_sentence_num, var_num_per_sentence);
+        //System.out.println("var_min_ls = " + Arrays.toString(var_min_value_ls));
+        //System.out.println("var_max_ls = " + Arrays.toString(var_max_value_ls));
+
+        getRandomAgeValue(name_var_num, var_num_per_sentence);
 
         // template -> problem
-        templateToProblem(name_ls, name_var_ls, var_ls,
+        String[] real_prob = templateToProblem(name_ls, name_var_ls, var_ls,
                 content_template, explanation_template, answer_template);
 
-         */
+        //System.out.println(real_prob[0]);   // real_content
+        //System.out.println(real_prob[1]);   // real_explanation
+        //System.out.println(real_prob[2]);   // real_answer
+        // return new String[] {real_content, real_explanation, real_answer};
 
     }
 
     public void ageProblemTemplate(int prob_sentence_num, int var_num_per_sentence,
-                           int[] sentence_category_id_ls,
-                           int answer_inx, int condition_inx,
-                           boolean[] useYear_ls, boolean[] useMult_ls, boolean[] useAddMinus_ls,
-                           int[] var_sign_ls, int[] year1_sign_ls, int[] year2_sign_ls) {
+                           int answer_inx, int condition_inx) {
         ////////////////////////////////////////////////////////////////////////////////////////////////
         // 문장 생성
 
@@ -183,9 +186,10 @@ public class Elementary5th {
         int cond_inx_for_sentence = 1;  // age1, age2 중 age2가 given
         if(prob_sentence_num==1)    cond_inx_for_sentence = condition_inx;
         for(int i = 0; i < prob_sentence_num; i++){
+            int var1_index = i * var_num_per_sentence;
             // create_age_sentence(유형id, 값 참조 시작하는 인덱스, answer_index, condition_index) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
             sentence_ls[i] = create_age_sentence(sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
-                    useYear_ls[i], useMult_ls[i], useAddMinus_ls[i], var_sign_ls[i], year1_sign_ls[i], year2_sign_ls[i]);  // sentence_ls[i] = {content, explanation}
+                    useYear_ls[i], useMult_ls[i], useAddMinus_ls[i], var_sign_ls[var1_index+1], var_sign_ls[var1_index+2], var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
 
 
@@ -246,7 +250,8 @@ public class Elementary5th {
     // 나이 문제 상황 문장 생성
     // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
     private String[] create_age_sentence(int category_id, int index, int var_num_per_sentence, int cond_inx,
-                                         boolean useYear, boolean useMult, boolean useAddMinus, int var_sign, int year1_sign, int year2_sign){
+                                         boolean useYear, boolean useMult, boolean useAddMinus,
+                                         int var_sign, int year1_sign, int year2_sign){
         String name_category_token = age_category_token; // "의 나이"
         String name_unit_token = age_unit_token;
         String var34_unit_token = year_unit_token;
@@ -656,42 +661,85 @@ public class Elementary5th {
     /////////////////////////////////////////////////////////////////////////////////////////
     // 랜덤 숫자 뽑기
 
-    private int[] name_var_ls;   // 결과
-    private int[] var_ls;   // 결과
+    // var_min_value_ls, var_max_value_ls 설정
+    private void setVarMinMaxLs(int prob_sentence_num, int num_var_per_sentence){
+        var_min_value_ls = new int[prob_sentence_num * num_var_per_sentence];
+        var_max_value_ls = new int[prob_sentence_num * num_var_per_sentence];
+        for(int i = 0; i < prob_sentence_num; i++){
+            int var1_index = i * num_var_per_sentence;
+            if(useMult_ls[i]) {    // var1
+                var_min_value_ls[var1_index] = 2;
+                var_max_value_ls[var1_index] = 5;
+            } else{
+                var_min_value_ls[var1_index] = 1;
+                var_max_value_ls[var1_index] = 1;
+            }
+            if(useAddMinus_ls[i]){ // var2
+                var_min_value_ls[var1_index+1] = 1;
+                var_max_value_ls[var1_index+1] = 20;
+            } else{
+                var_min_value_ls[var1_index+1] = 0;
+                var_max_value_ls[var1_index+1] = 0;
+            }
+            if(useYear_ls[i]){
+                var_min_value_ls[var1_index+2] = 1;
+                var_max_value_ls[var1_index+2] = 20;
+                var_min_value_ls[var1_index+3] = 1;
+                var_max_value_ls[var1_index+3] = 20;
+            } else{
+                var_min_value_ls[var1_index+2] = 0;
+                var_max_value_ls[var1_index+2] = 0;
+                var_min_value_ls[var1_index+3] = 0;
+                var_max_value_ls[var1_index+3] = 0;
+            }
+        }
+    }
+
+    // random int 값 뽑기
+    private int getRandomIntValue(int min_value, int max_value){
+        if(max_value < min_value){
+            System.out.println("ERROR:: getRandomIntValue() : min > max now... should be min <= max");
+            return -1;
+        } else if(max_value == min_value){
+            return 0;
+        } else{
+            int ret = random.nextInt(max_value-min_value+1) + min_value;
+            return ret;
+        }
+    }
+
 
     // 나이 문제 숫자 뽑기
-    private void getRandomAgeValue(int age_ls_length, int num_var_per_sentence,
-                                    int year_min_value, int year_max_value,
-                                    int[] sentence_category_ls, int[] sign_ls,
-                                    int[] age_min_value_ls, int[] age_max_value_ls, int[] var_min_value_ls, int[] var_max_value_ls){
+    private void getRandomAgeValue(int age_ls_length, int num_var_per_sentence){
         name_var_ls = new int[age_ls_length];
         var_ls = new int[age_ls_length * num_var_per_sentence];
 
-        int age0 = random.nextInt(age_max_value_ls[0]+1) + age_min_value_ls[0];
+        int age0 = getRandomIntValue(name_var_min_value_ls[0], name_var_max_value_ls[0]);
         int given_age = age0;
-        for(int i = sentence_category_ls.length - 1; i >= 0; i--){
+        for(int i = sentence_category_id_ls.length - 1; i >= 0; i--){
             int age1_index = i;
             int age2_index = (i + 1) % name_var_ls.length;
             int var1_index = age1_index * num_var_per_sentence;
             int var2_index = var1_index + 1;
-            int var3_index = var1_index + 2;
-            int var4_index = var1_index + 3;
-            if(sentence_category_ls[i] == AGE_CATEGORY_ID_YX){
-                int[] ret_var = getRandomYXValue(given_age, sign_ls[i],
-                        age_min_value_ls[age1_index], age_max_value_ls[age1_index],
+            int year1_index = var1_index + 2;
+            int year2_index = var1_index + 3;
+            if(sentence_category_id_ls[i] == AGE_CATEGORY_ID_YX){
+                int[] ret_var = getRandomYXValue(given_age,
+                        var_sign_ls[var2_index], var_sign_ls[year1_index], var_sign_ls[year2_index],
+                        name_var_min_value_ls[age1_index], name_var_max_value_ls[age1_index],
                         var_min_value_ls[var1_index], var_max_value_ls[var1_index],
                         var_min_value_ls[var2_index], var_max_value_ls[var2_index],
-                        var_min_value_ls[var3_index], var_max_value_ls[var3_index],
-                        var_min_value_ls[var4_index], var_max_value_ls[var4_index]);
+                        var_min_value_ls[year1_index], var_max_value_ls[year1_index],
+                        var_min_value_ls[year2_index], var_max_value_ls[year2_index]);
                 name_var_ls[age1_index] = ret_var[0];
                 name_var_ls[age2_index] = ret_var[1];
                 var_ls[var1_index] = ret_var[2];
                 var_ls[var2_index] = ret_var[3];
-                var_ls[var3_index] = ret_var[4];
-                var_ls[var4_index] = ret_var[5];
+                var_ls[year1_index] = ret_var[4];
+                var_ls[year2_index] = ret_var[5];
 
-            } else if(sentence_category_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE){
-                int[] ret_var = getRandomX1X2Value(given_age, sign_ls[i], age_min_value_ls[age1_index], age_max_value_ls[age1_index]);
+            } else if(sentence_category_id_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE){
+                int[] ret_var = getRandomX1X2Value(given_age, var_sign_ls[i], name_var_min_value_ls[age1_index], name_var_max_value_ls[age1_index]);
                 name_var_ls[age1_index] = ret_var[0];
                 name_var_ls[age2_index] = ret_var[1];
                 var_ls[var1_index] = ret_var[2];
@@ -704,28 +752,41 @@ public class Elementary5th {
     // (name_var1 +- var3) = (name_var2 +- var4) * var1 +- var2
     // name_var2 given
     // return new int[] {name_var1, name_var2, var1, var2, var3, var4}
-    private int[] getRandomYXValue(int given_name_var2, int sign,
-                                   int name_var1_min_value, int given_name_var1_max_value,
+    private int[] getRandomYXValue(int given_name_var2, int var_sign, int year1_sign, int year2_sign,
+                                   int name_var1_min_value, int name_var1_max_value,
                                    int var1_min_value, int var1_max_value,
                                    int var2_min_value, int var2_max_value,
                                    int var3_min_value, int var3_max_value,
                                    int var4_min_value, int var4_max_value){ // name_var2, year given
-        int var1=0, var2=0, var3=0, var4=0, name_var1=0, name_var2=given_name_var2;
+        int var1=1, var2=0, var3=0, var4=0, name_var1=0, name_var2=given_name_var2;
 
         // name_var1 = name_var2 * var1 +- var2
-        while(name_var1 < name_var1_min_value || name_var1 > given_name_var1_max_value) {
-            var1 = random.nextInt(var1_max_value+1) + var1_min_value;
-            var2 = random.nextInt(var2_max_value+1) + var2_min_value;
-            var3 = random.nextInt(var3_max_value+1) + var3_min_value;
-            var4 = random.nextInt(var4_min_value, var4_max_value);
-            if(sign == PLUS_SIGN) {
-                name_var1 = (name_var2 + var4) * var1 + var2 - var3;
+        while(name_var1 < name_var1_min_value || name_var1 > name_var1_max_value) {
+            var1 = getRandomIntValue(var1_min_value, var1_max_value);
+            var2 = getRandomIntValue(var2_min_value, var2_max_value);
+            var3 = getRandomIntValue(var3_min_value, var3_max_value);
+            var4 = getRandomIntValue(var4_min_value, var4_max_value);
+            name_var1 = 0;
+            int name_var2_with_var4 = 0;
+            int name_var1_with_var3 = 0;
+            if(year2_sign == PLUS_SIGN){
+                name_var2_with_var4 = name_var2 + var4;
             } else{
-                name_var1 = (name_var2 + var4) * var1 - var2 - var3;
+                name_var2_with_var4 = name_var2 - var4;
+            }
+            if(var_sign == PLUS_SIGN) {
+                name_var1_with_var3 = name_var2_with_var4 * var1 + var2;
+            } else{
+                name_var1_with_var3 = name_var2_with_var4 * var1 - var2;
+            }
+            if(year1_sign == PLUS_SIGN){
+                name_var1 = name_var1_with_var3 - var3;
+            } else{
+                name_var1 = name_var1_with_var3 + var3;
             }
         }
 
-        return new int[] {name_var1, name_var2, var1, var2};
+        return new int[] {name_var1, name_var2, var1, var2, var3, var4};
     }
 
     // name_var1 +- name_var2 = var1
@@ -734,7 +795,7 @@ public class Elementary5th {
     // return new int[] {name_var1, name_var2, var1};
     private int[] getRandomX1X2Value(int given_name_var2, int sign,
                                      int name_var1_min_value, int name_var1_max_value){ // age2 given
-        int age1 = random.nextInt(name_var1_max_value+1) + name_var1_min_value;
+        int age1 = getRandomIntValue(name_var1_min_value, name_var1_max_value);
         int age2 = given_name_var2;
 
         int var1 = -1;
@@ -752,9 +813,7 @@ public class Elementary5th {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // 그 외 함수
 
-    private String[] name_ls;   // 아버지, 어머니, ...
-
-    // use name_ls, name_var_ls, var_ls, content_template, explanation_template, answer_template
+    // return new String[] {real_content, real_explanation, real_answer};
     public String[] templateToProblem(String[] name_ls, int[] name_var_ls, int[] var_ls,
                                       String content_template, String explanation_template, String answer_template){
         // content, explanation, answer
@@ -762,25 +821,25 @@ public class Elementary5th {
         String real_explanation = explanation_template;
         String real_answer = answer_template;
         for(int i = 0; i < name_ls.length; i++){
-            String regex = "^"+VAR_START+NAME_STR+i+VAR_END+"$";
+            String old_value = "\\" + VAR_START + NAME_STR+i+ "\\" + VAR_END;
             String new_value = name_ls[i];
-            real_content.replaceAll(regex, new_value);
-            real_explanation.replaceAll(regex, new_value);
-            real_answer.replaceAll(regex, new_value);
+            real_content.replaceAll(old_value, new_value);
+            real_explanation.replaceAll(old_value, new_value);
+            real_answer.replaceAll(old_value, new_value);
         }
         for(int i = 0; i < name_var_ls.length;i++){
-            String regex = "^"+VAR_START+NAME_VAR_STR+i+VAR_END+"$";
+            String old_value = "\\" + VAR_START + NAME_VAR_STR+i + "\\" + VAR_END;
             String new_value = String.valueOf(name_var_ls[i]);
-            real_content.replaceAll(regex, new_value);
-            real_explanation.replaceAll(regex, new_value);
-            real_answer.replaceAll(regex, new_value);
+            real_content.replaceAll(old_value, new_value);
+            real_explanation.replaceAll(old_value, new_value);
+            real_answer.replaceAll(old_value, new_value);
         }
         for(int i = 0; i < var_ls.length; i++){
-            String regex = "^"+VAR_START+VAR_STR+i+VAR_END+"$";
+            String old_value = "\\" + VAR_START + VAR_STR+i + "\\" + VAR_END;
             String new_value = String.valueOf(var_ls[i]);
-            real_content.replaceAll(regex, new_value);
-            real_explanation.replaceAll(regex, new_value);
-            real_answer.replaceAll(regex, new_value);
+            real_content.replaceAll(old_value, new_value);
+            real_explanation.replaceAll(old_value, new_value);
+            real_answer.replaceAll(old_value, new_value);
         }
 
         return new String[] {real_content, real_explanation, real_answer};
