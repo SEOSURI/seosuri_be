@@ -151,7 +151,7 @@ public class Elementary5th {
             sentence_category_id_ls[i] = random.nextInt(SENTENCE_CATEGORY_NUM);
         }
         int answer_inx = random.nextInt(name_var_num);  // 구하는 나이의 인덱스
-        int condition_inx = (random.nextInt(name_var_num - 1) + answer_inx) % name_var_num;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
+        int condition_inx = (random.nextInt(name_var_num) + answer_inx + 1) % name_var_num;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
 
         setUseBooleans(level, var_num_per_sentence);
 
@@ -816,11 +816,12 @@ public class Elementary5th {
     // return new int[] {name_var1, name_var2, var1};
     private int[] getRandomX1X2Value(int given_name_var2, int sign,
                                      int name_var1_min_value, int name_var1_max_value){ // age2 given
-        int age1 = getRandomIntValue(name_var1_min_value, name_var1_max_value);
+        int age1 = 0;
         int age2 = given_name_var2;
 
         int var1 = -1;
         while (var1 < 0){
+            age1 = getRandomIntValue(name_var1_min_value, name_var1_max_value);
             if(sign == PLUS_SIGN){  // age1 + age2 = var1
                 var1 = age1 + age2;
             } else { // age1 - age2 = var1
