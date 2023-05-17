@@ -7,12 +7,12 @@ class Elementary5thTest {
     @Test
     void ageProblem() {
         Elementary5th elementary5th = new Elementary5th();
-        elementary5th.ageProblem();
+        elementary5th.ageProblem(3);
         //elementary5th.printTemplate();
     }
 
     @Test
-    void templateToProblem(){
+    void templateToProblem() {
         Elementary5th elementary5th = new Elementary5th();
         String[] name_ls = new String[] {"어머니", "동생"};
         int[] name_var_ls = new int[] {50, 10};
