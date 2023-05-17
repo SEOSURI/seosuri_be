@@ -211,15 +211,22 @@ public class Elementary5th {
 
         // 상황 문장 생성 : {content, explanation}
         String[][] sentence_ls = new String[prob_sentence_num][2];
+        // condition index for sentence
+        //      0~cond_inx -> age2 given
+        //      cond_inx+1~ -> age1 given
         int cond_inx_for_sentence = 1;  // age1, age2 중 age2가 given
         if(prob_sentence_num==1)    cond_inx_for_sentence = condition_inx;
-        for(int i = 0; i < prob_sentence_num; i++){
+        for(int i = 0; i < condition_inx; i++){ // 0~cond_inx -> age2 given
             int var1_index = i * var_num_per_sentence;
-            // create_age_sentence(유형id, 값 참조 시작하는 인덱스, answer_index, condition_index) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
             sentence_ls[i] = create_age_sentence(sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
                     useYear_ls[i], useMult_ls[i], useAddMinus_ls[i], var_sign_ls[var1_index+1], var_sign_ls[var1_index+2], var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
-
+        cond_inx_for_sentence = 0;  // age1, age2 중 age1가 given
+        for(int i = condition_inx; i < prob_sentence_num; i++){ // cond_inx+1~ -> age1 given
+            int var1_index = i * var_num_per_sentence;
+            sentence_ls[i] = create_age_sentence(sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+                    useYear_ls[i], useMult_ls[i], useAddMinus_ls[i], var_sign_ls[var1_index+1], var_sign_ls[var1_index+2], var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
+        }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // 상황 문장 연결
@@ -231,13 +238,16 @@ public class Elementary5th {
         }
         content += condition + "\n" + question;
 
-        // explanation : conditon_inx -> condition_inx + 1 -> ... -> 끝 index -> 1 -> 2 -> ... -> condition_inx - 1 순서로 연결
+        // explanation
+        // condition_inx = 0 : 0->1->...
+        // else: condition_inx+1 -> condition_inx-1 -> ... -> 끝, condition_inx-1 -> condition_inx-2 -> ... -> 0 순서로 연결
         String explanation = "";
-        int start_index = (condition_inx + prob_sentence_num - 1) % prob_sentence_num;
-        for(int i = start_index; i >= 0; i--){    // condition_inx - 1   ~   0
+        int start_index = (condition_inx + sentence_ls.length - 1) % sentence_ls.length;
+        if(condition_inx == 0)  start_index = 0;
+        for(int i = start_index; i < sentence_ls.length; i++){    // condition_inx  ~  끝
             explanation += sentence_ls[i][1] + "\n\n";   // 상황 문장 explanation
         }
-        for(int i = sentence_ls.length - 1; i >= condition_inx; i--){                     // 끝   ~   condition_inx
+        for(int i = start_index - 1; i >= 0; i--){ // condition_inx-1 ~ 0
             explanation += sentence_ls[i][1] + "\n\n";   // 상황 문장 exlanation
         }
 
