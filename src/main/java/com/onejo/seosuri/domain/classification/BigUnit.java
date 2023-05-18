@@ -26,8 +26,11 @@ public class BigUnit {
     @Column(name="big_unit_number")
     private Long number;
 
-    @Column(name="bit_unit_title")
+    @Column(name="big_unit_title")
     private String title;
+
+    @Column(name="big_unit_semester")
+    private Long semester;
 
     @OneToMany(mappedBy = "bigUnit")
     private List<MiddleUnit> middleUnits = new ArrayList<>();
