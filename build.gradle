@@ -32,6 +32,10 @@ dependencies {
 	implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
 	implementation 'org.glassfish:jakarta.el:3.0.3'
 
+	// ocr
+	implementation platform('com.google.cloud:libraries-bom:26.6.0')
+	implementation 'com.google.cloud:google-cloud-vision'
+
 }
 
 tasks.named('test') {
