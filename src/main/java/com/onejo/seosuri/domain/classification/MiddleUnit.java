@@ -30,5 +30,5 @@ public class MiddleUnit {
     private String title;
 
     @OneToMany(mappedBy = "midUnit")
-    private List<SmallUnit> smallUnits = new ArrayList<>();
+    private List<Category> categories = new ArrayList<>();
 }
