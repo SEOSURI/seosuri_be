@@ -25,27 +25,21 @@ public class ProblemService {
 
     @Transactional
     public List<CreateProbRes> createProblem(String categoryTitle, String level){
-        //~ 문제 리스트 생성 로직 (필요에 따라 수정하셔도 됩니다) ~
-        List<CreateProbRes> problemList = new ArrayList<>();
 
-        // 시험지 entity 생성 및 DB 저장
-
-        // # 시험지 만들기 - 10회 반복
-
-        // 템플릿 선택 - 카테고리, 난이도 맞춰서
-        // name 조건에 맞춰 랜덤 선택 - arrayList에 넣습니다
-        // obj 조건 맞춰 랜덤 선택 - arrayList에 넣습니다
-        // num 난이도 맞춰 랜덤 선택 - arrayList에 넣습니다
-
-        // 문제 번호, 문제 난이도 설정
-        // content (문제 내용) 작성
-        // explanation (해설) 작성
-        // answer (답) 작성
-
-        // 문제 entity 생성 및 DB 저장
+        List<String> tmpList = new ArrayList<>();         // 사용할 템플릿
+        List<CreateProbRes> probList = new ArrayList<>();  // 완성된 문제
 
 
-        // 시험지 리스트 반환
-        return problemList;
+        // ---------------- 템플릿 완성 후, 사용할 코드 ----------------
+        // 다음 조건을 만족하는 템플릿 10개를 랜덤으로 뽑아서 tmpList에 저장한다
+        // 템플릿 tmpList를 돌며 조건 맞춰서 숫자 삽입 + 단어 삽입
+            // 사용한 단어는 DB에 저장
+            // 완성된 문제 Problem DB 저장
+
+        // ---------------- 템플릿 완성 전, api 연결 테스트 코드 ----------------
+        // 시험지 id +
+
+        // 문제 리스트 반환
+        return probList;
     }
 }
