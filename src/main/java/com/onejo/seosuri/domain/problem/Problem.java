@@ -4,6 +4,7 @@ import com.onejo.seosuri.domain.BaseTimeEntity;
 import com.onejo.seosuri.domain.testpaper.TestPaper;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.ArrayList;
@@ -43,6 +44,10 @@ public class Problem extends BaseTimeEntity {
 
     @Column(name="prob_explanation")
     private String explanation;
+
+    @Column(name="prob_state")
+    @ColumnDefault("'A'")
+    private String state;
 
     @OneToMany(mappedBy = "prob")
     private List<ProbWord> probWords = new ArrayList<>();

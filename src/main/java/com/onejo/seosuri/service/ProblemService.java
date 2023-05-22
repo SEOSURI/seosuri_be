@@ -1,9 +1,8 @@
 package com.onejo.seosuri.service;
 
-import com.onejo.seosuri.controller.dto.problem.CreateProbRes;
-import com.onejo.seosuri.domain.classification.Category;
+import com.onejo.seosuri.controller.dto.problem.ProbRes;
 import com.onejo.seosuri.domain.classification.CategoryRepository;
-import com.onejo.seosuri.domain.classification.CategoryTitle;
+import com.onejo.seosuri.domain.problem.ProbWordRepository;
 import com.onejo.seosuri.domain.problem.Problem;
 import com.onejo.seosuri.domain.problem.ProblemRepository;
 import com.onejo.seosuri.domain.problem.ProblemTemplateRepository;
@@ -27,14 +26,15 @@ public class ProblemService {
     private final TestPaperRepository testPaperRepository;
     private final ProblemTemplateRepository problemTemplateRepository;
     private final CategoryRepository categoryRepository;
+    private final ProbWordRepository probWordRepository;
 
 
     @Transactional
-    public List<CreateProbRes> createProblem(String categoryTitle, String level){
+    public List<ProbRes> createProblem(String categoryTitle, String level){
 
         Long testPaperId = -1L;
         List<String> tmpList = new ArrayList<>();         // 사용할 템플릿
-        List<CreateProbRes> probList = new ArrayList<>();  // 완성된 문제
+        List<ProbRes> probList = new ArrayList<>();  // 완성된 문제
 
         // 시험지 만들기
 //        TestPaper testPaper = new TestPaper();
@@ -73,21 +73,77 @@ public class ProblemService {
         }
         for(int i = 0; i< probs.size(); i++){
             Problem tmpProb = probs.get(i);
-            CreateProbRes createProbRes = new CreateProbRes();
+            ProbRes probRes = new ProbRes();
 
-            createProbRes.setTestPaperId(1L);  // 나중에 고쳐야 함!!
-            createProbRes.setNum(tmpProb.getProbNum());
-            createProbRes.setLevel(tmpProb.getLevel());
-            createProbRes.setContent(tmpProb.getContent());
-            createProbRes.setExplanation(tmpProb.getExplanation());
-            createProbRes.setAnswer(tmpProb.getAnswer());
+            probRes.setTestPaperId(1L);  // 나중에 고쳐야 함!!
+            probRes.setNum(tmpProb.getProbNum());
+            probRes.setLevel(tmpProb.getLevel());
+            probRes.setContent(tmpProb.getContent());
+            probRes.setExplanation(tmpProb.getExplanation());
+            probRes.setAnswer(tmpProb.getAnswer());
 
-            probList.add(createProbRes);
+            probList.add(probRes);
         }
 
         Collections.sort(probList, new ProbNumComparator());
 
         // 문제 리스트 반환
+        return probList;
+    }
+
+    // 2. 문항 삭제 api
+    @Transactional
+    public List<ProbRes> deleteProb(Long testPaperId, Long probNum){
+
+        List<ProbRes> probList = new ArrayList<>();  // 완성된 문제
+
+//        Optional<TestPaper> testPaper = testPaperRepository.findById(testPaperId);
+        Optional<TestPaper> testPaper = testPaperRepository.findById(1L); // 이거 고쳐야 함... 위에서 나중에 시험지 생성하면 그걸로 하기
+        if(testPaper.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_TEST_PAPER);
+        }
+        Optional<Problem> deleteProblem = problemRepository.findByTestPaperAndProbNum(testPaper.get(), probNum);
+        if(deleteProblem.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_PROBLEM);
+        }
+
+        // 1. 문제 state => D로 변경 하는 방식
+        deleteProblem.get().setState("D");
+        // 2. 그냥 삭제해버리기
+//        problemRepository.deleteById(deleteProblem.get().getId());
+
+        // 3. 삭제 후 문제 리스트 불러오기
+        List<Problem> probs = problemRepository.findAllByTestPaperAndState(testPaper.get(), "A");
+        if(probs.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_PROBLEM);
+        }
+        for(int i = 0; i< probs.size(); i++){
+            Problem tmpProb = probs.get(i);
+            ProbRes probRes = new ProbRes();
+
+            probRes.setTestPaperId(1L);  // 나중에 고쳐야 함!!
+            probRes.setNum(tmpProb.getProbNum());
+            probRes.setLevel(tmpProb.getLevel());
+            probRes.setContent(tmpProb.getContent());
+            probRes.setExplanation(tmpProb.getExplanation());
+            probRes.setAnswer(tmpProb.getAnswer());
+
+            probList.add(probRes);
+        }
+
+        // 4. 정렬
+        Collections.sort(probList, new ProbNumComparator());
+
+        // 5. 빈 숫자 수정 및 DB 수정
+        for(int i = 0; i<probList.size(); i++){
+            Optional<Problem> updateProbNum = problemRepository.findByTestPaperAndProbNum(testPaper.get(), probList.get(i).getNum());
+            updateProbNum.get().setProbNum((long)i+1);
+            probList.get(i).setNum((long)i+1);
+        }
+
+        // 6. A의 개수 + 1 -> 문제 번호로
+        deleteProblem.get().setProbNum((long)probList.size() + 1);
+
         return probList;
     }
 }

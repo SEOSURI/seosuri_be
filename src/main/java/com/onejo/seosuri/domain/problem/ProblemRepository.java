@@ -2,7 +2,7 @@ package com.onejo.seosuri.domain.problem;
 
 import com.onejo.seosuri.domain.classification.Category;
 import com.onejo.seosuri.domain.classification.SchoolYear;
-import com.onejo.seosuri.domain.testpaper.TestPaper;
+import com.onejo.seosuri.domain.testpaper.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +14,9 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
     Optional<Problem> findById(Long id);
 
     List<Problem> findAllByTestPaper(TestPaper testPaper);
+    List<Problem> findAllByTestPaperAndState(TestPaper testPaper, String State);
+
+    Optional<Problem> findByTestPaperAndProbNum(TestPaper testPaper, Long probNum);
+
+
 }
