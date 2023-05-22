@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Schema(title = "10문제")
-public class CreateProbRes {
+public class ProbRes {
     @Schema(description = "시험지 id", example = "")
     private Long testPaperId;
     @Schema(description = "문제 번호", example = "")
