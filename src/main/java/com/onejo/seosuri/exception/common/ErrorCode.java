@@ -27,8 +27,13 @@ public enum ErrorCode {
     FAILED_TO_LOGIN(false, 3007, "비밀번호가 틀렸습니다."),
 
     /*서버, DB 4000*/
-    DATABASE_ERROR(false, 4000, "DB에 문제가 발생했습니다.")
+    DATABASE_ERROR(false, 4000, "DB에 문제가 발생했습니다."),
+    NO_EXIST_CATEGORY_TITLE(false, 4001, "없는 카테고리 입니다."),
+    NO_EXIST_PROBLEM(false, 4002, "문제가 존재하지 않습니다.")
+
+
     ;
+
 
     private final boolean isSuccess;
     private final int code;
