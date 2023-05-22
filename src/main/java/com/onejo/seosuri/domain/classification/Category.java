@@ -22,8 +22,8 @@ public class Category {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="small_unit_id")
-    private SmallUnit smallUnit;
+    @JoinColumn(name="mid_unit_id")
+    private MiddleUnit midUnit;
 
     @Enumerated(EnumType.STRING)
     @Column(name="category_title")

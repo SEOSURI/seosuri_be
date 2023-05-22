@@ -28,6 +28,7 @@ public class Word {
     @Column(name="word_extra_condition")
     private String condition;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="word_type")
-    private String type;
+    private WordType type;
 }

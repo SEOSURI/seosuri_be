@@ -16,3 +16,4 @@ public class Elementary5th {
     // 도형에서의 혼합 계산 응용 알고리즘
     public void geometryCalculation() {}
 }
+
