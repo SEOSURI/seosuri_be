@@ -3,11 +3,9 @@ package com.onejo.seosuri.controller;
 import com.onejo.seosuri.controller.dto.problem.*;
 import com.onejo.seosuri.service.ProblemService;
 import com.onejo.seosuri.exception.common.BusinessException;
-import com.onejo.seosuri.exception.common.ErrorCode;
 import com.onejo.seosuri.response.BaseResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +29,9 @@ public class ProblemController {
 
     @Operation(summary = "문제 생성", description = "최초 문제 리스트(10문제).\nDB에 생성된 문제 정보 저장.")
     @PostMapping("/create")
-    public BaseResponse<List<CreateProbRes>> createProblems(@RequestBody CreateProbReq createProbReq){
+    public BaseResponse<List<ProbRes>> createProblems(@RequestBody CreateProbReq createProbReq){
         try{
-            List<CreateProbRes> problemList = problemService.createProblem(createProbReq.getCategoryTitle(), createProbReq.getLevel());
+            List<ProbRes> problemList = problemService.createProblem(createProbReq.getCategoryTitle(), createProbReq.getLevel());
             return new BaseResponse<>(problemList);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
@@ -42,9 +40,10 @@ public class ProblemController {
 
     @Operation(summary = "문제 삭제", description = "DB에서 문제 삭제")
     @DeleteMapping("/delete")
-    public BaseResponse<String> deleteProblem(@RequestBody DeleteProbReq deleteProbReq){
+    public BaseResponse<List<ProbRes>> deleteProblem(@RequestBody DeleteProbReq deleteProbReq){
         try{
-            return new BaseResponse<>("tmp");
+            List<ProbRes> deleteProbRes = problemService.deleteProb(deleteProbReq.getTestPaperId(), deleteProbReq.getProbNum());
+            return new BaseResponse<>(deleteProbRes);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }
