@@ -5,9 +5,13 @@ package com.onejo.seosuri.service.algorithm;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.*;
 
 /*
 템플릿 생성 완료
@@ -641,10 +645,11 @@ public class Elementary5th {
         else sign_token = "!!!!!!!SIGN_ERROR!!!!";
 
 
+        // 기본식 : (name1의 나이) +- (name2의 나이) = %d
         // explanation token 조합
-        //(name1의 나이) +- (name2의 나이) = %d
-        // (name1의 나이) = %d -+ (name2의 나이) = %d
-        // (name2의 나이) = %d - name1의 나이 = %d
+        // (name1의 나이) = %d -+ (name2의 나이) = %d // name1 구하기, +/-
+        // (name2의 나이) = %d - name1의 나이 = %d // name2 구하기, +
+        // (name2의 나이) = name1의 나이 - %d = %d // name2 구하기, -
         String ex_expression_str_start_token = "\"" + content + "\"라는 문장을 식으로 바꾸면";
         String ex_expression_token = name1_with_category_token + sign_blank_token + name2_with_category_token
                 + BLANK_SYM + EQUAL_SYM + BLANK_SYM + var1_token;
@@ -658,6 +663,10 @@ public class Elementary5th {
                 + EQUAL_BLANK_SYM + var1_token + MINUS_BLANK_STR + name1_with_category_token
                 + EQUAL_BLANK_SYM + var1_token + MINUS_BLANK_STR + name_var1_token
                 + EQUAL_BLANK_SYM + EXPRESSION_START + var1_token + MINUS_SYM + name_var1_token + EXPRESSION_END;
+        String ex_name_var2_with_diff_token = name2_with_category_token
+                + EQUAL_BLANK_SYM + name1_with_category_token + MINUS_BLANK_STR + var1_token
+                + EQUAL_BLANK_SYM + name_var1_token + var1_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + MINUS_SYM + var1_token + EXPRESSION_END;
 
         String explanation = "";
         ArrayList<String> explanation_ls = new ArrayList<>(10);
@@ -670,7 +679,7 @@ public class Elementary5th {
             if(sign == PLUS_SIGN) {
                 explanation_ls.add(ex_name_var2_with_sum_token);
             } else if(sign == MINUS_SIGN) {
-                explanation_ls.add("VALUE ERROR:: should do minus from bigger to smaller");
+                explanation_ls.add(ex_name_var2_with_diff_token);
             } else{
                 explanation_ls.add("SIGN VALUE ERROR");
             }
@@ -747,35 +756,45 @@ public class Elementary5th {
 
         int age0 = getRandomIntValue(name_var_min_value_ls[0], name_var_max_value_ls[0]);
         int given_age = age0;
-        for(int i = sentence_category_id_ls.length - 1; i >= 0; i--){
+        int num_sentence = sentence_category_id_ls.length;
+        int start_index = num_sentence - 1;   // 마지막 상황문장부터 숫자 뽑음
+        for(int i = start_index; i >= 0; i--){
             int age1_index = i;
             int age2_index = (i + 1) % name_var_ls.length;
             int var1_index = age1_index * num_var_per_sentence;
             int var2_index = var1_index + 1;
             int year1_index = var1_index + 2;
             int year2_index = var1_index + 3;
-            if(sentence_category_id_ls[i] == AGE_CATEGORY_ID_YX){
-                int[] ret_var = getRandomYXValue(given_age,
-                        var_sign_ls[var2_index], var_sign_ls[year1_index], var_sign_ls[year2_index],
-                        name_var_min_value_ls[age1_index], name_var_max_value_ls[age1_index],
-                        var_min_value_ls[var1_index], var_max_value_ls[var1_index],
-                        var_min_value_ls[var2_index], var_max_value_ls[var2_index],
-                        var_min_value_ls[year1_index], var_max_value_ls[year1_index],
-                        var_min_value_ls[year2_index], var_max_value_ls[year2_index]);
-                name_var_ls[age1_index] = ret_var[0];
-                name_var_ls[age2_index] = ret_var[1];
-                var_ls[var1_index] = ret_var[2];
-                var_ls[var2_index] = ret_var[3];
-                var_ls[year1_index] = ret_var[4];
-                var_ls[year2_index] = ret_var[5];
 
-            } else if(sentence_category_id_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE){
-                int[] ret_var = getRandomX1X2Value(given_age, var_sign_ls[i], name_var_min_value_ls[age1_index], name_var_max_value_ls[age1_index]);
-                name_var_ls[age1_index] = ret_var[0];
-                name_var_ls[age2_index] = ret_var[1];
-                var_ls[var1_index] = ret_var[2];
-            } else{
-                System.out.println("ERROR:: invalid category id");
+            try {
+                if (sentence_category_id_ls[i] == AGE_CATEGORY_ID_YX) {
+                    int[] ret_var = getRandomYXValue(given_age,
+                            var_sign_ls[var2_index], var_sign_ls[year1_index], var_sign_ls[year2_index],
+                            name_var_min_value_ls[age1_index], name_var_max_value_ls[age1_index],
+                            var_min_value_ls[var1_index], var_max_value_ls[var1_index],
+                            var_min_value_ls[var2_index], var_max_value_ls[var2_index],
+                            var_min_value_ls[year1_index], var_max_value_ls[year1_index],
+                            var_min_value_ls[year2_index], var_max_value_ls[year2_index],
+                            useYear_ls[i], useAddMinus_ls[i], useMult_ls[i]);
+                    name_var_ls[age1_index] = ret_var[0];
+                    name_var_ls[age2_index] = ret_var[1];
+                    var_ls[var1_index] = ret_var[2];
+                    var_ls[var2_index] = ret_var[3];
+                    var_ls[year1_index] = ret_var[4];
+                    var_ls[year2_index] = ret_var[5];
+                } else if (sentence_category_id_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE) {
+                    int[] ret_var = getRandomX1X2Value(given_age, var_sign_ls[i],
+                            name_var_min_value_ls[age1_index], name_var_max_value_ls[age1_index]);
+                    name_var_ls[age1_index] = ret_var[0];
+                    name_var_ls[age2_index] = ret_var[1];
+                    var_ls[var1_index] = ret_var[2];
+
+                } else {
+                    System.out.println("ERROR:: invalid category id");
+                }
+            } catch (TimeoutException e){
+                    i = start_index;
+                    continue;
             }
         }
     }
@@ -788,8 +807,13 @@ public class Elementary5th {
                                    int var1_min_value, int var1_max_value,
                                    int var2_min_value, int var2_max_value,
                                    int var3_min_value, int var3_max_value,
-                                   int var4_min_value, int var4_max_value){ // name_var2, year given
+                                   int var4_min_value, int var4_max_value,
+                                   boolean useYear, boolean useAddMinus, boolean useMult)
+    throws TimeoutException { // name_var2, year given
         int var1=1, var2=0, var3=0, var4=0, name_var1=0, name_var2=given_name_var2;
+
+        long timeoutInMn = 3;   // timeout 시간
+        LocalDateTime startTime = LocalDateTime.now();
 
         // name_var1 = name_var2 * var1 +- var2
         while(name_var1 < name_var1_min_value || name_var1 > name_var1_max_value) {
@@ -797,6 +821,17 @@ public class Elementary5th {
             var2 = getRandomIntValue(var2_min_value, var2_max_value);
             var3 = getRandomIntValue(var3_min_value, var3_max_value);
             var4 = getRandomIntValue(var4_min_value, var4_max_value);
+            if(useMult == false)  {
+                var1 = 1;
+            }
+            if(useAddMinus == false){
+                var2 = 0;
+            }
+            if(useYear == false) {
+                var3 = 0;
+                var4 = 0;
+            }
+
             int name_var2_with_var4 = 0;
             int name_var1_with_var3 = 0;
             if(year2_sign == PLUS_SIGN){
@@ -815,6 +850,10 @@ public class Elementary5th {
                 name_var1 = name_var1_with_var3 + var3;
             }
 
+            // timeout
+            if(ChronoUnit.MINUTES.between(startTime, LocalDateTime.now()) > timeoutInMn){
+                throw new TimeoutException();
+            }
         }
 
         return new int[] {name_var1, name_var2, var1, var2, var3, var4};
@@ -825,9 +864,13 @@ public class Elementary5th {
     // 단, name_var1 > name_var2 여야 (초등교육과정)
     // return new int[] {name_var1, name_var2, var1};
     private int[] getRandomX1X2Value(int given_name_var2, int sign,
-                                     int name_var1_min_value, int name_var1_max_value){ // age2 given
+                                     int name_var1_min_value, int name_var1_max_value)
+    throws TimeoutException { // age2 given
         int age1 = 0;
         int age2 = given_name_var2;
+
+        long timeoutInMn = 3;   // timeout 시간
+        LocalDateTime startTime = LocalDateTime.now();
 
         int var1 = -1;
         while (var1 < 0){
@@ -836,6 +879,11 @@ public class Elementary5th {
                 var1 = age1 + age2;
             } else { // age1 - age2 = var1
                 var1 = age1 - age2;
+            }
+
+            // timeout
+            if(ChronoUnit.MINUTES.between(startTime, LocalDateTime.now()) > timeoutInMn){
+                throw new TimeoutException();
             }
         }
         return new int[] {age1, age2, var1};
@@ -905,15 +953,20 @@ public class Elementary5th {
                 inExpr = true;
             } else if(char_i == ']'){
                 inExpr = false;
-                String calc_res = "DEFAULT_EXPR_STR";
+                String calc_res = "DEFAULT_EXPR_STR:: ";
 
                 // calculate
 
+                // 임시 dummy 값
+                for(int j = 0; j < expression.size(); j++){
+                    calc_res += expression.get(j);
+                }
+
                 res += calc_res;
             } else {
-                if (inExpr == true) {
+                if (inExpr == true) {   // 식 속의 문자
                     expression.add(char_i);
-                } else {
+                } else {    // 식 밖의 문자
                     res += char_i;
                 }
             }
