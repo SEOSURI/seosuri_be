@@ -2,10 +2,6 @@
 
 package com.onejo.seosuri.service.algorithm;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -110,44 +106,14 @@ public class Elementary5th {
     boolean[] useMult_ls;
     boolean[] useAddMinus_ls;
 
-
-    private void setUseBooleans(int level, int var_num_per_sentence){
-        int prob_sentence_num = level;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
-
-        useYear_ls = new boolean[prob_sentence_num];
-        useMult_ls = new boolean[prob_sentence_num];
-        useAddMinus_ls = new boolean[prob_sentence_num];
-
-        /*
-        level -> prob_sentence_num 결정
-        상(3) - prob_sentence_num = 3, useYear = true, t/f, t/f,   useMult = t, t/f, t/f,   useAddMinus = t, t/f, t/f
-        중(2) - prob_sentence_num = 2, useYear = true, false,      useMult = t, t/f,        useAddMinus = t, t/f
-        하(1) - prob_sentence_num = 1, useYear = false,            useMult = t/f,           useAddMinus = t/f
-         */
-        if(level == 1){ // 난이도 하
-            useYear_ls[0] = false;
-            useMult_ls[0] = random.nextBoolean();
-            useAddMinus_ls[0] = random.nextBoolean();
-        } else{
-            useYear_ls[0] = true;
-            useMult_ls[0] = true;
-            useAddMinus_ls[0] = true;
-            for(int i = 1; i < prob_sentence_num; i++){
-                useYear_ls[i] = random.nextBoolean();
-                useMult_ls[i] = random.nextBoolean();
-                useAddMinus_ls[i] = random.nextBoolean();
-            }
-        }
-    }
-
     // 나이 구하기 문제 알고리즘
     public void ageProblem(int level){
         int var_num_per_sentence = 4;   // var1, var2, year1, year2
+        int prob_sentence_num = level;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
 
         random = new Random(); //랜덤 객체 생성(디폴트 시드값 : 현재시간)
         random.setSeed(System.currentTimeMillis()); //시드값 설정을 따로 할수도 있음
 
-        int prob_sentence_num = level;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
         int name_var_num = prob_sentence_num + 1;
         int var_num = prob_sentence_num * var_num_per_sentence;
         sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
@@ -165,24 +131,20 @@ public class Elementary5th {
         }
 
         // ageProblemTemplate() 실행 결과 class 변수 setting 됨
-        ageProblemTemplate(prob_sentence_num, var_num_per_sentence, answer_inx, condition_inx);
+        ageProblemTemplate(prob_sentence_num, var_num_per_sentence, answer_inx, condition_inx); // 문제 템플릿 생성
 
         // for testing
         printTemplate();
 
-        // 상수 var, name_var 설정
-        name_var_min_value_ls = new int[name_var_num];
-        name_var_max_value_ls = new int[name_var_num];
-        name_ls = new String[name_var_num];
-        for(int i = 0; i < name_var_num; i++){      // DB 연결 -> DB에서 값 받아와야
-            name_var_min_value_ls[i] = 10;
-            name_var_max_value_ls[i] = 100;
-            name_ls[i] = i+"사람"+i;
-        }
-        setVarMinMaxLs(prob_sentence_num, var_num_per_sentence);
-        //System.out.println("var_min_ls = " + Arrays.toString(var_min_value_ls));
-        //System.out.println("var_max_ls = " + Arrays.toString(var_max_value_ls));
 
+        ///////////////////////////////////////////////////////////////////////////////
+        // 실제 문제 생성
+
+        // name 뽑기, 상수 var, name_var 범위 설정
+        setNameAndNameVar(name_var_num);
+        setVarMinMaxLs(prob_sentence_num, var_num_per_sentence);
+
+        // 상수 var, name_var 랜덤 뽑기
         getRandomAgeValue(name_var_num, var_num_per_sentence);
 
         // template -> problem
@@ -283,6 +245,86 @@ public class Elementary5th {
     // 도형에서의 혼합 계산 응용 알고리즘
     public void geometryCalculation() {}
 
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // 설정값 setting
+    //
+
+    // 난이도에 따른 useBoolean 변수들 (useYear, useMult, useAddMinus) 설정값
+    private void setUseBooleans(int level, int var_num_per_sentence){
+        int prob_sentence_num = level;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
+
+        useYear_ls = new boolean[prob_sentence_num];
+        useMult_ls = new boolean[prob_sentence_num];
+        useAddMinus_ls = new boolean[prob_sentence_num];
+
+        /*
+        level -> prob_sentence_num 결정
+        상(3) - prob_sentence_num = 3, useYear = true, t/f, t/f,   useMult = t, t/f, t/f,   useAddMinus = t, t/f, t/f
+        중(2) - prob_sentence_num = 2, useYear = true, false,      useMult = t, t/f,        useAddMinus = t, t/f
+        하(1) - prob_sentence_num = 1, useYear = false,            useMult = t/f,           useAddMinus = t/f
+         */
+        if(level == 1){ // 난이도 하
+            useYear_ls[0] = false;
+            useMult_ls[0] = random.nextBoolean();
+            useAddMinus_ls[0] = random.nextBoolean();
+        } else{
+            useYear_ls[0] = true;
+            useMult_ls[0] = true;
+            useAddMinus_ls[0] = true;
+            for(int i = 1; i < prob_sentence_num; i++){
+                useYear_ls[i] = random.nextBoolean();
+                useMult_ls[i] = random.nextBoolean();
+                useAddMinus_ls[i] = random.nextBoolean();
+            }
+        }
+    }
+
+    // var_min_value_ls, var_max_value_ls 설정
+    private void setVarMinMaxLs(int prob_sentence_num, int num_var_per_sentence){
+        var_min_value_ls = new int[prob_sentence_num * num_var_per_sentence];
+        var_max_value_ls = new int[prob_sentence_num * num_var_per_sentence];
+        for(int i = 0; i < prob_sentence_num; i++){
+            int var1_index = i * num_var_per_sentence;
+            if(useMult_ls[i]) {    // var1
+                var_min_value_ls[var1_index] = 2;
+                var_max_value_ls[var1_index] = 5;
+            } else{ // 0~100 =  0~100 * 2 - 100 // 99 *
+                var_min_value_ls[var1_index] = 1;
+                var_max_value_ls[var1_index] = 1;
+            }
+            if(useAddMinus_ls[i]){ // var2
+                var_min_value_ls[var1_index+1] = 1;
+                var_max_value_ls[var1_index+1] = 20;
+            } else{
+                var_min_value_ls[var1_index+1] = 0;
+                var_max_value_ls[var1_index+1] = 0;
+            }
+            if(useYear_ls[i]){
+                var_min_value_ls[var1_index+2] = 1;
+                var_max_value_ls[var1_index+2] = 100;
+                var_min_value_ls[var1_index+3] = 1;
+                var_max_value_ls[var1_index+3] = 100;
+            } else{
+                var_min_value_ls[var1_index+2] = 0;
+                var_max_value_ls[var1_index+2] = 0;
+                var_min_value_ls[var1_index+3] = 0;
+                var_max_value_ls[var1_index+3] = 0;
+            }
+        }
+    }
+
+    // name_var 설정
+    private void setNameAndNameVar(int name_var_num){
+        name_var_min_value_ls = new int[name_var_num];
+        name_var_max_value_ls = new int[name_var_num];
+        name_ls = new String[name_var_num];
+        for(int i = 0; i < name_var_num; i++){      // DB 연결 -> DB에서 값 받아와야
+            name_var_min_value_ls[i] = 10;
+            name_var_max_value_ls[i] = 100;
+            name_ls[i] = i+"사람"+i;
+        }
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -453,76 +495,76 @@ public class Elementary5th {
         String ex_age_after_year_token = name1_add_str_token +"{"+NAME_STR+"%d}의 나이 = {"+AGE_STR+"%d} + {"+YEAR_STR+"} = [{"
                 +AGE_STR+"%d}+{"+YEAR_STR+"}]";
         */
+        String mult_blank_var1_token = MULT_BLANK_STR + var1_token;
+        String mult_var1_token = MULT_SYM + var1_token;
+        if(useMult == false) {
+            mult_blank_var1_token = "";
+            mult_var1_token = "";
+        }
+        String inv_add_minus_blank_var2_token = var2_inv_sign_blank_token + var2_token;
+        String inv_add_minus_var2_token = var2_inv_sign_token + var2_token;
+        String add_minus_blank_var2_token = var2_sign_blank_token + var2_token;
+        String add_minus_var2_token = var2_sign_token + var2_token;
+        if(useAddMinus == false){
+            add_minus_blank_var2_token = "";
+            add_minus_var2_token = "";
+            inv_add_minus_blank_var2_token = "";
+            inv_add_minus_var2_token = "";
+        }
+        String expr_add_minus_blank_var4_token = var4_sign_blank_token + var4_token;
+        String expr_add_minus_blank_var3_token = var3_sign_blank_token + var3_token;
+        String expr_add_minus_var4_token = var4_sign_token + var4_token;
+        String expr_add_minus_var3_token = var3_sign_token + var3_token;
+        if(useYear == false){
+            expr_add_minus_var3_token = "";
+            expr_add_minus_var4_token = "";
+            expr_add_minus_blank_var3_token = "";
+            expr_add_minus_blank_var4_token = "";
+        }
+
         String ex_expression_str_start_token = "\"" + content + "\"라는 문장을 식으로 바꾸면";
         String ex_expression_token = name1_add_str_token + name1_with_category_token
-                + BLANK_SYM + EQUAL_SYM + BLANK_SYM + name2_add_str_token + name2_with_category_token;
-        if(useMult) {
-            ex_expression_token += MULT_BLANK_STR + var1_token;
-        }
-        if(useAddMinus) {
-            ex_expression_token += var2_sign_blank_token + var2_token;
-        }
+                + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token + mult_blank_var1_token + add_minus_blank_var2_token;
         String ex_expression_str_end_token = "가 됩니다.";
 
         String ex_explain_start_token = "이제 이 식을 다음과 같은 순서로 풀 수 있습니다.";
 
+        // name_var -> name_var +- year
         String ex_name_var1_after_year_token = name1_add_str_token + name1_with_category_token
-                + EQUAL_BLANK_SYM + name_var1_token + var3_sign_blank_token + var3_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + var3_sign_token + var3_token + EXPRESSION_END;
+                + EQUAL_BLANK_SYM + name_var1_token + expr_add_minus_blank_var3_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + expr_add_minus_var3_token + EXPRESSION_END;
         String ex_name_var2_after_year_token = name2_add_str_token + name2_with_category_token
-                + EQUAL_BLANK_SYM + name_var2_token + var4_sign_blank_token + var4_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var2_token + var4_sign_token + var4_token + EXPRESSION_END;
-        String ex_name_var1_after_year_same_age_token = EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token;
-        String ex_name_var2_after_year_same_age_token = EQUAL_BLANK_SYM + name1_add_str_token + name1_with_category_token;
+                + EQUAL_BLANK_SYM + name_var2_token + expr_add_minus_blank_var4_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var2_token + expr_add_minus_var4_token + EXPRESSION_END;
 
+        // name_var +- year -> name_var
         String ex_after_year_to_name_var1_token = name1_with_category_token
                 + EQUAL_BLANK_SYM + name1_add_str_token + name1_with_category_token + var3_inv_sign_blank_token + var3_token
                 + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var2_token + var4_inv_sign_token + var4_token + BRACKET_END + MULT_SYM + var1_token + var2_sign_token + var2_token + EXPRESSION_END + var3_inv_sign_blank_token + var3_token
                 + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var2_token + var4_inv_sign_token + var4_token + BRACKET_END + MULT_SYM + var1_token + var2_sign_token + var2_token + var3_inv_sign_token + var3_token + EXPRESSION_END;
-        String ex_after_year_to_name_var2_with_plus_sign_token = name2_with_category_token
+        String ex_after_year_to_name_var2_token = name2_with_category_token
                 + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token + var4_inv_sign_blank_token + var4_token
                 + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var1_token + var3_inv_sign_token + var3_token + MINUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END + var4_inv_sign_blank_token + var4_token
                 + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var1_token + var3_inv_sign_token + var3_token + MINUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + var4_inv_sign_token + var4_token + EXPRESSION_END;
-        String ex_after_year_to_name_var2_with_minus_sign_token = name2_with_category_token
-                + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token + var4_inv_sign_blank_token + var4_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var1_token + var3_inv_sign_token + var3_token + PLUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END + var4_inv_sign_blank_token + var4_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var1_token + var3_inv_sign_token + var3_token + PLUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + var4_inv_sign_token + var4_token + EXPRESSION_END;
+
 
         // (%s%s의 나이) = (%s%s의 나이) * %d %s %d = %d * %d %s %d = %d
         // y년후 name1의 나이 = y년후 name2의나이 * var1 +- var2 = [age2+year] * var1 +- var2 = age1
-        String ex_cond2_compute_with_plus_sign_token = name1_add_str_token + name1_with_category_token
-                + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token + MULT_BLANK_STR + var1_token + var2_sign_blank_token + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var2_token + var4_sign_token + var4_token + EXPRESSION_END + MULT_BLANK_STR + var1_token + var2_sign_blank_token + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var2_token + var4_sign_token + var4_token + BRACKET_END + MULT_SYM + var1_token + var2_sign_token + var2_token + EXPRESSION_END;
-        String ex_cond2_compute_with_minus_sign_token = name1_add_str_token + name1_with_category_token
-                + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token + MULT_BLANK_STR + var1_token + var2_inv_sign_blank_token + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var2_token + var4_sign_token + var4_token + EXPRESSION_END + MULT_BLANK_STR + var1_token + var2_inv_sign_blank_token + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var2_token + var4_sign_token + var4_token + BRACKET_END + MULT_SYM + var1_token + var2_sign_token + var2_token + EXPRESSION_END;
+        String ex_cond2_compute_token = name1_add_str_token + name1_with_category_token
+                + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token + mult_blank_var1_token + add_minus_blank_var2_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var2_token + expr_add_minus_var4_token + EXPRESSION_END + mult_blank_var1_token + add_minus_blank_var2_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var2_token + expr_add_minus_var4_token + BRACKET_END + mult_var1_token + add_minus_var2_token + EXPRESSION_END;
 
         // if var2 != 0
         // (year년 후 name1의 나이) -+ var2 = age1 + year -+ var2
-        String ex_cond1_compute_b4_divide_with_zero_var2_token = name2_add_str_token + name2_with_category_token + EQUAL_BLANK_SYM;
-        String ex_cond1_compute_b4_divide_with_plus_sign_token = name1_add_str_token + name1_with_category_token + MINUS_BLANK_STR + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + var3_sign_token + var3_token + MINUS_SYM + var2_token + EXPRESSION_END;
-        String ex_cond1_compute_b4_divide_with_minus_sign_token = name1_add_str_token + name1_with_category_token + PLUS_BLANK_STR + var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + var3_sign_token + var3_token + PLUS_SYM + var2_token + EXPRESSION_END;
-        if(useAddMinus==false){
-            ex_cond1_compute_b4_divide_with_plus_sign_token="";
-            ex_cond1_compute_b4_divide_with_minus_sign_token="";
-        }
+        String ex_cond1_compute_b4_divide_token = name1_add_str_token + name1_with_category_token + inv_add_minus_blank_var2_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + expr_add_minus_var3_token + inv_add_minus_var2_token + EXPRESSION_END;
 
         // if var1 != 1
         //"(%s%s의 나이) = {age1 + year -+ var2} / var1 = %d\n"
-        String ex_cond1_compute_divide_with_plus_sign_token = name2_add_str_token + name2_with_category_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + var3_sign_token + var3_token + MINUS_SYM + var2_token + EXPRESSION_END + DIVIDE_BLANK_STR + var1_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var1_token + var3_sign_token + var3_token + MINUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END;
-        String ex_cond1_compute_divide_with_minus_sign_token = name2_add_str_token + name2_with_category_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + var3_sign_token + var3_token + PLUS_SYM + var2_token + EXPRESSION_END + DIVIDE_BLANK_STR + var1_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var1_token + var3_sign_token + var3_token + PLUS_SYM + var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END;
-        if(useMult==false) {
-            ex_cond1_compute_divide_with_plus_sign_token="";
-            ex_cond1_compute_divide_with_minus_sign_token="";
-        }
+        String ex_cond1_compute_divide_token = name2_add_str_token + name2_with_category_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + expr_add_minus_var3_token + inv_add_minus_var2_token + EXPRESSION_END + DIVIDE_BLANK_STR + var1_token
+                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var1_token + expr_add_minus_var3_token + inv_add_minus_var2_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END;
 
         // explanation
         String explanation="";
@@ -533,41 +575,17 @@ public class Elementary5th {
 
         explanation_ls.add(ex_explain_start_token);
         if(cond_inx == 0){  // age1 given, find age2
-            explanation = ex_name_var1_after_year_token;
-            if(useMult == false && useAddMinus == false)
-                explanation += ex_name_var1_after_year_same_age_token;
-            explanation_ls.add(explanation);
-
-            explanation = "";
-            if(useMult == false && useAddMinus == true)
-                explanation += ex_cond1_compute_b4_divide_with_zero_var2_token;
-            if(var2_sign == PLUS_SIGN){
-                explanation += ex_cond1_compute_b4_divide_with_plus_sign_token;
-                explanation_ls.add(explanation);
-                explanation_ls.add(ex_cond1_compute_divide_with_plus_sign_token);
-                explanation_ls.add(ex_after_year_to_name_var2_with_plus_sign_token);
-            } else if(var2_sign == MINUS_SIGN){
-                explanation += ex_cond1_compute_b4_divide_with_minus_sign_token;
-                explanation_ls.add(explanation);
-                explanation_ls.add(ex_cond1_compute_divide_with_minus_sign_token);
-                explanation_ls.add(ex_after_year_to_name_var2_with_minus_sign_token);
-            } else {
-                explanation_ls.add("var2_sign value error");
+            explanation_ls.add(ex_name_var1_after_year_token);
+            if(useAddMinus) {   //
+                explanation_ls.add(ex_cond1_compute_b4_divide_token);
             }
+            if(useMult) {
+                explanation_ls.add(ex_cond1_compute_divide_token);
+            }
+            explanation_ls.add(ex_after_year_to_name_var2_token);
         } else{ // age2 given, find age1
-            explanation = ex_name_var2_after_year_token;
-            if(useMult == false && useAddMinus == false)
-                explanation += ex_name_var2_after_year_same_age_token;
-            explanation_ls.add(explanation);
-
-            if(var2_sign == PLUS_SIGN){
-                explanation_ls.add(ex_cond2_compute_with_plus_sign_token);
-            } else if(var2_sign == MINUS_SIGN){
-                explanation_ls.add(ex_cond2_compute_with_minus_sign_token);
-            } else{
-                explanation_ls.add("var2_sign value error");
-            }
-
+            explanation_ls.add(ex_name_var2_after_year_token);
+            explanation_ls.add(ex_cond2_compute_token);
             explanation_ls.add(ex_after_year_to_name_var1_token);
         }
 
@@ -699,41 +717,6 @@ public class Elementary5th {
     /////////////////////////////////////////////////////////////////////////////////////////
     // 랜덤 숫자 뽑기
 
-    // var_min_value_ls, var_max_value_ls 설정
-    // age1 + year1 = (age2 + year2) * var1 - var2
-    // age2 + year3 = (age3 + year3) * var3 + var4
-    private void setVarMinMaxLs(int prob_sentence_num, int num_var_per_sentence){
-        var_min_value_ls = new int[prob_sentence_num * num_var_per_sentence];
-        var_max_value_ls = new int[prob_sentence_num * num_var_per_sentence];
-        for(int i = 0; i < prob_sentence_num; i++){
-            int var1_index = i * num_var_per_sentence;
-            if(useMult_ls[i]) {    // var1
-                var_min_value_ls[var1_index] = 2;
-                var_max_value_ls[var1_index] = 5;
-            } else{ // 0~100 =  0~100 * 2 - 100 // 99 *
-                var_min_value_ls[var1_index] = 1;
-                var_max_value_ls[var1_index] = 1;
-            }
-            if(useAddMinus_ls[i]){ // var2
-                var_min_value_ls[var1_index+1] = 1;
-                var_max_value_ls[var1_index+1] = 20;
-            } else{
-                var_min_value_ls[var1_index+1] = 0;
-                var_max_value_ls[var1_index+1] = 0;
-            }
-            if(useYear_ls[i]){
-                var_min_value_ls[var1_index+2] = 1;
-                var_max_value_ls[var1_index+2] = 100;
-                var_min_value_ls[var1_index+3] = 1;
-                var_max_value_ls[var1_index+3] = 100;
-            } else{
-                var_min_value_ls[var1_index+2] = 0;
-                var_max_value_ls[var1_index+2] = 0;
-                var_min_value_ls[var1_index+3] = 0;
-                var_max_value_ls[var1_index+3] = 0;
-            }
-        }
-    }
 
     // random int 값 뽑기
     public int getRandomIntValue(int min_value, int max_value){
