@@ -61,6 +61,7 @@ class Elementary5thTest {
 
         boolean[] tf_set = new boolean[] {true, false};
         int case_id = 0;
+        // cond_inx
         for(int cond_inx: new int[] {0, 1})
             for(boolean useYear: tf_set)
                 for(boolean useMult: tf_set)
