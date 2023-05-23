@@ -62,49 +62,36 @@ public class Elementary5th {
 
 
     // string tokens
-    String blank_token = " ";
-    String ui_token = "의";
-    String gwa_token = "과";
-    String wa_token = "와";
-    String neun_token = "는";
-    String eun_token = "은";
-    String eul_token = "을";
-    String reul_token = "를";
-    String eseo_token = "에서";
+    static final String blank_token = " ";
+    static final String ui_token = "의";
+    static final String gwa_token = "과";
+    static final String wa_token = "와";
+    static final String neun_token = "는";
+    static final String eun_token = "은";
+    static final String eul_token = "을";
+    static final String reul_token = "를";
+    static final String eseo_token = "에서";
 
-    String bae_token = "배 한 것";
-    String than_token = "보다";
-    String same_token = "같습니다.";
-    String more_amount_token = "많습니다.";
-    String less_amount_token = "적습니다.";
-    String sum_token = "합한";
-    String difference_token = "뺀";
-    String value_token = "값";
+    static final String bae_token = "배 한 것";
+    static final String than_token = "보다";
+    static final String same_token = "같습니다.";
+    static final String more_amount_token = "많습니다.";
+    static final String less_amount_token = "적습니다.";
+    static final String sum_token = "합한";
+    static final String difference_token = "뺀";
+    static final String value_token = "값";
 
-    String age_category_token = "나이";
-    String age_unit_token = "살";
-    String year_unit_token = "년";
-    String time_after_token = "후";
-    String time_before_token = "전";
+    static final String age_category_token = "나이";
+    static final String age_unit_token = "살";
+    static final String year_unit_token = "년";
+    static final String time_after_token = "후";
+    static final String time_before_token = "전";
     //String time_past_token = "년 후";
 
     private static final int SENTENCE_CATEGORY_NUM = 2;  // 상황 문장 유형 갯수
 
-    private String content_template = "";
-    private String explanation_template = "";
-    private String answer_template = "";
-    private int[] sentence_category_id_ls;
-    private int[] var_sign_ls;  // input
-    private int[] var_min_value_ls; // input
-    private int[] var_max_value_ls; // input
-    private int[] name_var_min_value_ls;    // input
-    private int[] name_var_max_value_ls;    // input
-    private String[] name_ls;
-    private int[] name_var_ls;   // 결과
-    private int[] var_ls;   // 결과
-    boolean[] useYear_ls;
-    boolean[] useMult_ls;
-    boolean[] useAddMinus_ls;
+    private VarElementary5th varElementary5th = new VarElementary5th();
+
 
     // 나이 구하기 문제 알고리즘
     public void ageProblem(int level){
@@ -116,18 +103,18 @@ public class Elementary5th {
 
         int name_var_num = prob_sentence_num + 1;
         int var_num = prob_sentence_num * var_num_per_sentence;
-        sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
+        varElementary5th.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
         for(int i = 0; i < prob_sentence_num; i++){
-            sentence_category_id_ls[i] = random.nextInt(SENTENCE_CATEGORY_NUM);
+            varElementary5th.sentence_category_id_ls[i] = random.nextInt(SENTENCE_CATEGORY_NUM);
         }
         int answer_inx = random.nextInt(name_var_num);  // 구하는 나이의 인덱스
         int condition_inx = (random.nextInt(name_var_num) + answer_inx + 1) % name_var_num;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
 
         setUseBooleans(level, var_num_per_sentence);
 
-        var_sign_ls = new int[var_num];
+        varElementary5th.var_sign_ls = new int[var_num];
         for(int i = 0; i < var_num; i++){
-            var_sign_ls[i] = random.nextInt(2);
+            varElementary5th.var_sign_ls[i] = random.nextInt(2);
         }
 
         // ageProblemTemplate() 실행 결과 class 변수 setting 됨
@@ -148,8 +135,8 @@ public class Elementary5th {
         getRandomAgeValue(name_var_num, var_num_per_sentence);
 
         // template -> problem
-        String[] real_prob = templateToProblem(name_ls, name_var_ls, var_ls,
-                content_template, explanation_template, answer_template);
+        String[] real_prob = templateToProblem(varElementary5th.name_ls, varElementary5th.name_var_ls, varElementary5th.var_ls,
+                varElementary5th.content_template, varElementary5th.explanation_template, varElementary5th.answer_template);
 
         System.out.println("\n\n-----------------------------------------------------");
         System.out.println(real_prob[0]);   // real_content
@@ -184,14 +171,16 @@ public class Elementary5th {
         if(prob_sentence_num==1)    cond_inx_for_sentence = condition_inx;
         for(int i = 0; i < condition_inx; i++){ // 0~cond_inx -> age2 given
             int var1_index = i * var_num_per_sentence;
-            sentence_ls[i] = create_age_sentence(sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
-                    useYear_ls[i], useMult_ls[i], useAddMinus_ls[i], var_sign_ls[var1_index+1], var_sign_ls[var1_index+2], var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
+            sentence_ls[i] = create_age_sentence(varElementary5th.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+                    varElementary5th.useYear_ls[i], varElementary5th.useMult_ls[i], varElementary5th.useAddMinus_ls[i],
+                    varElementary5th.var_sign_ls[var1_index+1], varElementary5th.var_sign_ls[var1_index+2], varElementary5th.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
         cond_inx_for_sentence = 0;  // age1, age2 중 age1가 given
         for(int i = condition_inx; i < prob_sentence_num; i++){ // cond_inx+1~ -> age1 given
             int var1_index = i * var_num_per_sentence;
-            sentence_ls[i] = create_age_sentence(sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
-                    useYear_ls[i], useMult_ls[i], useAddMinus_ls[i], var_sign_ls[var1_index+1], var_sign_ls[var1_index+2], var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
+            sentence_ls[i] = create_age_sentence(varElementary5th.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+                    varElementary5th.useYear_ls[i], varElementary5th.useMult_ls[i], varElementary5th.useAddMinus_ls[i],
+                    varElementary5th.var_sign_ls[var1_index+1], varElementary5th.var_sign_ls[var1_index+2], varElementary5th.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,11 +208,9 @@ public class Elementary5th {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         // 결과 : {문제, explanation, answer, prob_sentence_category_list, var_sign_ls}
-        this.content_template = content;
-        this.explanation_template = explanation;
-        this.answer_template = answer;
-        this.sentence_category_id_ls = sentence_category_id_ls;
-        this.var_sign_ls = var_sign_ls;
+        varElementary5th.content_template = content;
+        varElementary5th.explanation_template = explanation;
+        varElementary5th.answer_template = answer;
         //String[] result_ls = new String[] {content, explanation, answer, Arrays.toString(sentence_category_id_ls), Arrays.toString(var_sign_ls)};
 
         /*
@@ -254,9 +241,9 @@ public class Elementary5th {
     private void setUseBooleans(int level, int var_num_per_sentence){
         int prob_sentence_num = level;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
 
-        useYear_ls = new boolean[prob_sentence_num];
-        useMult_ls = new boolean[prob_sentence_num];
-        useAddMinus_ls = new boolean[prob_sentence_num];
+        varElementary5th.useYear_ls = new boolean[prob_sentence_num];
+        varElementary5th.useMult_ls = new boolean[prob_sentence_num];
+        varElementary5th.useAddMinus_ls = new boolean[prob_sentence_num];
 
         /*
         level -> prob_sentence_num 결정
@@ -265,64 +252,64 @@ public class Elementary5th {
         하(1) - prob_sentence_num = 1, useYear = false,            useMult = t/f,           useAddMinus = t/f
          */
         if(level == 1){ // 난이도 하
-            useYear_ls[0] = false;
-            useMult_ls[0] = random.nextBoolean();
-            useAddMinus_ls[0] = random.nextBoolean();
+            varElementary5th.useYear_ls[0] = false;
+            varElementary5th.useMult_ls[0] = random.nextBoolean();
+            varElementary5th.useAddMinus_ls[0] = random.nextBoolean();
         } else{
-            useYear_ls[0] = true;
-            useMult_ls[0] = true;
-            useAddMinus_ls[0] = true;
+            varElementary5th.useYear_ls[0] = true;
+            varElementary5th.useMult_ls[0] = true;
+            varElementary5th.useAddMinus_ls[0] = true;
             for(int i = 1; i < prob_sentence_num; i++){
-                useYear_ls[i] = random.nextBoolean();
-                useMult_ls[i] = random.nextBoolean();
-                useAddMinus_ls[i] = random.nextBoolean();
+                varElementary5th.useYear_ls[i] = random.nextBoolean();
+                varElementary5th.useMult_ls[i] = random.nextBoolean();
+                varElementary5th.useAddMinus_ls[i] = random.nextBoolean();
             }
         }
     }
 
     // var_min_value_ls, var_max_value_ls 설정
     private void setVarMinMaxLs(int prob_sentence_num, int num_var_per_sentence){
-        var_min_value_ls = new int[prob_sentence_num * num_var_per_sentence];
-        var_max_value_ls = new int[prob_sentence_num * num_var_per_sentence];
+        varElementary5th.var_min_value_ls = new int[prob_sentence_num * num_var_per_sentence];
+        varElementary5th.var_max_value_ls = new int[prob_sentence_num * num_var_per_sentence];
         for(int i = 0; i < prob_sentence_num; i++){
             int var1_index = i * num_var_per_sentence;
-            if(useMult_ls[i]) {    // var1
-                var_min_value_ls[var1_index] = 2;
-                var_max_value_ls[var1_index] = 5;
+            if(varElementary5th.useMult_ls[i]) {    // var1
+                varElementary5th.var_min_value_ls[var1_index] = 2;
+                varElementary5th.var_max_value_ls[var1_index] = 5;
             } else{ // 0~100 =  0~100 * 2 - 100 // 99 *
-                var_min_value_ls[var1_index] = 1;
-                var_max_value_ls[var1_index] = 1;
+                varElementary5th.var_min_value_ls[var1_index] = 1;
+                varElementary5th.var_max_value_ls[var1_index] = 1;
             }
-            if(useAddMinus_ls[i]){ // var2
-                var_min_value_ls[var1_index+1] = 1;
-                var_max_value_ls[var1_index+1] = 20;
+            if(varElementary5th.useAddMinus_ls[i]){ // var2
+                varElementary5th.var_min_value_ls[var1_index+1] = 1;
+                varElementary5th.var_max_value_ls[var1_index+1] = 20;
             } else{
-                var_min_value_ls[var1_index+1] = 0;
-                var_max_value_ls[var1_index+1] = 0;
+                varElementary5th.var_min_value_ls[var1_index+1] = 0;
+                varElementary5th.var_max_value_ls[var1_index+1] = 0;
             }
-            if(useYear_ls[i]){
-                var_min_value_ls[var1_index+2] = 1;
-                var_max_value_ls[var1_index+2] = 100;
-                var_min_value_ls[var1_index+3] = 1;
-                var_max_value_ls[var1_index+3] = 100;
+            if(varElementary5th.useYear_ls[i]){
+                varElementary5th.var_min_value_ls[var1_index+2] = 1;
+                varElementary5th.var_max_value_ls[var1_index+2] = 100;
+                varElementary5th.var_min_value_ls[var1_index+3] = 1;
+                varElementary5th.var_max_value_ls[var1_index+3] = 100;
             } else{
-                var_min_value_ls[var1_index+2] = 0;
-                var_max_value_ls[var1_index+2] = 0;
-                var_min_value_ls[var1_index+3] = 0;
-                var_max_value_ls[var1_index+3] = 0;
+                varElementary5th.var_min_value_ls[var1_index+2] = 0;
+                varElementary5th.var_max_value_ls[var1_index+2] = 0;
+                varElementary5th.var_min_value_ls[var1_index+3] = 0;
+                varElementary5th.var_max_value_ls[var1_index+3] = 0;
             }
         }
     }
 
     // name_var 설정
     private void setNameAndNameVar(int name_var_num){
-        name_var_min_value_ls = new int[name_var_num];
-        name_var_max_value_ls = new int[name_var_num];
-        name_ls = new String[name_var_num];
+        varElementary5th.name_var_min_value_ls = new int[name_var_num];
+        varElementary5th.name_var_max_value_ls = new int[name_var_num];
+        varElementary5th.name_ls = new String[name_var_num];
         for(int i = 0; i < name_var_num; i++){      // DB 연결 -> DB에서 값 받아와야
-            name_var_min_value_ls[i] = 10;
-            name_var_max_value_ls[i] = 100;
-            name_ls[i] = i+"사람"+i;
+            varElementary5th.name_var_min_value_ls[i] = 10;
+            varElementary5th.name_var_max_value_ls[i] = 100;
+            varElementary5th.name_ls[i] = i+"사람"+i;
         }
     }
 
@@ -734,43 +721,43 @@ public class Elementary5th {
 
     // 나이 문제 숫자 뽑기
     private void getRandomAgeValue(int age_ls_length, int num_var_per_sentence){
-        name_var_ls = new int[age_ls_length];
-        var_ls = new int[age_ls_length * num_var_per_sentence];
+        varElementary5th.name_var_ls = new int[age_ls_length];
+        varElementary5th.var_ls = new int[age_ls_length * num_var_per_sentence];
 
-        int age0 = getRandomIntValue(name_var_min_value_ls[0], name_var_max_value_ls[0]);
+        int age0 = getRandomIntValue(varElementary5th.name_var_min_value_ls[0], varElementary5th.name_var_max_value_ls[0]);
         int given_age = age0;
-        int num_sentence = sentence_category_id_ls.length;
+        int num_sentence = varElementary5th.sentence_category_id_ls.length;
         int start_index = num_sentence - 1;   // 마지막 상황문장부터 숫자 뽑음
         for(int i = start_index; i >= 0; i--){
             int age1_index = i;
-            int age2_index = (i + 1) % name_var_ls.length;
+            int age2_index = (i + 1) % varElementary5th.name_var_ls.length;
             int var1_index = age1_index * num_var_per_sentence;
             int var2_index = var1_index + 1;
             int year1_index = var1_index + 2;
             int year2_index = var1_index + 3;
 
             try {
-                if (sentence_category_id_ls[i] == AGE_CATEGORY_ID_YX) {
+                if (varElementary5th.sentence_category_id_ls[i] == AGE_CATEGORY_ID_YX) {
                     int[] ret_var = getRandomYXValue(given_age,
-                            var_sign_ls[var2_index], var_sign_ls[year1_index], var_sign_ls[year2_index],
-                            name_var_min_value_ls[age1_index], name_var_max_value_ls[age1_index],
-                            var_min_value_ls[var1_index], var_max_value_ls[var1_index],
-                            var_min_value_ls[var2_index], var_max_value_ls[var2_index],
-                            var_min_value_ls[year1_index], var_max_value_ls[year1_index],
-                            var_min_value_ls[year2_index], var_max_value_ls[year2_index],
-                            useYear_ls[i], useAddMinus_ls[i], useMult_ls[i]);
-                    name_var_ls[age1_index] = ret_var[0];
-                    name_var_ls[age2_index] = ret_var[1];
-                    var_ls[var1_index] = ret_var[2];
-                    var_ls[var2_index] = ret_var[3];
-                    var_ls[year1_index] = ret_var[4];
-                    var_ls[year2_index] = ret_var[5];
-                } else if (sentence_category_id_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE) {
-                    int[] ret_var = getRandomX1X2Value(given_age, var_sign_ls[i],
-                            name_var_min_value_ls[age1_index], name_var_max_value_ls[age1_index]);
-                    name_var_ls[age1_index] = ret_var[0];
-                    name_var_ls[age2_index] = ret_var[1];
-                    var_ls[var1_index] = ret_var[2];
+                            varElementary5th.var_sign_ls[var2_index], varElementary5th.var_sign_ls[year1_index], varElementary5th.var_sign_ls[year2_index],
+                            varElementary5th.name_var_min_value_ls[age1_index], varElementary5th.name_var_max_value_ls[age1_index],
+                            varElementary5th.var_min_value_ls[var1_index], varElementary5th.var_max_value_ls[var1_index],
+                            varElementary5th.var_min_value_ls[var2_index], varElementary5th.var_max_value_ls[var2_index],
+                            varElementary5th.var_min_value_ls[year1_index], varElementary5th.var_max_value_ls[year1_index],
+                            varElementary5th.var_min_value_ls[year2_index], varElementary5th.var_max_value_ls[year2_index],
+                            varElementary5th.useYear_ls[i], varElementary5th.useAddMinus_ls[i], varElementary5th.useMult_ls[i]);
+                    varElementary5th.name_var_ls[age1_index] = ret_var[0];
+                    varElementary5th.name_var_ls[age2_index] = ret_var[1];
+                    varElementary5th.var_ls[var1_index] = ret_var[2];
+                    varElementary5th.var_ls[var2_index] = ret_var[3];
+                    varElementary5th.var_ls[year1_index] = ret_var[4];
+                    varElementary5th.var_ls[year2_index] = ret_var[5];
+                } else if (varElementary5th.sentence_category_id_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE) {
+                    int[] ret_var = getRandomX1X2Value(given_age, varElementary5th.var_sign_ls[i],
+                            varElementary5th.name_var_min_value_ls[age1_index], varElementary5th.name_var_max_value_ls[age1_index]);
+                    varElementary5th.name_var_ls[age1_index] = ret_var[0];
+                    varElementary5th.name_var_ls[age2_index] = ret_var[1];
+                    varElementary5th.var_ls[var1_index] = ret_var[2];
 
                 } else {
                     System.out.println("ERROR:: invalid category id");
@@ -874,7 +861,7 @@ public class Elementary5th {
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////
-    // 그 외 함수
+    // template -> problem
 
     // return new String[] {real_content, real_explanation, real_answer};
     public String[] templateToProblem(String[] name_ls, int[] name_var_ls, int[] var_ls,
@@ -959,21 +946,17 @@ public class Elementary5th {
 
     public void printTemplate(){
         System.out.println("CONTENT ------------------------------------");
-        System.out.println(content_template);
+        System.out.println(varElementary5th.content_template);
         System.out.println("EXPLANATION ------------------------------------");
-        System.out.println(explanation_template);
+        System.out.println(varElementary5th.explanation_template);
         System.out.println("ANSWER ------------------------------------");
-        System.out.println(answer_template);
+        System.out.println(varElementary5th.answer_template);
         System.out.println("SENTENCE_CATEGORY_ID ------------------------------");
-        System.out.println(Arrays.toString(sentence_category_id_ls));
+        System.out.println(Arrays.toString(varElementary5th.sentence_category_id_ls));
         System.out.println("VAR_SIGN ------------------------------------");
-        System.out.println(Arrays.toString(var_sign_ls));
+        System.out.println(Arrays.toString(varElementary5th.var_sign_ls));
         System.out.println("\n\n");
     }
-
-
-
-
 
 
 }
