@@ -10,23 +10,12 @@ import java.util.Random;
 import java.util.concurrent.*;
 
 /*
-템플릿 생성 완료
-
 남은 일
-0. 난이도 기준 마련
-    - 템플릿 난이도
-        - 상황 문장 갯수
-        - 상황 문장 난이도
-            useYear
-            useMult
-            useAddMinus
-        - 상황 문장 셔플 여부
-    - 숫자 난이도
-        - 자리수 : 한자리, 두자리, 세자리
-1. 랜덤 숫자 뽑기 - 무한루프 문제
-2. 숫자에 맞는 단어 뽑기
-3. 템플릿 -> 실제 문장으로 변경
+    saveAgeProblemTemplates() 코드 작성
+    ageProblem() DB에서 값 가져오는 코드 작성
+    setNameAndNameVarRange() DB에서 name, name_var범위 값 가져오게 수정
  */
+
 
 public class Elementary5th {
     Random random;
@@ -34,8 +23,12 @@ public class Elementary5th {
     static final int MINUS_SIGN = 1;
 
     // 상황 문장 id
+    private static final int SENTENCE_CATEGORY_NUM = 2;  // 상황 문장 유형 갯수
     static final int AGE_CATEGORY_ID_YX = 0;
     static final int AGE_CATEGORY_ID_SUM_DIFFERENCE = 1;
+
+    // 상황문장 1개당 상수 변수의 개수
+    // 참고 - 문제에서 등장하는 변수 = 구하는값 관련 변수(나이) + 상수 변수(year, 곱해지는 수(var1), 더하거나 빼는 수(var2))
     static final int AGE_PROB_VAR_NUM_PER_SENTENCE = 4;     // var1, var2, year1, year2
 
 
@@ -90,7 +83,6 @@ public class Elementary5th {
     static final String time_before_token = "전";
     //String time_past_token = "년 후";
 
-    private static final int SENTENCE_CATEGORY_NUM = 2;  // 상황 문장 유형 갯수
 
     private VarElementary5th varElementary5th = new VarElementary5th();
 
@@ -114,14 +106,20 @@ public class Elementary5th {
 
         int name_var_num = prob_sentence_num + 1;
         int var_num = prob_sentence_num * AGE_PROB_VAR_NUM_PER_SENTENCE;
+
+
         varElementary5th.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
         // DB에서 sentence_category_id_ls 가져오기!!!!
+        varElementary5th.var_sign_ls = new int[var_num];    // DB에서 가져오기!!!
+        varElementary5th.useYear_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        varElementary5th.useMult_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        varElementary5th.useAddMinus_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
 
-        // DB에서 템플릿 가져오기
-        // 난이도로 템플릿 고르고 그 중에서 랜덤 뽑기!!!
+        // DB에서 템플릿 가져오기 - 난이도로 템플릿 고르고 그 중에서 랜덤 뽑기!!!
         varElementary5th.content_template = "내용";
         varElementary5th.explanation_template = "설명";
         varElementary5th.answer_template = "답";
+
 
         // name 뽑기, name_var 범위 설정  -> 문제 숫자 값 랜덤 뽑기 시 이용됨
         // DB에서 name, name_var범위 값 가져오게 수정해야!!!
@@ -132,7 +130,8 @@ public class Elementary5th {
 
         // 상수 var, name_var 랜덤 뽑기 -> 숫자 변경 시 여기부터 다시 실행하면 됨!!!
         // ageProblem의 name_var_num = 4, var_num_per_sentence = level
-        getRandomAgeValue(name_var_num, AGE_PROB_VAR_NUM_PER_SENTENCE);  // name_var_ls, var_ls
+        // 인자 외에 내부에서 이용하는 값 : name_var_min_value_ls, name_value_max_value_ls, sentence_category_id_ls, var_sign_ls, var_min_value_ls, var_max_value_ls, useYear_ls, useMult_ls, useAddMinus_ls
+        getRandomAgeValue(name_var_num, AGE_PROB_VAR_NUM_PER_SENTENCE);  // name_var_ls, var_ls 설정
 
         // template -> problem
         String[] real_prob = templateToProblem(varElementary5th.name_ls, varElementary5th.name_var_ls, varElementary5th.var_ls,
@@ -151,7 +150,8 @@ public class Elementary5th {
          */
     }
 
-    // 구버전 - 디버깅용으로 실제 문제 하나 만들어보는 함수였음~~~
+    /*
+    // 구버전(지금은 아무데서도 사용 안 함) - 디버깅용으로 실제 문제 하나 만들어보는 함수였음~~~
     public void realAgeProblem(int level){
         int var_num_per_sentence = 4;   // var1, var2, year1, year2
         int prob_sentence_num = level;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
@@ -205,39 +205,93 @@ public class Elementary5th {
         // return new String[] {real_content, real_explanation, real_answer};
 
     }
+*/
 
-
+    // 나이문제 템플릿의 모든 조합을 DB에 저장
     public void saveAgeProblemTemplates(){
+        /*
+        prob_sentence_num(상황문장 갯수)
+        answer_inx
+        condition_inx
+        sentence_category_id
+        useYear
+        useMult
+        useAddMinus
+        var1_sign
+        var2_sign
+        var3_sign
+        var4_sign
+        */
 
-        boolean[] tf_set = new boolean[] {true, false};
-        int case_id = 0;
-        // cond_inx
+        int template_id = 0;    // template_id = 0, 1, 2, ...
+
         for(int prob_sentence_num: new int[] {0, 1, 2}) {
             int name_var_num = prob_sentence_num + 1;
             int var_num = prob_sentence_num * AGE_PROB_VAR_NUM_PER_SENTENCE;
-            int answer_inx = random.nextInt(name_var_num);  // 구하는 나이의 인덱스
-            int condition_inx = (random.nextInt(name_var_num) + answer_inx + 1) % name_var_num;   // 조건으로 값이 주어진 나이의 인덱스, answer_inx와 다른 인덱스가 되도록 설정
-            /*
-            create_age_sentence(varElementary5th.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
-                    varElementary5th.useYear_ls[i], varElementary5th.useMult_ls[i], varElementary5th.useAddMinus_ls[i],
-                    varElementary5th.var_sign_ls[var1_index+1], varElementary5th.var_sign_ls[var1_index+2], varElementary5th.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
-             */
-            // useYear_ls, useMult_ls, useAddMinus_ls, var_sign 가능한 모든 조합으로 template 생성 후 DB 저장
-            boolean[] useYear_ls = new boolean[prob_sentence_num];
-            boolean[] useMult_ls = new boolean[prob_sentence_num];
-            boolean[] useAddMinus_ls = new boolean[prob_sentence_num];
-            for (boolean useYear : useYear_ls)
-                for (boolean useMult : useMult_ls)
-                    for (boolean useAddMinus : useAddMinus_ls)
-                        for (int year1_sign : new int[]{0, 1})
-                            for (int year2_sign : new int[]{0, 1})
-                                for (int var_sign : new int[]{0, 1}) {
-                                    ageProblemTemplate(prob_sentence_num, AGE_PROB_VAR_NUM_PER_SENTENCE, condition_inx, answer_inx);
-                                    //DB에 저장
+            int[] inx_ls = new int[prob_sentence_num];
+            for(int i = 0; i < prob_sentence_num; i++){
+                inx_ls[i] = i;
+            }
+
+            // 코드 작성 전!!!
+            int[][] sentence_category_id_ls_ls = new int[SENTENCE_CATEGORY_NUM^prob_sentence_num][prob_sentence_num];   // 모든 순열 리스트
+            boolean[][] useBoolean_ls_ls = new boolean[2^prob_sentence_num][prob_sentence_num]; // 모든 순열 리스트
+            int[][] var_sign_ls_ls = new int[2^var_num][var_num];
+            for(int i = 0; i < (2^prob_sentence_num); i++){
+                useBoolean_ls_ls[i] = new boolean[prob_sentence_num];
+                // t / f
+                // t t / t f / f t / f f
+                // t t t / t t f / t f t / t f f / ...
+            }
+            // 코드 작성 전!!!
+
+            for(int[] sentence_category_id_ls: sentence_category_id_ls_ls){
+                varElementary5th.sentence_category_id_ls = sentence_category_id_ls;
+                for(int answer_inx: inx_ls) {
+                    for (int condition_inx = (answer_inx + 1) % name_var_num; condition_inx != answer_inx; condition_inx++) {
+                        for (boolean[] useYear_ls : useBoolean_ls_ls) {
+                            varElementary5th.useYear_ls = useYear_ls;
+                            for (boolean[] useMult_ls : useBoolean_ls_ls) { // 식유형 1일 경우에만 변수 됨
+                                varElementary5th.useMult_ls = useMult_ls;
+                                for (boolean[] useAddMinus_ls : useBoolean_ls_ls) { // 식유형 1일 경우에만 변수 됨
+                                    varElementary5th.useAddMinus_ls = useAddMinus_ls;
+                                    for(int[] var_sign_ls: var_sign_ls_ls){ // 식유형 1일 경우에만 변수 됨, useBoolean 값이 true일때만 변수됨
+                                        varElementary5th.var_sign_ls = var_sign_ls;
+                                        ageProblemTemplate(prob_sentence_num, AGE_PROB_VAR_NUM_PER_SENTENCE, condition_inx, answer_inx);
+
+                                        //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
+                                        //Long id = template_id
+                                        //Category category = ???
+                                            //Long category_id
+                                            //SmallUnit smallUnit
+                                            //CategoryTitle title
+                                            //List<TestPaper> testPapers
+                                            //List<ProblemTemplate> problemTemplates
+                                        //String content = varElementary5th.content_template;
+                                        //String level = prob_sentence_num -> '상', '중', '하'
+                                        //String explanation = varElementary5th.explanation_template;
+                                        //String answer = varElementary5th.answer_template;
+                                        //String sentenceCategoryList = varElementary5th.sentence_category_id_ls;
+                                        //List<Problem> problems = ????
+
+                                        // 다음은 DB에 column 생성한 후 저장해야
+                                        //varElementary5th.var_sign_ls;
+                                        //varElementary5th.useYear_ls;
+                                        //varElementary5th.useMult_ls;
+                                        //varElementary5th.useAddMinus_ls;
+
+                                        template_id++;
+                                    }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
     }
+
     // template 생성 -> varElementary5th.content, explanation, answer에 결과 저장됨
     public void ageProblemTemplate(int prob_sentence_num, int var_num_per_sentence,
                            int answer_inx, int condition_inx) {
@@ -811,6 +865,8 @@ public class Elementary5th {
 
 
     // 나이 문제 숫자 뽑기
+    // input : name_var_min_value_ls, name_value_max_value_ls, sentence_category_id_ls, var_sign_ls, var_min_value_ls, var_max_value_ls, useYear_ls, useMult_ls, useAddMinus_ls
+    // output : name_var_ls, var_ls
     private void getRandomAgeValue(int age_ls_length, int num_var_per_sentence){
         varElementary5th.name_var_ls = new int[age_ls_length];
         varElementary5th.var_ls = new int[age_ls_length * num_var_per_sentence];
