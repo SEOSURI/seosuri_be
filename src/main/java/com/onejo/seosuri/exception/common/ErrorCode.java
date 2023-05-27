@@ -14,8 +14,8 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(false, 2001, "잘못된 호출입니다."),
     HANDLE_ACCESS_DENIED(false, 2002, "접근할 수 없습니다."),
     INTERNAL_SERVER_ERROR(false, 2003, "문제가 발생했습니다."),
-    EMPTY_JWT(false, 2004, "JWT를 입력해주세요."),
-    INVALID_JWT(false, 2005, "유효하지 않은 JWT입니다."),
+    FAILED_TO_SEND_EMAIL(false, 2004, "이메일 발송에 실패했습니다"),
+    EMPTY_DATA(false, 2005, "비어 있는 값을 주셨습니다."),
 
     /*유저 3000*/
     ACCOUNT_NOT_FOUND(false, 3001, "사용자를 찾을 수 없습니다."),
@@ -31,7 +31,6 @@ public enum ErrorCode {
     NO_EXIST_CATEGORY_TITLE(false, 4001, "없는 카테고리 입니다."),
     NO_EXIST_PROBLEM(false, 4002, "문제가 존재하지 않습니다."),
     NO_EXIST_TEST_PAPER(false, 4003, "시험지가 존재하지 않습니다.")
-
 
     ;
 
