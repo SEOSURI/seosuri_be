@@ -36,6 +36,10 @@ dependencies {
 	implementation platform('com.google.cloud:libraries-bom:26.6.0')
 	implementation 'com.google.cloud:google-cloud-vision'
 
+	// email
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+
 }
 
 tasks.named('test') {

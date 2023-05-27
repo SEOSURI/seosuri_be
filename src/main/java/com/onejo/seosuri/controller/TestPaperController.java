@@ -3,7 +3,6 @@ package com.onejo.seosuri.controller;
 import com.onejo.seosuri.controller.dto.testpaper.*;
 import com.onejo.seosuri.service.TestPaperService;
 import com.onejo.seosuri.exception.common.BusinessException;
-import com.onejo.seosuri.exception.common.ErrorCode;
 import com.onejo.seosuri.response.BaseResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +28,9 @@ public class TestPaperController {
 
     @Operation(summary = "시험지 생성", description = "시험문제 -> html -> pdf 후 DB에 저장")
     @PostMapping("/create")
-    public BaseResponse<String> createTestPaper(@RequestBody CreateTestPaperReq createTestPaperReq){
+    public BaseResponse<String> createTestPaper(@RequestBody EmailDto emailDto){
+        // 10문제 확인 리스트 화면에서 다음 단계 넘어 갈때 작동하는 버튼
+        // 시험지 DB에 저장된 시험지 id 번호 반환함
         try{
             return new BaseResponse<>("result");
         } catch(BusinessException e) {
@@ -38,10 +39,11 @@ public class TestPaperController {
     }
 
     @Operation(summary = "시험지 이메일 발송", description = "입력한 이메일로 시험지 전송")
-    @GetMapping("/email/{email}")
-    public BaseResponse<String> sendTestPaperEmail(@Parameter(description = "이메일")@PathVariable String email){
+    @GetMapping("/email")
+    public BaseResponse<String> sendTestPaperEmail(@RequestBody EmailDto emailDto){
         try{
-            return new BaseResponse<>("result");
+            testPaperService.sendEmail(emailDto.getEmail(), emailDto.getTestPaperId());
+            return new BaseResponse<>("Email sent successfully");
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }
