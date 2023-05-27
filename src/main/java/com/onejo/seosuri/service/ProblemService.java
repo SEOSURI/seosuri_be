@@ -45,7 +45,10 @@ public class ProblemService {
 //        testPaper.setCategory(optional.get());
 //        testPaperId = testPaper.getId();
 
-        //문제 만들기
+        // 시험지 난이도에 따라서 문제 난이도 개수 조절
+        // 상(6 3 1) 중(4 4 2) 하(1 4 5)
+
+        //
 
 
 
