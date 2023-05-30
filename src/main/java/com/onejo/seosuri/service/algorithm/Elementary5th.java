@@ -271,14 +271,6 @@ public class Elementary5th {
         int_permutation(0, var_sign_ls_ls, new int[] {PLUS_SIGN, MINUS_SIGN}, var_num);
     }
 
-    // 불필요한 var_sign_ls 삭제
-    public void complete_var_sign_ls_ls(){
-        // 식유형 1
-
-
-        // 식 유형 2
-
-    }
 
     // n^r개 배열 나옴
     // n = target.length
@@ -357,8 +349,9 @@ public class Elementary5th {
                                         // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
                                         boolean generateTemplate = true;
                                         for(int i = 0; i < prob_sentence_num; i++){
-                                            if((varElementary5th.sentence_category_id_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐
-                                                && !(varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_ADDMIN_VAR_OFFSET] == PLUS_SIGN
+                                            if((varElementary5th.sentence_category_id_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
+                                                && !(varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_MULT_VAR_OFFSET] == PLUS_SIGN
+                                                    && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_ADDMIN_VAR_OFFSET] == PLUS_SIGN
                                                     && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
                                                     && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR2_OFFSET] == PLUS_SIGN))
                                             || (useYear_ls[i] == false  // year 사용하지 않는 경우, year sign에 따른 변화 무시
@@ -940,7 +933,7 @@ public class Elementary5th {
                 + EQUAL_BLANK_SYM + EXPRESSION_START + var1_token + MINUS_SYM + name_var1_token + EXPRESSION_END;
         String ex_name_var2_with_diff_token = name2_with_category_token
                 + EQUAL_BLANK_SYM + name1_with_category_token + MINUS_BLANK_STR + var1_token
-                + EQUAL_BLANK_SYM + name_var1_token + var1_token
+                + EQUAL_BLANK_SYM + name_var1_token + MINUS_BLANK_STR + var1_token
                 + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + MINUS_SYM + var1_token + EXPRESSION_END;
 
         String explanation = "";
