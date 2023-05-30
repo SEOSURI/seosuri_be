@@ -12,6 +12,8 @@ import java.util.concurrent.*;
 /*
 남은 일
     saveAgeProblemTemplates() 코드 작성
+
+    // Problem Service로 옮길 메소드에서 해야되는 일
     ageProblem() DB에서 값 가져오는 코드 작성
     setNameAndNameVarRange() DB에서 name, name_var범위 값 가져오게 수정
  */
@@ -100,12 +102,13 @@ public class Elementary5th {
         name_var_max_value_ls
          */
         int prob_sentence_num = level;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
+        int var_num_per_sentence = AGE_PROB_VAR_NUM_PER_SENTENCE;
 
         random = new Random(); //랜덤 객체 생성(디폴트 시드값 : 현재시간)
         random.setSeed(System.currentTimeMillis()); //시드값 설정을 따로 할수도 있음
 
         int name_var_num = prob_sentence_num + 1;
-        int var_num = prob_sentence_num * AGE_PROB_VAR_NUM_PER_SENTENCE;
+        int var_num = prob_sentence_num * var_num_per_sentence;
 
 
         varElementary5th.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
@@ -126,12 +129,12 @@ public class Elementary5th {
         setNameAndNameVarRange(name_var_num);          // name_ls, name_var_min_value_ls, name_var_max_value_ls 설정
 
         // 상수 var 범위 설정 -> 문제 숫자 값 랜덤 뽑기 시 이용됨
-        setVarMinMaxLs(prob_sentence_num, AGE_PROB_VAR_NUM_PER_SENTENCE);    // var_min_value_ls, var_max_value_ls 설정
+        setVarMinMaxLs(prob_sentence_num, var_num_per_sentence);    // var_min_value_ls, var_max_value_ls 설정
 
         // 상수 var, name_var 랜덤 뽑기 -> 숫자 변경 시 여기부터 다시 실행하면 됨!!!
         // ageProblem의 name_var_num = 4, var_num_per_sentence = level
         // 인자 외에 내부에서 이용하는 값 : name_var_min_value_ls, name_value_max_value_ls, sentence_category_id_ls, var_sign_ls, var_min_value_ls, var_max_value_ls, useYear_ls, useMult_ls, useAddMinus_ls
-        getRandomAgeValue(name_var_num, AGE_PROB_VAR_NUM_PER_SENTENCE);  // name_var_ls, var_ls 설정
+        getRandomAgeValue(name_var_num, var_num_per_sentence);  // name_var_ls, var_ls 설정
 
         // template -> problem
         String[] real_prob = templateToProblem(varElementary5th.name_ls, varElementary5th.name_var_ls, varElementary5th.var_ls,
@@ -206,6 +209,92 @@ public class Elementary5th {
 
     }
 */
+    // 순열 메서드(cnt는 선택 횟수)
+    public boolean[][] useBoolean_ls_ls;
+    private static final boolean[] target_boolean = new boolean[] {true, false};
+    public void set_useBoolean_ls_ls(int prob_sentence_num){
+        int row_num = (int)Math.pow(2.0f, prob_sentence_num);
+        useBoolean_ls_ls = new boolean[row_num][prob_sentence_num];
+        for(int i = 0; i < row_num; i++){
+            useBoolean_ls_ls[i] = new boolean[prob_sentence_num];
+        }
+        bool_permutation(0);
+    }
+
+    // starts with permutation(0)
+    public void bool_permutation(int cnt) {
+        int N = useBoolean_ls_ls.length;
+        int prob_sentence_num = useBoolean_ls_ls[0].length;
+        if (cnt == useBoolean_ls_ls[0].length) {
+            return;
+        }
+        // 대상 집합을 순회하며 숫자를 하나 선택한다.
+        for (int i = 0; i < target_boolean.length; i++) {
+            // ex) 8개 종류
+            // 2개로 나눠 -> 0 ~ N/2-1 : true, N/2 ~ 2N/2-1 : false
+            //      cnt = 0     -> 2^1
+            // 4개로 나눠 -> 0 ~ N/4-1 : true, N/4 ~ 2N/4-1 : false, 2N/4 ~ 3N/4-1 : true, 3N/4 ~ 4N/4-1 : false
+            //      cnt = 1     -> 2^2
+            // 8개로 나눠 -> ...
+            int offset = N/(int)Math.pow(2, cnt+1);
+            for(int j = i * offset; j < N; j += 2 * offset){
+                for(int row = j; row < j+offset; row++){
+                    useBoolean_ls_ls[row][cnt] = target_boolean[i];
+                }
+            }
+            bool_permutation(cnt + 1);
+        }
+    }
+
+    int[][] sentence_category_id_ls_ls;
+    int[][] var_sign_ls_ls;
+
+    public void setSentence_category_id_ls_ls(int prob_sentence_num){
+        int row_num = (int)Math.pow(SENTENCE_CATEGORY_NUM, prob_sentence_num);
+        sentence_category_id_ls_ls = new int[row_num][prob_sentence_num];   // 모든 순열 리스트
+        for(int i = 0; i < row_num; i++){
+            sentence_category_id_ls_ls[i] = new int[prob_sentence_num];
+        }
+        int_permutation(0, sentence_category_id_ls_ls, new int[] {AGE_CATEGORY_ID_YX, AGE_CATEGORY_ID_SUM_DIFFERENCE}, prob_sentence_num);
+    }
+
+    public void setVar_sign_ls_ls(int var_num){
+        int row_num = (int)Math.pow(2, var_num);
+        var_sign_ls_ls = new int[row_num][var_num];
+        for(int i = 0; i < row_num; i++){
+            var_sign_ls_ls[i] = new int[var_num];
+        }
+        int_permutation(0, var_sign_ls_ls, new int[] {PLUS_SIGN, MINUS_SIGN}, var_num);
+    }
+
+    // n^r개 배열 나옴
+    // n = target.length
+    public void int_permutation(int cnt, int[][] dest, int[] target, int r) {
+        // target에서 숫자 골라 중복순열 만들기
+        // cnt는 현재 탐색 깊이 (depth)
+        int n = target.length;
+        int N = (int)Math.pow(n, r);
+        if (cnt == dest[0].length) {
+            return;
+        }
+        // 대상 집합을 순회하며 숫자를 하나 선택한다.
+        for (int i = 0; i < target.length; i++) {
+            // ex) 8개 종류
+            // 2개로 나눠 -> 0 ~ N/2-1 : true, N/2 ~ 2N/2-1 : false
+            //      cnt = 0     -> 2^1
+            // 4개로 나눠 -> 0 ~ N/4-1 : true, N/4 ~ 2N/4-1 : false, 2N/4 ~ 3N/4-1 : true, 3N/4 ~ 4N/4-1 : false
+            //      cnt = 1     -> 2^2
+            // 8개로 나눠 -> ...
+            int offset = N/(int)Math.pow(n, cnt+1);
+            for(int j = i * offset; j < N; j += 2 * offset) {
+                for (int row = j; row < j + offset; row++) {
+                    dest[row][cnt] = target[i];
+                }
+            }
+        }
+        int_permutation(cnt + 1, dest, target, r);
+    }
+
 
     // 나이문제 템플릿의 모든 조합을 DB에 저장
     public void saveAgeProblemTemplates(){
@@ -224,26 +313,19 @@ public class Elementary5th {
         */
 
         int template_id = 0;    // template_id = 0, 1, 2, ...
+        int var_num_per_sentence = AGE_PROB_VAR_NUM_PER_SENTENCE;
 
         for(int prob_sentence_num: new int[] {0, 1, 2}) {
             int name_var_num = prob_sentence_num + 1;
-            int var_num = prob_sentence_num * AGE_PROB_VAR_NUM_PER_SENTENCE;
+            int var_num = prob_sentence_num * var_num_per_sentence;
             int[] inx_ls = new int[prob_sentence_num];
             for(int i = 0; i < prob_sentence_num; i++){
                 inx_ls[i] = i;
             }
 
-            // 코드 작성 전!!!
-            int[][] sentence_category_id_ls_ls = new int[SENTENCE_CATEGORY_NUM^prob_sentence_num][prob_sentence_num];   // 모든 순열 리스트
-            boolean[][] useBoolean_ls_ls = new boolean[2^prob_sentence_num][prob_sentence_num]; // 모든 순열 리스트
-            int[][] var_sign_ls_ls = new int[2^var_num][var_num];
-            for(int i = 0; i < (2^prob_sentence_num); i++){
-                useBoolean_ls_ls[i] = new boolean[prob_sentence_num];
-                // t / f
-                // t t / t f / f t / f f
-                // t t t / t t f / t f t / t f f / ...
-            }
-            // 코드 작성 전!!!
+            setSentence_category_id_ls_ls(prob_sentence_num);
+            set_useBoolean_ls_ls(prob_sentence_num);
+            setVar_sign_ls_ls(var_num);
 
             for(int[] sentence_category_id_ls: sentence_category_id_ls_ls){
                 varElementary5th.sentence_category_id_ls = sentence_category_id_ls;
@@ -257,8 +339,8 @@ public class Elementary5th {
                                     varElementary5th.useAddMinus_ls = useAddMinus_ls;
                                     for(int[] var_sign_ls: var_sign_ls_ls){ // 식유형 1일 경우에만 변수 됨, useBoolean 값이 true일때만 변수됨
                                         varElementary5th.var_sign_ls = var_sign_ls;
-                                        ageProblemTemplate(prob_sentence_num, AGE_PROB_VAR_NUM_PER_SENTENCE, condition_inx, answer_inx);
-
+                                        ageProblemTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
+                                        System.out.println(""+template_id+":: \n\t"+ varElementary5th.content_template + "\n\t" + varElementary5th.answer_template + "\n\t" +  varElementary5th.explanation_template + "\n\t");
                                         //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
                                         //Long id = template_id
                                         //Category category = ???

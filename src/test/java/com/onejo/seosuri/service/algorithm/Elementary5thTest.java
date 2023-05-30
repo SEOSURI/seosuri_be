@@ -5,6 +5,23 @@ import org.junit.jupiter.api.Test;
 class Elementary5thTest {
 
     @Test
+    void saveAgeProblemTemplate(){
+        Elementary5th elementary5th = new Elementary5th();
+        elementary5th.saveAgeProblemTemplates();
+    }
+
+    @Test
+    void permutation(){
+        int prob_sentence_num = 3;
+        int var_num_per_sentence = 4;
+        int var_num = prob_sentence_num * var_num_per_sentence;
+        Elementary5th elementary5th = new Elementary5th();
+        elementary5th.set_useBoolean_ls_ls(prob_sentence_num);
+        //elementary5th.setSentence_category_id_ls_ls(prob_sentence_num);
+        //elementary5th.setVar_sign_ls_ls(var_num);
+    }
+
+    @Test
     void ageProblem() {
         Elementary5th elementary5th = new Elementary5th();
         elementary5th.ageProblem(3);
