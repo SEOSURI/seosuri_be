@@ -2,6 +2,8 @@ package com.onejo.seosuri.service.algorithm;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 class Elementary5thTest {
 
     @Test
@@ -16,9 +18,12 @@ class Elementary5thTest {
         int var_num_per_sentence = 4;
         int var_num = prob_sentence_num * var_num_per_sentence;
         Elementary5th elementary5th = new Elementary5th();
-        elementary5th.set_useBoolean_ls_ls(prob_sentence_num);
-        //elementary5th.setSentence_category_id_ls_ls(prob_sentence_num);
+        //elementary5th.set_useBoolean_ls_ls(prob_sentence_num);
+        elementary5th.setSentence_category_id_ls_ls(prob_sentence_num);
         //elementary5th.setVar_sign_ls_ls(var_num);
+        for(int i = 0; i < elementary5th.sentence_category_id_ls_ls.length; i++){
+            System.out.println(elementary5th.sentence_category_id_ls_ls[i].toString());
+        }
     }
 
     @Test

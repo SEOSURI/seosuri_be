@@ -33,6 +33,10 @@ public class Elementary5th {
     // 참고 - 문제에서 등장하는 변수 = 구하는값 관련 변수(나이) + 상수 변수(year, 곱해지는 수(var1), 더하거나 빼는 수(var2))
     static final int AGE_PROB_VAR_NUM_PER_SENTENCE = 4;     // var1, var2, year1, year2
 
+    static final int AGE_PROB_MULT_VAR_OFFSET = 0;
+    static final int AGE_PROB_ADDMIN_VAR_OFFSET = 1;
+    static final int AGE_PROB_YEAR_VAR1_OFFSET = 2;
+    static final int AGE_PROB_YEAR_VAR2_OFFSET = 3;
 
     // 변수명 string 규칙
     static final String NAME_VAR_STR = "name_var";    // age 변수 : {age0}, {age1}, {age2}, ...
@@ -246,35 +250,44 @@ public class Elementary5th {
         }
     }
 
-    int[][] sentence_category_id_ls_ls;
-    int[][] var_sign_ls_ls;
+    ArrayList<Integer>[] sentence_category_id_ls_ls;
+    ArrayList<Integer>[] var_sign_ls_ls;
 
     public void setSentence_category_id_ls_ls(int prob_sentence_num){
         int row_num = (int)Math.pow(SENTENCE_CATEGORY_NUM, prob_sentence_num);
-        sentence_category_id_ls_ls = new int[row_num][prob_sentence_num];   // 모든 순열 리스트
+        sentence_category_id_ls_ls = new ArrayList[row_num];   // 모든 순열 리스트
         for(int i = 0; i < row_num; i++){
-            sentence_category_id_ls_ls[i] = new int[prob_sentence_num];
+            sentence_category_id_ls_ls[i] = new ArrayList<Integer>();
         }
         int_permutation(0, sentence_category_id_ls_ls, new int[] {AGE_CATEGORY_ID_YX, AGE_CATEGORY_ID_SUM_DIFFERENCE}, prob_sentence_num);
     }
 
     public void setVar_sign_ls_ls(int var_num){
         int row_num = (int)Math.pow(2, var_num);
-        var_sign_ls_ls = new int[row_num][var_num];
+        var_sign_ls_ls = new ArrayList[row_num];
         for(int i = 0; i < row_num; i++){
-            var_sign_ls_ls[i] = new int[var_num];
+            var_sign_ls_ls[i] = new ArrayList<Integer>();
         }
         int_permutation(0, var_sign_ls_ls, new int[] {PLUS_SIGN, MINUS_SIGN}, var_num);
     }
 
+    // 불필요한 var_sign_ls 삭제
+    public void complete_var_sign_ls_ls(){
+        // 식유형 1
+
+
+        // 식 유형 2
+
+    }
+
     // n^r개 배열 나옴
     // n = target.length
-    public void int_permutation(int cnt, int[][] dest, int[] target, int r) {
+    public void int_permutation(int cnt, ArrayList<Integer>[] dest, int[] target, int r) {
         // target에서 숫자 골라 중복순열 만들기
         // cnt는 현재 탐색 깊이 (depth)
         int n = target.length;
         int N = (int)Math.pow(n, r);
-        if (cnt == dest[0].length) {
+        if (cnt == r) {
             return;
         }
         // 대상 집합을 순회하며 숫자를 하나 선택한다.
@@ -288,7 +301,7 @@ public class Elementary5th {
             int offset = N/(int)Math.pow(n, cnt+1);
             for(int j = i * offset; j < N; j += 2 * offset) {
                 for (int row = j; row < j + offset; row++) {
-                    dest[row][cnt] = target[i];
+                    dest[row].add(target[i]);
                 }
             }
         }
@@ -323,46 +336,75 @@ public class Elementary5th {
                 inx_ls[i] = i;
             }
 
-            setSentence_category_id_ls_ls(prob_sentence_num);
-            set_useBoolean_ls_ls(prob_sentence_num);
-            setVar_sign_ls_ls(var_num);
+            setSentence_category_id_ls_ls(prob_sentence_num);   // category_num(2)^prob_sentence_num
+            set_useBoolean_ls_ls(prob_sentence_num);    // 2^prob_sentence_num
+            setVar_sign_ls_ls(var_num);                 // 2^var_num = 2^(prob_sentence_num*va4_num_per_sentence(=4)) = 16 * 2^prob_sentence_num)
 
-            for(int[] sentence_category_id_ls: sentence_category_id_ls_ls){
-                varElementary5th.sentence_category_id_ls = sentence_category_id_ls;
-                for(int answer_inx: inx_ls) {
+            for(ArrayList<Integer> sentence_category_id_ls: sentence_category_id_ls_ls){    // 2^prob_sentence_num
+                varElementary5th.sentence_category_id_ls = sentence_category_id_ls.stream().mapToInt(i->i).toArray();
+                for(int answer_inx: inx_ls) {   // prob_sentence_num
                     for (int condition_inx = (answer_inx + 1) % name_var_num; condition_inx != answer_inx; condition_inx++) {
-                        for (boolean[] useYear_ls : useBoolean_ls_ls) {
+                        for (boolean[] useYear_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
                             varElementary5th.useYear_ls = useYear_ls;
-                            for (boolean[] useMult_ls : useBoolean_ls_ls) { // 식유형 1일 경우에만 변수 됨
+                            for (boolean[] useMult_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
                                 varElementary5th.useMult_ls = useMult_ls;
-                                for (boolean[] useAddMinus_ls : useBoolean_ls_ls) { // 식유형 1일 경우에만 변수 됨
+                                for (boolean[] useAddMinus_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
                                     varElementary5th.useAddMinus_ls = useAddMinus_ls;
-                                    for(int[] var_sign_ls: var_sign_ls_ls){ // 식유형 1일 경우에만 변수 됨, useBoolean 값이 true일때만 변수됨
-                                        varElementary5th.var_sign_ls = var_sign_ls;
-                                        ageProblemTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
-                                        System.out.println(""+template_id+":: \n\t"+ varElementary5th.content_template + "\n\t" + varElementary5th.answer_template + "\n\t" +  varElementary5th.explanation_template + "\n\t");
-                                        //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
-                                        //Long id = template_id
-                                        //Category category = ???
+                                    for(ArrayList<Integer> var_sign_ls: var_sign_ls_ls){ // 16 * 2^prob_sentence_num
+                                        varElementary5th.var_sign_ls = var_sign_ls.stream().mapToInt(i->i).toArray();
+
+                                        // template 생성할 것인지 여부 결정
+                                        // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
+                                        boolean generateTemplate = true;
+                                        for(int i = 0; i < prob_sentence_num; i++){
+                                            if((varElementary5th.sentence_category_id_ls[i] == AGE_CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐
+                                                && !(varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_ADDMIN_VAR_OFFSET] == PLUS_SIGN
+                                                    && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
+                                                    && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR2_OFFSET] == PLUS_SIGN))
+                                            || (useYear_ls[i] == false  // year 사용하지 않는 경우, year sign에 따른 변화 무시
+                                                && !(varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
+                                                    && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR2_OFFSET] == PLUS_SIGN))
+                                            || (useMult_ls[i] == false && (varElementary5th.var_sign_ls[i*var_num_per_sentence] == MINUS_SIGN)) // mult 사용하지 않는 경우, mult sign 에 따른 변화 무시
+                                            || (useAddMinus_ls[i] == false && (varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_ADDMIN_VAR_OFFSET] == MINUS_SIGN))) // addminus 사용하지 않는 경우, addminus sign 에 따른 변화 무시
+                                            {
+                                                generateTemplate = false;
+                                                break;
+                                            }
+                                        }
+
+                                        // template 생성, DB에 저장
+                                        if(generateTemplate) {
+                                            ageProblemTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
+                                            System.out.println("" + template_id + ":: \n\t"
+                                                    + varElementary5th.content_template + "\n\t"
+                                                    + varElementary5th.answer_template + "\n\t"
+                                                    + varElementary5th.explanation_template + "\n\t");
+
+
+                                            //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
+                                            //Long id = template_id
+                                            //Category category = ???
                                             //Long category_id
                                             //SmallUnit smallUnit
                                             //CategoryTitle title
                                             //List<TestPaper> testPapers
                                             //List<ProblemTemplate> problemTemplates
-                                        //String content = varElementary5th.content_template;
-                                        //String level = prob_sentence_num -> '상', '중', '하'
-                                        //String explanation = varElementary5th.explanation_template;
-                                        //String answer = varElementary5th.answer_template;
-                                        //String sentenceCategoryList = varElementary5th.sentence_category_id_ls;
-                                        //List<Problem> problems = ????
+                                            //String content = varElementary5th.content_template;
+                                            //String level = prob_sentence_num -> '상', '중', '하'
+                                            //String explanation = varElementary5th.explanation_template;
+                                            //String answer = varElementary5th.answer_template;
+                                            //String sentenceCategoryList = varElementary5th.sentence_category_id_ls;
+                                            //List<Problem> problems = ????
 
-                                        // 다음은 DB에 column 생성한 후 저장해야
-                                        //varElementary5th.var_sign_ls;
-                                        //varElementary5th.useYear_ls;
-                                        //varElementary5th.useMult_ls;
-                                        //varElementary5th.useAddMinus_ls;
+                                            // 다음은 DB에 column 생성한 후 저장해야
+                                            //varElementary5th.var_sign_ls;
+                                            //varElementary5th.useYear_ls;
+                                            //varElementary5th.useMult_ls;
+                                            //varElementary5th.useAddMinus_ls;
 
-                                        template_id++;
+                                            template_id++;
+                                            //System.out.println("" + template_id);
+                                        }
                                     }
                                 }
                             }
@@ -371,7 +413,6 @@ public class Elementary5th {
                 }
             }
         }
-
     }
 
     // template 생성 -> varElementary5th.content, explanation, answer에 결과 저장됨
@@ -457,6 +498,7 @@ public class Elementary5th {
     // 설정값 setting
     //
 
+
     // 난이도에 따른 useBoolean 변수들 (useYear, useMult, useAddMinus) 설정값
     private void setUseBooleans(int level, int var_num_per_sentence){
         int prob_sentence_num = level;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
@@ -493,6 +535,7 @@ public class Elementary5th {
         }
         */
     }
+
 
     // var_min_value_ls, var_max_value_ls 설정
     private void setVarMinMaxLs(int prob_sentence_num, int num_var_per_sentence){
