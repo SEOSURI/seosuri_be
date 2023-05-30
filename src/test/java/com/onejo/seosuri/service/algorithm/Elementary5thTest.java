@@ -87,12 +87,15 @@ class Elementary5thTest {
         for(int cond_inx: new int[] {0, 1})
             for(boolean useYear: tf_set)
                 for(boolean useMult: tf_set)
-                    for(boolean useAddMinus: tf_set)
+                    for(boolean useAddMinus: tf_set)/*
                         for(int year1_sign: new int[] {0, 1})
                             for(int year2_sign: new int[] {0, 1})
-                                for(int var_sign: new int[] {0, 1}) {
+                                for(int var_sign: new int[] {0, 1})*/ {
                                     case_id++;
+                                    int year1_sign=0, year2_sign=0, var_sign=0;
                                     System.out.println("\n\nCASE" + case_id + "\t@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+                                    System.out.println("cond="+cond_inx+" y="+useYear+" m="+useMult+" am="+useAddMinus+" yrs="+year1_sign+year2_sign+" vars="+var_sign);
+                                    /*
                                     System.out.println("cond_inx = " + cond_inx);
                                     System.out.println("useYear = " + useYear);
                                     System.out.println("useMult = " + useMult);
@@ -100,14 +103,17 @@ class Elementary5thTest {
                                     System.out.println("year1_sign = " + year1_sign);
                                     System.out.println("year2_sign = " + year2_sign);
                                     System.out.println("var_sign = " + var_sign);
+                                     */
                                     String[] sentence_ls = elementary5th.create_sentence_yx(ls_index, var_num_per_sentence, cond_inx,
                                             useYear, useMult, useAddMinus,
                                             var_sign, year1_sign, year2_sign,
                                             name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
+                                    /*
                                     System.out.println("content-------------------------");
                                     System.out.println(sentence_ls[0]);
-                                    System.out.println("explanation-------------------------------------");
+                                    System.out.println("explanation-------------------------------------");*/
                                     System.out.println(sentence_ls[1]);
+
                                 }
     }
 
