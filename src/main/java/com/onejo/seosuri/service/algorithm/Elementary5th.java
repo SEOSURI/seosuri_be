@@ -63,7 +63,8 @@ public class Elementary5th {
     static final String DIVIDE_SYM = "/";
     static final String EQUAL_SYM = "=";
     static final String BLANK_SYM = " ";
-    static final String EQUAL_BLANK_SYM = "\n= ";
+    static final String EQUAL_D_BLANK_SYM = " = ";
+    static final String EQUAL_NL_BLANK_SYM = "\n= ";
     static final String PLUS_BLANK_STR = " + ";
     static final String MINUS_BLANK_STR = " - ";
     static final String MULT_BLANK_STR = " * ";
@@ -509,52 +510,49 @@ public class Elementary5th {
         }
         set_useBoolean_ls_ls(prob_sentence_num);    // 2^prob_sentence_num
         setVar_sign_ls_ls(var_num);                 // 2^var_num = 2^(prob_sentence_num*va4_num_per_sentence(=4)) = 16 * 2^prob_sentence_num)
+        varElementary5th.useYear_ls = new boolean[prob_sentence_num];
         varElementary5th.useAddMinus_ls = new boolean[prob_sentence_num];
         varElementary5th.sentence_category_id_ls = new int[prob_sentence_num];
         for(int i = 0; i < prob_sentence_num; i++){
+            varElementary5th.useYear_ls[i] = true;
             varElementary5th.useAddMinus_ls[i] = false;
             varElementary5th.sentence_category_id_ls[i] = CATEGORY_ID_YX;
         }
 
 
-
-        for (boolean[] useYear_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
-            varElementary5th.useYear_ls = useYear_ls;
+        for (boolean[] useAddMinus_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
+            varElementary5th.useAddMinus_ls = useAddMinus_ls;
             for (boolean[] useMult_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
                 varElementary5th.useMult_ls = useMult_ls;
-                for(boolean useMultNotDivInCorrectNum: new boolean[] {true, false}) {
-                    for(boolean useMultNotDivInWrongNum: new boolean[] {true, false}) {
-                        for (ArrayList<Integer> var_sign_ls : var_sign_ls_ls) { // 16 * 2^prob_sentence_num
-                            varElementary5th.var_sign_ls = var_sign_ls.stream().mapToInt(i -> i).toArray();
-                            // template 생성할 것인지 여부 결정
-                            // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
-                            boolean generateTemplate = true;
-                            for (int i = 0; i < prob_sentence_num; i++) {
-                                if ((varElementary5th.useYear_ls[i] == false  // year 사용하지 않는 경우, year sign에 따른 변화 무시
-                                    && !(varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
-                                    && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR2_OFFSET] == PLUS_SIGN))
-                                    || (varElementary5th.useMult_ls[i] == false && (varElementary5th.var_sign_ls[i * var_num_per_sentence] == MINUS_SIGN)) // mult 사용하지 않는 경우, mult sign 에 따른 변화 무시
-                                    || (varElementary5th.useAddMinus_ls[i] == false && (varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_ADDMIN_VAR_OFFSET] == MINUS_SIGN))) // addminus 사용하지 않는 경우, addminus sign 에 따른 변화 무시
-                                {
-                                    generateTemplate = false;
-                                    break;
-                                }
-                            }
-
-                            // template 생성, DB에 저장
-                            if (generateTemplate) {
-                                unknownnumProblemTemplate();
-                                System.out.println("" + template_id + ":: \n"
-                                        + varElementary5th.content_template + "\n\n"
-                                        + varElementary5th.answer_template + "\n\n"
-                                        + varElementary5th.explanation_template + "\n\n");
-
-                                //DB에 저장
-
-                                template_id++;
-                                //System.out.println("" + template_id);
-                            }
+                for (ArrayList<Integer> var_sign_ls : var_sign_ls_ls) { // 16 * 2^prob_sentence_num
+                    varElementary5th.var_sign_ls = var_sign_ls.stream().mapToInt(i -> i).toArray();
+                    // template 생성할 것인지 여부 결정
+                    // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
+                    boolean generateTemplate = true;
+                    for (int i = 0; i < prob_sentence_num; i++) {
+                        if ((varElementary5th.useYear_ls[i] == false  // year 사용하지 않는 경우, year sign에 따른 변화 무시
+                            && !(varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
+                            && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR2_OFFSET] == PLUS_SIGN))
+                            || (varElementary5th.useMult_ls[i] == false && (varElementary5th.var_sign_ls[i * var_num_per_sentence] == MINUS_SIGN)) // mult 사용하지 않는 경우, mult sign 에 따른 변화 무시
+                            || (varElementary5th.useAddMinus_ls[i] == false && (varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_ADDMIN_VAR_OFFSET] == MINUS_SIGN))) // addminus 사용하지 않는 경우, addminus sign 에 따른 변화 무시
+                        {
+                            generateTemplate = false;
+                            break;
                         }
+                    }
+
+                    // template 생성, DB에 저장
+                    if (generateTemplate) {
+                        unknownnumProblemTemplate();
+                        System.out.println("" + template_id + ":: \n"
+                                + varElementary5th.content_template + "\n\n");
+                               // + varElementary5th.answer_template + "\n\n"
+                                //+ varElementary5th.explanation_template + "\n\n");
+
+                        //DB에 저장
+
+                        template_id++;
+                        //System.out.println("" + template_id);
                     }
                 }
             }
@@ -638,8 +636,8 @@ public class Elementary5th {
     // prob_sentence_num = 2로 고정 (인자로 받지 않고 함수 내부에서 상수로 이용
     public void unknownnumProblemTemplate() {
         final int prob_sentence_num = 2;  // 바르게 계산한 수 문장, 잘못 계산한 수 문장
-        final int answer_inx = UNKNOWN_PROB_X_INDEX;    // 어떤 수
-        final int condition_inx = UNKNOWN_PROB_CORRECT_NUM_INDEX;   // 바르게 계산한 수
+        final int answer_inx = UNKNOWN_PROB_CORRECT_NUM_INDEX;    // 바르게 계산한 수
+        final int condition_inx = UNKNOWN_PROB_WRONG_NUM_INDEX;   // 잘못 계산한 수
         final int var_num_per_sentence = UNKNOWNNUM_PROB_VAR_NUM_PER_SENTECE;
 
         // 어떤 수(name_var1), 잘못 계산한 수(name_var2), 네모(name_var3)
@@ -668,6 +666,7 @@ public class Elementary5th {
         배 한 것보다 -> 을 곱하고
         많습니다 -> 를 더해야 할 것을 / 더했습니다.
         적습니다 -> 를 빼야 할 것을 / 뺐습니다.
+
 
 
         {어떤 수}에 {var4}를 (더한/뺀) 후 {var1}을 곱하고 {var2}를 (더해야/빼야) 할 것을
@@ -707,7 +706,7 @@ public class Elementary5th {
 
         // 어떤 수 문장 생성
         int var1_index = 0;
-        sentence_ls[0] = create_unknownnum_sentence(name_var_index_in_correctNum_ls[0], name_var_index_in_correctNum_ls[1],
+        sentence_ls[0] = create_unknownnum_sentence(true, name_var_index_in_correctNum_ls[0], name_var_index_in_correctNum_ls[1],
                 varElementary5th.sentence_category_id_ls[0], 0 , var_num_per_sentence, cond_inx_for_sentence,
                 varElementary5th.useYear_ls[0], varElementary5th.useMult_ls[0], varElementary5th.useAddMinus_ls[0],
                 varElementary5th.var_sign_ls[var1_index+1], varElementary5th.var_sign_ls[var1_index+2], varElementary5th.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
@@ -715,7 +714,7 @@ public class Elementary5th {
 
         // 잘못 계산한 수 문장 생성
         var1_index = var_num_per_sentence;
-        sentence_ls[1] = create_unknownnum_sentence(name_var_index_in_wrongNum_ls[0], name_var_index_in_wrongNum_ls[1], varElementary5th.sentence_category_id_ls[1], 1 , var_num_per_sentence, cond_inx_for_sentence,
+        sentence_ls[1] = create_unknownnum_sentence(false, name_var_index_in_wrongNum_ls[0], name_var_index_in_wrongNum_ls[1], varElementary5th.sentence_category_id_ls[1], 1 , var_num_per_sentence, cond_inx_for_sentence,
                 varElementary5th.useYear_ls[1], varElementary5th.useMult_ls[1], varElementary5th.useAddMinus_ls[1],
                 varElementary5th.var_sign_ls[var1_index+1], varElementary5th.var_sign_ls[var1_index+2], varElementary5th.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
 
@@ -862,7 +861,7 @@ public class Elementary5th {
                     var_sign, year1_sign, year2_sign,
                     name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
             String explanation = create_explanation_yx(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
-                    useYear, useMult, useAddMinus,
+                    useYear, useMult, useAddMinus, true,
                     var_sign, year1_sign, year2_sign,
                     name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
             return new String[] {content, explanation};               // {content, explanation, sign}
@@ -879,7 +878,7 @@ public class Elementary5th {
 
     // 어떤수 문제 상황 문장 생성
     // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
-    private String[] create_unknownnum_sentence(int name_var_index1, int name_var_index2, int category_id, int index, int var_num_per_sentence, int cond_inx,
+    private String[] create_unknownnum_sentence(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2, int category_id, int index, int var_num_per_sentence, int cond_inx,
                                          boolean useYear, boolean useMult, boolean useAddMinus,
                                          int var_sign, int year1_sign, int year2_sign){
         final String name_category_token = "값"; // "의 나이"
@@ -887,9 +886,11 @@ public class Elementary5th {
         final String var34_unit_token = "";
         final String after_str_token = "";
         final String before_str_token = "";
-        String content = create_UnknownNumProb_content_yx();
+
+        String content = create_UnknownNumProb_content_yx(isCorrectNumSentence, name_var_index1, name_var_index2,
+                index, var_num_per_sentence, useYear, useMult, useAddMinus, var_sign, year1_sign);
         String explanation = create_explanation_yx(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
-                useYear, useMult, useAddMinus,
+                useYear, useMult, useAddMinus, false,
                 var_sign, year1_sign, year2_sign,
                 name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
         return new String[] {content, explanation};
@@ -907,7 +908,6 @@ public class Elementary5th {
                                             int var2_sign, int year1_sign, int year2_sign,
                                             String name_category_token, String name_unit_token, String var34_unit_token, String after_str_token, String before_str_token) {
         String name_chosa_token = ui_token;
-
 
         ArrayList<String> content_ls = new ArrayList<>(1);
 
@@ -989,16 +989,90 @@ public class Elementary5th {
         return content;
     }
 
-    public String create_UnknownNumProb_content_yx(){
-        String content = "";
+    public String create_UnknownNumProb_content_yx(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
+                                                   int ls_index, int var_num_per_sentence,
+                                                   boolean useYear, boolean useMult, boolean useAddMinus,
+                                                   int var2_sign, int year1_sign){
+        ArrayList<String> content_ls = new ArrayList<>(1);
 
+        int var_index1 = ls_index * var_num_per_sentence;
+        int var_index2 = var_index1 + 1;
+        int year1_index = var_index1 + 2;
+        int year2_index = var_index1 + 3;
+
+        // token 조합
+        String name1_token = VAR_START + NAME_STR + name_var_index1 + VAR_END;
+        String name2_token = VAR_START + NAME_STR + name_var_index2 + VAR_END;
+        String var1_token = VAR_START + VAR_STR + var_index1 + VAR_END;
+        String var2_token = VAR_START + VAR_STR + var_index2 + VAR_END;
+        String var3_token = VAR_START + VAR_STR + year1_index + VAR_END;    // year1
+        String var4_token = VAR_START + VAR_STR + year2_index + VAR_END;   // year2
+
+        String var4_addMin_token = "더한";
+        if(year1_sign == MINUS_SIGN){
+            var4_addMin_token = "뺀";
+        }
+
+        String var2_addMin_token = "더해";
+        if(var2_sign == MINUS_SIGN){
+            var2_addMin_token = "빼";
+        }
+        if(isCorrectNumSentence == false){
+            var2_addMin_token = "더했";
+            if(var2_sign == MINUS_SIGN){
+                var2_addMin_token = "뺐";
+            }
+        }
+
+        String mult_token = "곱";
+        String mult_to_am_token = "하고";
+        String mult_to_end_token = "해";
+
+        String end_correct_token = "야 할 것을";
+        String end_wrong_token = "습니다.";
+        String end_token = end_correct_token;
+        if(isCorrectNumSentence == false){
+            end_token = end_wrong_token;
+        }
+        /*
+        {어떤 수}에 {var4}를 (더한/뺀) 후 {var1}을 곱하고 {var2}를 (더해/빼)야 할 것을
+            잘못 계산한 수 = (어떤 수 +-var4) * var1 +- var2
+        잘못해서 var8를 (더한/뺀) 후 var5을 곱하고 var6를 (더했/뺐)습니다.
+            바르게 계산한 수 = (어떤 수 +- var8) * var5 +- var6
+         */
+
+        String content_pre_correct_token = name1_token + "에";
+        String content_pre_wrong_token = "잘못해서";
+        String addmin_var4_token = blank_token + var4_token + reul_token + blank_token + var4_addMin_token + blank_token + "후";
+        String mult_var1_token = blank_token + var1_token + eul_token + blank_token + mult_token;
+        String addmin_var2_token = blank_token + var2_token + reul_token + blank_token + var2_addMin_token;
+        String content = "";
+        if(isCorrectNumSentence){
+            content += content_pre_correct_token;
+        } else{
+            content += content_pre_wrong_token;
+        }
+        if(useYear){
+            content += addmin_var4_token;
+        }
+        if(useMult){
+            content += mult_var1_token;
+        }
+        if(useMult && useAddMinus){
+            content += mult_to_am_token;
+        }
+        if(useAddMinus){
+            content += addmin_var2_token;
+        }
+        content += end_token;
 
         return content;
     }
 
+
     public String create_explanation_yx(String content, int name_var_index1, int name_var_index2,
                                         int ls_index, int var_num_per_sentence, int cond_inx,
-                                        boolean useYear, boolean useMult, boolean useAddMinus,
+                                        boolean useYear, boolean useMult, boolean useAddMinus, boolean useYearStr,
                                         int var2_sign, int year1_sign, int year2_sign,
                                         String name_category_token, String name_unit_token, String var34_unit_token, String after_str_token, String before_str_token){
         String name_chosa_token = ui_token;
@@ -1027,7 +1101,7 @@ public class Elementary5th {
         String var4_token = VAR_START + VAR_STR + year2_index + VAR_END;   // year2
 
         String name1_add_str_token = "", name2_add_str_token = "";
-        if(useYear){
+        if(useYear && useYearStr){
             if(year1_sign == PLUS_SIGN){
                 name1_add_str_token = var3_token + var34_unit_token + blank_token + after_str_token + blank_token; // "{year1}년 후 "
             } else if(year1_sign == MINUS_SIGN){
@@ -1043,6 +1117,7 @@ public class Elementary5th {
                 System.out.println("ERROR:: invalid year sign");
             }
         }
+
 
 
         // sign
@@ -1110,19 +1185,19 @@ public class Elementary5th {
 
         String ex_expression_str_start_token = "\"" + content + "\"라는 문장을 식으로 바꾸면";
         String ex_expression_token = name1_add_str_token + name1_with_category_token
-                + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token + mult_blank_var1_token + add_minus_blank_var2_token;
+                + EQUAL_NL_BLANK_SYM + name2_add_str_token + name2_with_category_token + mult_blank_var1_token + add_minus_blank_var2_token;
         String ex_expression_str_end_token = "가 됩니다.";
 
         String ex_explain_start_token = "이제 이 식을 다음과 같은 순서로 풀 수 있습니다.";
 
         // name_var -> name_var +- year   또는   name_var 값 선언
         String ex_name_var1_after_year_token = name1_add_str_token + name1_with_category_token
-                + EQUAL_BLANK_SYM + name_var1_token + expr_add_minus_blank_var3_token;
+                + EQUAL_NL_BLANK_SYM + name_var1_token + expr_add_minus_blank_var3_token;
         String ex_name_var2_after_year_token = name2_add_str_token + name2_with_category_token
-                + EQUAL_BLANK_SYM + name_var2_token + expr_add_minus_blank_var4_token;
+                + EQUAL_NL_BLANK_SYM + name_var2_token + expr_add_minus_blank_var4_token;
         if(useYear){
-            ex_name_var1_after_year_token += EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + expr_add_minus_var3_token + EXPRESSION_END;
-            ex_name_var2_after_year_token += EQUAL_BLANK_SYM + EXPRESSION_START + name_var2_token + expr_add_minus_var4_token + EXPRESSION_END;
+            ex_name_var1_after_year_token += EQUAL_NL_BLANK_SYM + EXPRESSION_START + name_var1_token + expr_add_minus_var3_token + EXPRESSION_END;
+            ex_name_var2_after_year_token += EQUAL_NL_BLANK_SYM + EXPRESSION_START + name_var2_token + expr_add_minus_var4_token + EXPRESSION_END;
         }
 
         String expr_name_var1_token = BRACKET_START + name_var2_token + expr_add_minus_var4_token + BRACKET_END + mult_var1_token + add_minus_var2_token;
@@ -1132,35 +1207,35 @@ public class Elementary5th {
         // if var2 != 0
         // (year년 후 name1의 나이) -+ var2 = age1 + year -+ var2
         String ex_cond1_compute_b4_divide_token = name1_add_str_token + name1_with_category_token + inv_add_minus_blank_var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + expr_add_minus_var3_token + inv_add_minus_var2_token + EXPRESSION_END;
-        String ex_eq_name_var2_token = EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token;
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + name_var1_token + expr_add_minus_var3_token + inv_add_minus_var2_token + EXPRESSION_END;
+        String ex_eq_name_var2_token = EQUAL_NL_BLANK_SYM + name2_add_str_token + name2_with_category_token;
         String expr_cond1_computed_b4_divide_token = name_var1_token + expr_add_minus_var3_token + inv_add_minus_var2_token;
         // if var1 != 1
         //"(%s%s의 나이) = {age1 + year -+ var2} / var1 = %d\n"
         // age1 given, find age2
         String ex_cond1_compute_divide_token = name2_add_str_token + name2_with_category_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + expr_cond1_computed_b4_divide_token + EXPRESSION_END + DIVIDE_BLANK_STR + var1_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + expr_cond1_computed_b4_divide_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END;
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + expr_cond1_computed_b4_divide_token + EXPRESSION_END + DIVIDE_BLANK_STR + var1_token
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + BRACKET_START + expr_cond1_computed_b4_divide_token + BRACKET_END + DIVIDE_SYM + var1_token + EXPRESSION_END;
 
         // (%s%s의 나이) = (%s%s의 나이) * %d %s %d = %d * %d %s %d = %d
         // y년후 name1의 나이 = y년후 name2의나이 * var1 +- var2 = [age2+year] * var1 +- var2 = age1
         // age2 given, find age1
         String ex_cond2_compute_token = name1_add_str_token + name1_with_category_token
-                + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token + mult_blank_var1_token + add_minus_blank_var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var2_token + expr_add_minus_var4_token + EXPRESSION_END + mult_blank_var1_token + add_minus_blank_var2_token;
+                + EQUAL_NL_BLANK_SYM + name2_add_str_token + name2_with_category_token + mult_blank_var1_token + add_minus_blank_var2_token
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + name_var2_token + expr_add_minus_var4_token + EXPRESSION_END + mult_blank_var1_token + add_minus_blank_var2_token;
         if(!(useMult == false && useAddMinus == false)){
-            ex_cond2_compute_token += EQUAL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var2_token + expr_add_minus_var4_token + BRACKET_END + mult_var1_token + add_minus_var2_token + EXPRESSION_END;
+            ex_cond2_compute_token += EQUAL_NL_BLANK_SYM + EXPRESSION_START + BRACKET_START + name_var2_token + expr_add_minus_var4_token + BRACKET_END + mult_var1_token + add_minus_var2_token + EXPRESSION_END;
         }
 
         // name_var +- year -> name_var
         String ex_after_year_to_name_var1_token = name1_with_category_token
-                + EQUAL_BLANK_SYM + name1_add_str_token + name1_with_category_token + var3_inv_sign_blank_token + var3_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + expr_name_var1_token + EXPRESSION_END + var3_inv_sign_blank_token + var3_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + expr_name_var1_token + var3_inv_sign_token + var3_token + EXPRESSION_END;
+                + EQUAL_NL_BLANK_SYM + name1_add_str_token + name1_with_category_token + var3_inv_sign_blank_token + var3_token
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + expr_name_var1_token + EXPRESSION_END + var3_inv_sign_blank_token + var3_token
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + expr_name_var1_token + var3_inv_sign_token + var3_token + EXPRESSION_END;
         String ex_after_year_to_name_var2_token = name2_with_category_token
-                + EQUAL_BLANK_SYM + name2_add_str_token + name2_with_category_token + var4_inv_sign_blank_token + var4_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + expr_name_var2_token + EXPRESSION_END + var4_inv_sign_blank_token + var4_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + expr_name_var2_token + var4_inv_sign_token + var4_token + EXPRESSION_END;
+                + EQUAL_NL_BLANK_SYM + name2_add_str_token + name2_with_category_token + var4_inv_sign_blank_token + var4_token
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + expr_name_var2_token + EXPRESSION_END + var4_inv_sign_blank_token + var4_token
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + expr_name_var2_token + var4_inv_sign_token + var4_token + EXPRESSION_END;
 
 
 
@@ -1294,17 +1369,17 @@ public class Elementary5th {
         String ex_expression_str_end_token = "가 됩니다.";
         String ex_explain_start_token = "이제 이 식을 다음과 같은 순서로 풀 수 있습니다.";
         String ex_name_var1_token = name1_with_category_token
-                + EQUAL_BLANK_SYM + var1_token + inv_sign_blank_token + name2_with_category_token
-                + EQUAL_BLANK_SYM + var1_token + inv_sign_blank_token + name_var2_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + var1_token + inv_sign_token + name_var2_token + EXPRESSION_END;
+                + EQUAL_NL_BLANK_SYM + var1_token + inv_sign_blank_token + name2_with_category_token
+                + EQUAL_NL_BLANK_SYM + var1_token + inv_sign_blank_token + name_var2_token
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + var1_token + inv_sign_token + name_var2_token + EXPRESSION_END;
         String ex_name_var2_with_sum_token = name2_with_category_token
-                + EQUAL_BLANK_SYM + var1_token + MINUS_BLANK_STR + name1_with_category_token
-                + EQUAL_BLANK_SYM + var1_token + MINUS_BLANK_STR + name_var1_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + var1_token + MINUS_SYM + name_var1_token + EXPRESSION_END;
+                + EQUAL_NL_BLANK_SYM + var1_token + MINUS_BLANK_STR + name1_with_category_token
+                + EQUAL_NL_BLANK_SYM + var1_token + MINUS_BLANK_STR + name_var1_token
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + var1_token + MINUS_SYM + name_var1_token + EXPRESSION_END;
         String ex_name_var2_with_diff_token = name2_with_category_token
-                + EQUAL_BLANK_SYM + name1_with_category_token + MINUS_BLANK_STR + var1_token
-                + EQUAL_BLANK_SYM + name_var1_token + MINUS_BLANK_STR + var1_token
-                + EQUAL_BLANK_SYM + EXPRESSION_START + name_var1_token + MINUS_SYM + var1_token + EXPRESSION_END;
+                + EQUAL_NL_BLANK_SYM + name1_with_category_token + MINUS_BLANK_STR + var1_token
+                + EQUAL_NL_BLANK_SYM + name_var1_token + MINUS_BLANK_STR + var1_token
+                + EQUAL_NL_BLANK_SYM + EXPRESSION_START + name_var1_token + MINUS_SYM + var1_token + EXPRESSION_END;
 
         String explanation = "";
         ArrayList<String> explanation_ls = new ArrayList<>(10);
