@@ -90,7 +90,7 @@ public class TestPaperService {
     public MultipartFile createTestPaper() throws IOException, DocumentException{
 
         String htmlcssPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\html";
-        String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font";
+        String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\service\\font";
         String path = "C:\\pdftest";
         File saveFolder = new File(path);
 

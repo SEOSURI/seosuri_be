@@ -1,5 +1,6 @@
 package com.onejo.seosuri.controller;
 
+import com.itextpdf.text.DocumentException;
 import com.onejo.seosuri.controller.dto.testpaper.*;
 import com.onejo.seosuri.domain.testpaper.TestPaperRepository;
 import com.onejo.seosuri.service.TestPaperService;
@@ -18,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @Slf4j
 @RestController
 @Tag(name = "문제지 생성 및 발송 API")
@@ -29,12 +32,16 @@ public class TestPaperController {
 
     @Operation(summary = "시험지 생성", description = "시험문제 -> html -> pdf 후 DB에 저장")
     @PostMapping("/create")
-    public BaseResponse<String> createTestPaper(@RequestBody EmailDto emailDto){
+    public BaseResponse<String> createTestPaper(){
         // 10문제 확인 리스트 화면에서 다음 단계 넘어 갈때 작동하는 버튼
         // 시험지 DB에 저장된 시험지 id 번호 반환함
         try{
             testPaperService.createTestPaper();
             return new BaseResponse<>("result");
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }
