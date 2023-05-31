@@ -30,7 +30,7 @@ class Elementary5thTest {
     void ageProblem() {
         Elementary5th elementary5th = new Elementary5th();
         elementary5th.ageProblem(3);
-        //elementary5th.printTemplate();
+        elementary5th.printTemplate();
     }
 
     @Test
@@ -104,7 +104,7 @@ class Elementary5thTest {
                                     System.out.println("year2_sign = " + year2_sign);
                                     System.out.println("var_sign = " + var_sign);
                                      */
-                                    String[] sentence_ls = elementary5th.create_sentence_yx(ls_index, var_num_per_sentence, cond_inx,
+                                    String[] sentence_ls = elementary5th.create_sentence_yx(0, 1, ls_index, var_num_per_sentence, cond_inx,
                                             useYear, useMult, useAddMinus,
                                             var_sign, year1_sign, year2_sign,
                                             name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
