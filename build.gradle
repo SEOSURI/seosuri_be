@@ -39,6 +39,13 @@ dependencies {
 	// email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	// convert html -> pdf
+	implementation 'com.itextpdf:itextpdf:5.5.13.3'
+	implementation 'com.itextpdf:itext-pdfa:5.5.13.3'
+	implementation 'com.itextpdf.tool:xmlworker:5.5.9'
+
+	implementation 'commons-fileupload:commons-fileupload:1.4'
+	implementation 'commons-io:commons-io:2.4'
 
 }
 

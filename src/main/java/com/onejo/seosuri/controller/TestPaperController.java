@@ -1,6 +1,7 @@
 package com.onejo.seosuri.controller;
 
 import com.onejo.seosuri.controller.dto.testpaper.*;
+import com.onejo.seosuri.domain.testpaper.TestPaperRepository;
 import com.onejo.seosuri.service.TestPaperService;
 import com.onejo.seosuri.exception.common.BusinessException;
 import com.onejo.seosuri.response.BaseResponse;
@@ -32,6 +33,7 @@ public class TestPaperController {
         // 10문제 확인 리스트 화면에서 다음 단계 넘어 갈때 작동하는 버튼
         // 시험지 DB에 저장된 시험지 id 번호 반환함
         try{
+            testPaperService.createTestPaper();
             return new BaseResponse<>("result");
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
