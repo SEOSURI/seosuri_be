@@ -2,9 +2,14 @@ package com.onejo.seosuri.service.algorithm;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 class Elementary5thTest {
+
+    @Test
+    void saveUnknownNumProblemTemplate(){
+        Elementary5th elementary5th = new Elementary5th();
+        elementary5th.saveUnknownNumProblemTemplates();
+        //elementary5th.anyNumberProblem(3);
+    }
 
     @Test
     void saveAgeProblemTemplate(){
@@ -104,15 +109,27 @@ class Elementary5thTest {
                                     System.out.println("year2_sign = " + year2_sign);
                                     System.out.println("var_sign = " + var_sign);
                                      */
-                                    String[] sentence_ls = elementary5th.create_sentence_yx(0, 1, ls_index, var_num_per_sentence, cond_inx,
+                                    String content = elementary5th.create_ageProb_content_yx(0, 1, ls_index, var_num_per_sentence, cond_inx,
                                             useYear, useMult, useAddMinus,
                                             var_sign, year1_sign, year2_sign,
                                             name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
+                                    String explanation = elementary5th.create_explanation_yx(content, 0, 1, ls_index, var_num_per_sentence, cond_inx,
+                                            useYear, useMult, useAddMinus,
+                                            var_sign, year1_sign, year2_sign,
+                                            name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
+                                    System.out.println(content);
+                                    System.out.println(explanation);
+
+                                    /*
+                                    String[] sentence_ls = elementary5th.create_sentence_yx(0, 1, ls_index, var_num_per_sentence, cond_inx,
+                                            useYear, useMult, useAddMinus,
+                                            var_sign, year1_sign, year2_sign,
+                                            name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);*/
                                     /*
                                     System.out.println("content-------------------------");
                                     System.out.println(sentence_ls[0]);
                                     System.out.println("explanation-------------------------------------");*/
-                                    System.out.println(sentence_ls[1]);
+                                    //System.out.println(sentence_ls[1]);
 
                                 }
     }
