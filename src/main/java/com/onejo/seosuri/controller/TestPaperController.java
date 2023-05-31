@@ -32,15 +32,13 @@ public class TestPaperController {
 
     @Operation(summary = "시험지 생성", description = "시험문제 -> html -> pdf 후 DB에 저장")
     @PostMapping("/create")
-    public BaseResponse<String> createTestPaper(){
+    public BaseResponse<String> createTestPaper() throws IOException{
         // 10문제 확인 리스트 화면에서 다음 단계 넘어 갈때 작동하는 버튼
         // 시험지 DB에 저장된 시험지 id 번호 반환함
         try{
             testPaperService.createTestPaper();
             return new BaseResponse<>("result");
-        } catch (DocumentException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        }  catch (DocumentException e) {
             throw new RuntimeException(e);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
