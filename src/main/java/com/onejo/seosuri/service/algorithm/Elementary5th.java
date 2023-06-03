@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
-public class Elementary5th_Backup {
+public class Elementary5th {
 // 이곳에 문제 생성 알고리즘을 넣어두고, ProblemSerice에서 필요한 method를 호출하면 될 듯 싶습니다..
 
 
