@@ -115,7 +115,7 @@ class Elementary5thTest {
                                                 var_sign, year1_sign, year2_sign,
                                                 name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
                                         String explanation = elementary5th.create_explanation_yx(content, 0, 1, ls_index, var_num_per_sentence, cond_inx,
-                                                useYear1, useYear2, useMult, useAddMinus, true,
+                                                useYear1, useYear2, useMult, useAddMinus,
                                                 var_sign, year1_sign, year2_sign,
                                                 name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
                                         System.out.println(content);

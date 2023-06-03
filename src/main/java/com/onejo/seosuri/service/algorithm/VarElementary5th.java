@@ -38,16 +38,16 @@ public class VarElementary5th {
     // 실제 문제 생성 시에만 이용
 
     // min, max 범위
-    public int[] var_min_value_ls; // input
-    public int[] var_max_value_ls; // input
-    public int[] name_var_min_value_ls;    // input
-    public int[] name_var_max_value_ls;    // input
+    public int[] constant_var_min_value_ls; // input - 상수
+    public int[] constant_var_max_value_ls; // input - 상수
+    public int[] variant_var_min_value_ls;    // input - 이름
+    public int[] variant_var_max_value_ls;    // input - 이름
 
     // 이름
-    public String[] name_ls;
+    public String[] variant_var_string_ls;
 
     // 숫자값
-    public int[] name_var_ls;   // 결과
-    public int[] var_ls;   // 결과
+    public int[] variant_var_ls;   // 결과
+    public int[] constant_var_ls;   // 결과
 
 }
