@@ -1,0 +1,12 @@
+body {
+  /* 폰트 설정 */
+  font-family: MalgunGothic;
+}
+
+
+#yaong {
+    /* 요소의 배경색 설정, 빨간색 */
+      background-color: red;
+      /* 글씨색 설정, 파란색 */
+      color: blue;
+}

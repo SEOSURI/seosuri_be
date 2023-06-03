@@ -1,0 +1,135 @@
+body {
+  /* 폰트 설정 */
+  font-family: MalgunGothic;
+}
+
+#paper{
+    width: 793.7px;
+    height: 1122.52px;
+    background-color: white;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+}
+
+#header{
+    width: 710px;
+    height: 110px;
+
+    margin-left:41.85px;
+    margin-top: 50px;
+}
+
+#prob-list{
+    display: flex;
+    justify-content: center;
+
+    width: 710px;
+    height: 890px;
+
+    margin-left:41.85px;
+
+}
+
+#footer{
+    display: flex;
+    justify-content: center;
+
+    width: 710px;
+    height: 50px;
+
+    border-top-width: 2px;
+    border-top-color: black;
+    border-top-style: solid;
+
+    margin-left:41.85px;
+    padding-top: 10px;
+}
+
+#header-sub{
+    display: flex;
+
+    width: 710px;
+    height: 55px;
+
+    border-bottom-width: 2px;
+    border-bottom-color: black;
+    border-bottom-style: solid;
+
+}
+
+#header-text{
+    width: 188.5px;
+    height: 55px;
+
+    text-align: left;
+
+    padding-left: 10px;
+
+}
+
+#header-title{
+    width: 333px;
+    height: 55px;
+
+    display: flex;
+    justify-content: center;
+
+    background-color: #EBEBEB;
+
+    border-top-width: 2px;
+    border-top-color: black;
+    border-top-style: solid;
+
+    border-right-width: 2px;
+    border-right-color: black;
+    border-right-style: solid;
+
+    border-left-width: 2px;
+    border-left-color: black;
+    border-left-style: solid;
+}
+
+#header-category{
+    width: 333px;
+    height: 55px;
+    text-align: center;
+
+    border-right-width: 2px;
+    border-right-color: black;
+    border-right-style: solid;
+
+    border-left-width: 2px;
+    border-left-color: black;
+    border-left-style: solid;
+}
+
+#title{
+    width: 200px;
+    height: 36px;
+
+    font-weight: 1000;
+    font-size: 31px;
+    line-height: 0px;
+    text-align: center;
+}
+
+#list-sub-left{
+    width: 355px;
+    height: 888px;
+
+    margin-top:2px;
+
+    border-right:2px solid black;
+}
+
+#list-sub-right{
+    width: 355px;
+    height: 888px;
+
+    margin-top:2px;
+}
+
+#plain-text{
+    font-weight: bold;
+}
