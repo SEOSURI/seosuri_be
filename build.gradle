@@ -49,6 +49,7 @@ dependencies {
 
 	// new convert html -> pdf
 	implementation 'com.itextpdf:itextpdf:5.5.13.1'
+	implementation 'com.itextpdf.tool:xmlworker:5.5.13.1'
 
 }
 

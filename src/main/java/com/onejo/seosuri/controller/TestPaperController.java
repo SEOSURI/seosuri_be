@@ -37,6 +37,7 @@ public class TestPaperController {
         // 시험지 DB에 저장된 시험지 id 번호 반환함
         try{
             testPaperService.createTestPaper();
+
             return new BaseResponse<>("result");
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
