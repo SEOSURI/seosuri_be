@@ -18,7 +18,8 @@ public class VarElementary5th {
     // 템플릿 생성시만 이용
 
     // boolean 변수값 template 생성시 이용
-    public boolean[] useYear_ls;
+    public boolean[] useYear1_ls;
+    public boolean[] useYear2_ls;
     public boolean[] useMult_ls;
     public boolean[] useAddMinus_ls;
 

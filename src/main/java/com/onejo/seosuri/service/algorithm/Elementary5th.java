@@ -128,7 +128,8 @@ public class Elementary5th {
         varElementary5th.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
         // DB에서 sentence_category_id_ls 가져오기!!!!
         varElementary5th.var_sign_ls = new int[var_num];    // DB에서 가져오기!!!
-        varElementary5th.useYear_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        varElementary5th.useYear1_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        varElementary5th.useYear2_ls = new boolean[prob_sentence_num];    // DB에서 가져오기!!!
         varElementary5th.useMult_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
         varElementary5th.useAddMinus_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
 
@@ -241,7 +242,8 @@ public class Elementary5th {
         varElementary5th.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
         // DB에서 sentence_category_id_ls 가져오기!!!!
         varElementary5th.var_sign_ls = new int[var_num];    // DB에서 가져오기!!!
-        varElementary5th.useYear_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        varElementary5th.useYear1_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        varElementary5th.useYear2_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
         varElementary5th.useMult_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
         varElementary5th.useAddMinus_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!! // entire addminus should be false
 
@@ -414,67 +416,71 @@ public class Elementary5th {
                 varElementary5th.sentence_category_id_ls = sentence_category_id_ls.stream().mapToInt(i->i).toArray();
                 for(int answer_inx: inx_ls) {   // prob_sentence_num
                     for (int condition_inx = (answer_inx + 1) % name_var_num; condition_inx != answer_inx; condition_inx++) {
-                        for (boolean[] useYear_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
-                            varElementary5th.useYear_ls = useYear_ls;
-                            for (boolean[] useMult_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
-                                varElementary5th.useMult_ls = useMult_ls;
-                                for (boolean[] useAddMinus_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
-                                    varElementary5th.useAddMinus_ls = useAddMinus_ls;
-                                    for(ArrayList<Integer> var_sign_ls: var_sign_ls_ls){ // 16 * 2^prob_sentence_num
-                                        varElementary5th.var_sign_ls = var_sign_ls.stream().mapToInt(i->i).toArray();
+                        for (boolean[] useYear1_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
+                            varElementary5th.useYear1_ls = useYear1_ls;
+                            for (boolean[] useYear2_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
+                                varElementary5th.useYear2_ls = useYear2_ls;
+                                for (boolean[] useMult_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
+                                    varElementary5th.useMult_ls = useMult_ls;
+                                    for (boolean[] useAddMinus_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
+                                        varElementary5th.useAddMinus_ls = useAddMinus_ls;
+                                        for (ArrayList<Integer> var_sign_ls : var_sign_ls_ls) { // 16 * 2^prob_sentence_num
+                                            varElementary5th.var_sign_ls = var_sign_ls.stream().mapToInt(i -> i).toArray();
 
-                                        // template 생성할 것인지 여부 결정
-                                        // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
-                                        boolean generateTemplate = true;
-                                        for(int i = 0; i < prob_sentence_num; i++){
-                                            if((varElementary5th.sentence_category_id_ls[i] == CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
-                                                    && !(varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_MULT_VAR_OFFSET] == PLUS_SIGN
-                                                    && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_ADDMIN_VAR_OFFSET] == PLUS_SIGN
-                                                    && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
-                                                    && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR2_OFFSET] == PLUS_SIGN))
-                                                    || (useYear_ls[i] == false  // year 사용하지 않는 경우, year sign에 따른 변화 무시
-                                                    && !(varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
-                                                    && varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_YEAR_VAR2_OFFSET] == PLUS_SIGN))
-                                                    || (useMult_ls[i] == false && (varElementary5th.var_sign_ls[i*var_num_per_sentence] == MINUS_SIGN)) // mult 사용하지 않는 경우, mult sign 에 따른 변화 무시
-                                                    || (useAddMinus_ls[i] == false && (varElementary5th.var_sign_ls[i*var_num_per_sentence+AGE_PROB_ADDMIN_VAR_OFFSET] == MINUS_SIGN))) // addminus 사용하지 않는 경우, addminus sign 에 따른 변화 무시
-                                            {
-                                                generateTemplate = false;
-                                                break;
+                                            // template 생성할 것인지 여부 결정
+                                            // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
+                                            boolean generateTemplate = true;
+                                            for (int i = 0; i < prob_sentence_num; i++) {
+                                                if ((varElementary5th.sentence_category_id_ls[i] == CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
+                                                        && !(varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_MULT_VAR_OFFSET] == PLUS_SIGN
+                                                        && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_ADDMIN_VAR_OFFSET] == PLUS_SIGN
+                                                        && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
+                                                        && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR2_OFFSET] == PLUS_SIGN))
+                                                        || (useYear1_ls[i] == false  // year1 사용하지 않는 경우, year sign에 따른 변화 무시
+                                                        && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR1_OFFSET] == MINUS_SIGN)
+                                                        || (useYear2_ls[i] == false  // year2 사용하지 않는 경우, year sign에 따른 변화 무시
+                                                        && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR2_OFFSET] == MINUS_SIGN)
+                                                        || (useMult_ls[i] == false && (varElementary5th.var_sign_ls[i * var_num_per_sentence] == MINUS_SIGN)) // mult 사용하지 않는 경우, mult sign 에 따른 변화 무시
+                                                        || (useAddMinus_ls[i] == false && (varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_ADDMIN_VAR_OFFSET] == MINUS_SIGN))) // addminus 사용하지 않는 경우, addminus sign 에 따른 변화 무시
+                                                {
+                                                    generateTemplate = false;
+                                                    break;
+                                                }
                                             }
-                                        }
 
-                                        // template 생성, DB에 저장
-                                        if(generateTemplate) {
-                                            ageProblemTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
-                                            System.out.println("" + template_id + ":: \n"
-                                                    + varElementary5th.content_template + "\n\n"
-                                                    + varElementary5th.answer_template + "\n\n"
-                                                    + varElementary5th.explanation_template + "\n\n");
+                                            // template 생성, DB에 저장
+                                            if (generateTemplate) {
+                                                ageProblemTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
+                                                System.out.println("" + template_id + ":: \n"
+                                                        + varElementary5th.content_template + "\n\n"
+                                                        + varElementary5th.answer_template + "\n\n"
+                                                        + varElementary5th.explanation_template + "\n\n");
 
 
-                                            //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
-                                            //Long id = template_id
-                                            //Category category = ???
-                                            //Long category_id
-                                            //SmallUnit smallUnit
-                                            //CategoryTitle title
-                                            //List<TestPaper> testPapers
-                                            //List<ProblemTemplate> problemTemplates
-                                            //String content = varElementary5th.content_template;
-                                            //String level = prob_sentence_num -> '상', '중', '하'
-                                            //String explanation = varElementary5th.explanation_template;
-                                            //String answer = varElementary5th.answer_template;
-                                            //String sentenceCategoryList = varElementary5th.sentence_category_id_ls;
-                                            //List<Problem> problems = ????
+                                                //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
+                                                //Long id = template_id
+                                                //Category category = ???
+                                                //Long category_id
+                                                //SmallUnit smallUnit
+                                                //CategoryTitle title
+                                                //List<TestPaper> testPapers
+                                                //List<ProblemTemplate> problemTemplates
+                                                //String content = varElementary5th.content_template;
+                                                //String level = prob_sentence_num -> '상', '중', '하'
+                                                //String explanation = varElementary5th.explanation_template;
+                                                //String answer = varElementary5th.answer_template;
+                                                //String sentenceCategoryList = varElementary5th.sentence_category_id_ls;
+                                                //List<Problem> problems = ????
 
-                                            // 다음은 DB에 column 생성한 후 저장해야
-                                            //varElementary5th.var_sign_ls;
-                                            //varElementary5th.useYear_ls;
-                                            //varElementary5th.useMult_ls;
-                                            //varElementary5th.useAddMinus_ls;
+                                                // 다음은 DB에 column 생성한 후 저장해야
+                                                //varElementary5th.var_sign_ls;
+                                                //varElementary5th.useYear1_ls;
+                                                //varElementary5th.useMult_ls;
+                                                //varElementary5th.useAddMinus_ls;
 
-                                            template_id++;
-                                            //System.out.println("" + template_id);
+                                                template_id++;
+                                                //System.out.println("" + template_id);
+                                            }
                                         }
                                     }
                                 }
@@ -510,11 +516,13 @@ public class Elementary5th {
         }
         set_useBoolean_ls_ls(prob_sentence_num);    // 2^prob_sentence_num
         setVar_sign_ls_ls(var_num);                 // 2^var_num = 2^(prob_sentence_num*va4_num_per_sentence(=4)) = 16 * 2^prob_sentence_num)
-        varElementary5th.useYear_ls = new boolean[prob_sentence_num];
+        varElementary5th.useYear1_ls = new boolean[prob_sentence_num];
+        varElementary5th.useYear2_ls = new boolean[prob_sentence_num];
         varElementary5th.useAddMinus_ls = new boolean[prob_sentence_num];
         varElementary5th.sentence_category_id_ls = new int[prob_sentence_num];
         for(int i = 0; i < prob_sentence_num; i++){
-            varElementary5th.useYear_ls[i] = true;
+            varElementary5th.useYear1_ls[i] = true;
+            varElementary5th.useYear2_ls[i] = true;
             varElementary5th.useAddMinus_ls[i] = false;
             varElementary5th.sentence_category_id_ls[i] = CATEGORY_ID_YX;
         }
@@ -530,9 +538,10 @@ public class Elementary5th {
                     // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
                     boolean generateTemplate = true;
                     for (int i = 0; i < prob_sentence_num; i++) {
-                        if ((varElementary5th.useYear_ls[i] == false  // year 사용하지 않는 경우, year sign에 따른 변화 무시
-                            && !(varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
-                            && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR2_OFFSET] == PLUS_SIGN))
+                        if ((varElementary5th.useYear1_ls[i] == false  // year1 사용하지 않는 경우, year sign에 따른 변화 무시
+                            && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR1_OFFSET] == MINUS_SIGN)
+                            || (varElementary5th.useYear2_ls[i] == false  // year2 사용하지 않는 경우, year sign에 따른 변화 무시
+                                && varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR2_OFFSET] == MINUS_SIGN)
                             || (varElementary5th.useMult_ls[i] == false && (varElementary5th.var_sign_ls[i * var_num_per_sentence] == MINUS_SIGN)) // mult 사용하지 않는 경우, mult sign 에 따른 변화 무시
                             || (varElementary5th.useAddMinus_ls[i] == false && (varElementary5th.var_sign_ls[i * var_num_per_sentence + AGE_PROB_ADDMIN_VAR_OFFSET] == MINUS_SIGN))) // addminus 사용하지 않는 경우, addminus sign 에 따른 변화 무시
                         {
@@ -565,7 +574,7 @@ public class Elementary5th {
 
     // 나이문제 템플릿 생성
     // template 생성 -> varElementary5th.content, explanation, answer에 결과 저장됨
-    public void ageProblemTemplate(int prob_sentence_num, int var_num_per_sentence,
+    public void ageProblemTemplate (int prob_sentence_num, int var_num_per_sentence,
                                    int answer_inx, int condition_inx) {
         ////////////////////////////////////////////////////////////////////////////////////////////////
         // 문장 생성
@@ -589,14 +598,14 @@ public class Elementary5th {
         for(int i = 0; i < condition_inx; i++){ // 0~cond_inx -> age2 given
             int var1_index = i * var_num_per_sentence;
             sentence_ls[i] = create_age_sentence(i, i+1, varElementary5th.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
-                    varElementary5th.useYear_ls[i], varElementary5th.useMult_ls[i], varElementary5th.useAddMinus_ls[i],
+                    varElementary5th.useYear1_ls[i], varElementary5th.useYear2_ls[i], varElementary5th.useMult_ls[i], varElementary5th.useAddMinus_ls[i],
                     varElementary5th.var_sign_ls[var1_index+1], varElementary5th.var_sign_ls[var1_index+2], varElementary5th.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
         cond_inx_for_sentence = 0;  // age1, age2 중 age1가 given
         for(int i = condition_inx; i < prob_sentence_num; i++){ // cond_inx+1~ -> age1 given
             int var1_index = i * var_num_per_sentence;
             sentence_ls[i] = create_age_sentence(i, i+1, varElementary5th.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
-                    varElementary5th.useYear_ls[i], varElementary5th.useMult_ls[i], varElementary5th.useAddMinus_ls[i],
+                    varElementary5th.useYear1_ls[i], varElementary5th.useYear2_ls[i], varElementary5th.useMult_ls[i], varElementary5th.useAddMinus_ls[i],
                     varElementary5th.var_sign_ls[var1_index+1], varElementary5th.var_sign_ls[var1_index+2], varElementary5th.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
 
@@ -708,14 +717,14 @@ public class Elementary5th {
         int var1_index = 0;
         sentence_ls[0] = create_unknownnum_sentence(true, name_var_index_in_correctNum_ls[0], name_var_index_in_correctNum_ls[1],
                 varElementary5th.sentence_category_id_ls[0], 0 , var_num_per_sentence, cond_inx_for_sentence,
-                varElementary5th.useYear_ls[0], varElementary5th.useMult_ls[0], varElementary5th.useAddMinus_ls[0],
+                varElementary5th.useYear1_ls[0], varElementary5th.useYear2_ls[0], varElementary5th.useMult_ls[0], varElementary5th.useAddMinus_ls[0],
                 varElementary5th.var_sign_ls[var1_index+1], varElementary5th.var_sign_ls[var1_index+2], varElementary5th.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
 
 
         // 잘못 계산한 수 문장 생성
         var1_index = var_num_per_sentence;
         sentence_ls[1] = create_unknownnum_sentence(false, name_var_index_in_wrongNum_ls[0], name_var_index_in_wrongNum_ls[1], varElementary5th.sentence_category_id_ls[1], 1 , var_num_per_sentence, cond_inx_for_sentence,
-                varElementary5th.useYear_ls[1], varElementary5th.useMult_ls[1], varElementary5th.useAddMinus_ls[1],
+                varElementary5th.useYear1_ls[1], varElementary5th.useYear2_ls[1], varElementary5th.useMult_ls[1], varElementary5th.useAddMinus_ls[1],
                 varElementary5th.var_sign_ls[var1_index+1], varElementary5th.var_sign_ls[var1_index+2], varElementary5th.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
 
 
@@ -758,12 +767,14 @@ public class Elementary5th {
     private void setUseBooleans(int level, int var_num_per_sentence){
         int prob_sentence_num = level;  // 상황 문장 갯수 - 문제 난이도에 따라 값 달라짐
 
-        varElementary5th.useYear_ls = new boolean[prob_sentence_num];
+        varElementary5th.useYear1_ls = new boolean[prob_sentence_num];
+        varElementary5th.useYear2_ls = new boolean[prob_sentence_num];
         varElementary5th.useMult_ls = new boolean[prob_sentence_num];
         varElementary5th.useAddMinus_ls = new boolean[prob_sentence_num];
 
         for(int i = 1; i < prob_sentence_num; i++){
-            varElementary5th.useYear_ls[i] = random.nextBoolean();
+            varElementary5th.useYear1_ls[i] = random.nextBoolean();
+            varElementary5th.useYear2_ls[i] = random.nextBoolean();
             varElementary5th.useMult_ls[i] = random.nextBoolean();
             varElementary5th.useAddMinus_ls[i] = random.nextBoolean();
         }
@@ -812,14 +823,17 @@ public class Elementary5th {
                 varElementary5th.var_min_value_ls[var1_index+1] = 0;
                 varElementary5th.var_max_value_ls[var1_index+1] = 0;
             }
-            if(varElementary5th.useYear_ls[i]){
+            if(varElementary5th.useYear1_ls[i]){
                 varElementary5th.var_min_value_ls[var1_index+2] = 1;
                 varElementary5th.var_max_value_ls[var1_index+2] = 100;
-                varElementary5th.var_min_value_ls[var1_index+3] = 1;
-                varElementary5th.var_max_value_ls[var1_index+3] = 100;
             } else{
                 varElementary5th.var_min_value_ls[var1_index+2] = 0;
                 varElementary5th.var_max_value_ls[var1_index+2] = 0;
+            }
+            if(varElementary5th.useYear2_ls[i]){
+                varElementary5th.var_min_value_ls[var1_index+3] = 1;
+                varElementary5th.var_max_value_ls[var1_index+3] = 100;
+            } else{
                 varElementary5th.var_min_value_ls[var1_index+3] = 0;
                 varElementary5th.var_max_value_ls[var1_index+3] = 0;
             }
@@ -846,7 +860,7 @@ public class Elementary5th {
     // 나이 문제 상황 문장 생성
     // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
     private String[] create_age_sentence(int name_var_index1, int name_var_index2, int category_id, int index, int var_num_per_sentence, int cond_inx,
-                                         boolean useYear, boolean useMult, boolean useAddMinus,
+                                         boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
                                          int var_sign, int year1_sign, int year2_sign){
         String name_category_token = age_category_token; // "나이"
         String name_unit_token = age_unit_token;    // "살"
@@ -857,11 +871,11 @@ public class Elementary5th {
 
         if(category_id == CATEGORY_ID_YX){
             String content = create_ageProb_content_yx(name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
-                    useYear, useMult, useAddMinus,
+                    useYear1, useYear2, useMult, useAddMinus,
                     var_sign, year1_sign, year2_sign,
                     name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
             String explanation = create_explanation_yx(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
-                    useYear, useMult, useAddMinus, true,
+                    useYear1, useYear2, useMult, useAddMinus, true,
                     var_sign, year1_sign, year2_sign,
                     name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
             return new String[] {content, explanation};               // {content, explanation, sign}
@@ -879,7 +893,7 @@ public class Elementary5th {
     // 어떤수 문제 상황 문장 생성
     // create_age_sentence(유형id, 값 참조 시작하는 인덱스) ex) index = 2 -> name2, name3, age2, age3, var2, var3 사용
     private String[] create_unknownnum_sentence(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2, int category_id, int index, int var_num_per_sentence, int cond_inx,
-                                         boolean useYear, boolean useMult, boolean useAddMinus,
+                                         boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
                                          int var_sign, int year1_sign, int year2_sign){
         final String name_category_token = "값"; // "의 나이"
         final String name_unit_token = "";
@@ -888,9 +902,9 @@ public class Elementary5th {
         final String before_str_token = "";
 
         String content = create_UnknownNumProb_content_yx(isCorrectNumSentence, name_var_index1, name_var_index2,
-                index, var_num_per_sentence, useYear, useMult, useAddMinus, var_sign, year1_sign);
+                index, var_num_per_sentence, useYear1, useYear2, useMult, useAddMinus, var_sign, year1_sign);
         String explanation = create_explanation_yx(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
-                useYear, useMult, useAddMinus, false,
+                useYear1, useYear2, useMult, useAddMinus, false,
                 var_sign, year1_sign, year2_sign,
                 name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
         return new String[] {content, explanation};
@@ -904,7 +918,7 @@ public class Elementary5th {
     // (name_var1 +- var3) = (name_var2 +- var4) * var1 +- var2
     public String create_ageProb_content_yx(int name_var_index1, int name_var_index2,
                                             int ls_index, int var_num_per_sentence, int cond_inx,
-                                            boolean useYear, boolean useMult, boolean useAddMinus,
+                                            boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
                                             int var2_sign, int year1_sign, int year2_sign,
                                             String name_category_token, String name_unit_token, String var34_unit_token, String after_str_token, String before_str_token) {
         String name_chosa_token = ui_token;
@@ -931,14 +945,16 @@ public class Elementary5th {
         String var4_token = VAR_START + VAR_STR + year2_index + VAR_END;   // year2
 
         String name1_add_str_token = "", name2_add_str_token = "";
-        if(useYear){
-            if(year1_sign == PLUS_SIGN){
+        if(useYear1) {
+            if (year1_sign == PLUS_SIGN) {
                 name1_add_str_token = var3_token + var34_unit_token + blank_token + after_str_token + blank_token; // "{year1}년 후 "
-            } else if(year1_sign == MINUS_SIGN){
+            } else if (year1_sign == MINUS_SIGN) {
                 name1_add_str_token = var3_token + var34_unit_token + blank_token + before_str_token + blank_token; // "{year1}년 전 "
-            } else{
+            } else {
                 System.out.println("ERROR:: invalid year sign");
             }
+        }
+        if(useYear2) {
             if(year2_sign == PLUS_SIGN){
                 name2_add_str_token = var4_token + var34_unit_token + blank_token + after_str_token + blank_token; // "{year2}년 후 "
             } else if(year2_sign == MINUS_SIGN){
@@ -991,7 +1007,7 @@ public class Elementary5th {
 
     public String create_UnknownNumProb_content_yx(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
                                                    int ls_index, int var_num_per_sentence,
-                                                   boolean useYear, boolean useMult, boolean useAddMinus,
+                                                   boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
                                                    int var2_sign, int year1_sign){
         ArrayList<String> content_ls = new ArrayList<>(1);
 
@@ -1052,7 +1068,7 @@ public class Elementary5th {
         } else{
             content += content_pre_wrong_token;
         }
-        if(useYear){
+        if(useYear2){
             content += addmin_var4_token;
         }
         if(useMult){
@@ -1072,7 +1088,7 @@ public class Elementary5th {
 
     public String create_explanation_yx(String content, int name_var_index1, int name_var_index2,
                                         int ls_index, int var_num_per_sentence, int cond_inx,
-                                        boolean useYear, boolean useMult, boolean useAddMinus, boolean useYearStr,
+                                        boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus, boolean useYearStr,
                                         int var2_sign, int year1_sign, int year2_sign,
                                         String name_category_token, String name_unit_token, String var34_unit_token, String after_str_token, String before_str_token){
         String name_chosa_token = ui_token;
@@ -1101,14 +1117,16 @@ public class Elementary5th {
         String var4_token = VAR_START + VAR_STR + year2_index + VAR_END;   // year2
 
         String name1_add_str_token = "", name2_add_str_token = "";
-        if(useYear && useYearStr){
-            if(year1_sign == PLUS_SIGN){
+        if(useYear1) {
+            if (year1_sign == PLUS_SIGN) {
                 name1_add_str_token = var3_token + var34_unit_token + blank_token + after_str_token + blank_token; // "{year1}년 후 "
-            } else if(year1_sign == MINUS_SIGN){
+            } else if (year1_sign == MINUS_SIGN) {
                 name1_add_str_token = var3_token + var34_unit_token + blank_token + before_str_token + blank_token; // "{year1}년 전 "
-            } else{
+            } else {
                 System.out.println("ERROR:: invalid year sign");
             }
+        }
+        if(useYear2) {
             if(year2_sign == PLUS_SIGN){
                 name2_add_str_token = var4_token + var34_unit_token + blank_token + after_str_token + blank_token; // "{year2}년 후 "
             } else if(year2_sign == MINUS_SIGN){
@@ -1176,12 +1194,15 @@ public class Elementary5th {
         String expr_add_minus_blank_var3_token = var3_sign_blank_token + var3_token;
         String expr_add_minus_var4_token = var4_sign_token + var4_token;
         String expr_add_minus_var3_token = var3_sign_token + var3_token;
-        if(useYear == false){
+        if(useYear1 == false){
             expr_add_minus_var3_token = "";
-            expr_add_minus_var4_token = "";
             expr_add_minus_blank_var3_token = "";
+        }
+        if(useYear2 == false){
+            expr_add_minus_var4_token = "";
             expr_add_minus_blank_var4_token = "";
         }
+
 
         String ex_expression_str_start_token = "\"" + content + "\"라는 문장을 식으로 바꾸면";
         String ex_expression_token = name1_add_str_token + name1_with_category_token
@@ -1195,10 +1216,13 @@ public class Elementary5th {
                 + EQUAL_NL_BLANK_SYM + name_var1_token + expr_add_minus_blank_var3_token;
         String ex_name_var2_after_year_token = name2_add_str_token + name2_with_category_token
                 + EQUAL_NL_BLANK_SYM + name_var2_token + expr_add_minus_blank_var4_token;
-        if(useYear){
+        if(useYear1){
             ex_name_var1_after_year_token += EQUAL_NL_BLANK_SYM + EXPRESSION_START + name_var1_token + expr_add_minus_var3_token + EXPRESSION_END;
+        }
+        if(useYear2){
             ex_name_var2_after_year_token += EQUAL_NL_BLANK_SYM + EXPRESSION_START + name_var2_token + expr_add_minus_var4_token + EXPRESSION_END;
         }
+
 
         String expr_name_var1_token = BRACKET_START + name_var2_token + expr_add_minus_var4_token + BRACKET_END + mult_var1_token + add_minus_var2_token;
         String expr_name_var2_token = BRACKET_START + name_var1_token + expr_add_minus_var3_token + inv_add_minus_var2_token + BRACKET_END + DIVIDE_SYM + var1_token;
@@ -1252,14 +1276,14 @@ public class Elementary5th {
 
         // 풀이 과정 설명
         if(cond_inx == 0){  // age1 given, find age2
-            if(useYear == false && useMult==false && useAddMinus == false){
+            if(useMult==false && useAddMinus == false){
                 explanation_ls.add(ex_name_var1_after_year_token + ex_eq_name_var2_token);
             } else {
                 explanation_ls.add(ex_name_var1_after_year_token);
             }
 
             if(useAddMinus) {
-                if(useYear==false && useMult==false){
+                if(useMult==false){
                     explanation_ls.add(ex_cond1_compute_b4_divide_token + ex_eq_name_var2_token);
                 } else{
                     explanation_ls.add(ex_cond1_compute_b4_divide_token);
@@ -1270,14 +1294,14 @@ public class Elementary5th {
                 explanation_ls.add(ex_cond1_compute_divide_token);
             }
 
-            if(useYear) {
+            if(useYear2) {
                 explanation_ls.add(ex_after_year_to_name_var2_token);
             }
 
         } else{ // age2 given, find age1
             explanation_ls.add(ex_name_var2_after_year_token);
             explanation_ls.add(ex_cond2_compute_token);
-            if(useYear) {
+            if(useYear1) {
                 explanation_ls.add(ex_after_year_to_name_var1_token);
             }
         }
@@ -1455,7 +1479,7 @@ public class Elementary5th {
                             varElementary5th.var_min_value_ls[var2_index], varElementary5th.var_max_value_ls[var2_index],
                             varElementary5th.var_min_value_ls[year1_index], varElementary5th.var_max_value_ls[year1_index],
                             varElementary5th.var_min_value_ls[year2_index], varElementary5th.var_max_value_ls[year2_index],
-                            varElementary5th.useYear_ls[i], varElementary5th.useAddMinus_ls[i], varElementary5th.useMult_ls[i]);
+                            varElementary5th.useYear1_ls[i], varElementary5th.useYear2_ls[i], varElementary5th.useAddMinus_ls[i], varElementary5th.useMult_ls[i]);
                     varElementary5th.name_var_ls[age1_index] = ret_var[0];
                     varElementary5th.name_var_ls[age2_index] = ret_var[1];
                     varElementary5th.var_ls[var1_index] = ret_var[2];
@@ -1488,7 +1512,7 @@ public class Elementary5th {
                                    int var2_min_value, int var2_max_value,
                                    int var3_min_value, int var3_max_value,
                                    int var4_min_value, int var4_max_value,
-                                   boolean useYear, boolean useAddMinus, boolean useMult)
+                                   boolean useYear1, boolean useYear2, boolean useAddMinus, boolean useMult)
     throws TimeoutException { // name_var2, year given
         int var1=1, var2=0, var3=0, var4=0, name_var1=0, name_var2=given_name_var2;
 
@@ -1507,8 +1531,10 @@ public class Elementary5th {
             if(useAddMinus == false){
                 var2 = 0;
             }
-            if(useYear == false) {
+            if(useYear1 == false) {
                 var3 = 0;
+            }
+            if(useYear2 == false) {
                 var4 = 0;
             }
 
@@ -1669,6 +1695,5 @@ public class Elementary5th {
         System.out.println(Arrays.toString(varElementary5th.var_sign_ls));
         System.out.println("\n\n");
     }
-
 
 }
