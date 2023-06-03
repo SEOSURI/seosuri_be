@@ -38,8 +38,6 @@ public class TestPaperController {
         try{
             testPaperService.createTestPaper();
             return new BaseResponse<>("result");
-        }  catch (DocumentException e) {
-            throw new RuntimeException(e);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }
