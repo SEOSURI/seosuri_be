@@ -1,6 +1,10 @@
-package com.onejo.seosuri.service.algorithm;
+package com.onejo.seosuri.service.algorithm.problem;
 
-public class VarElementary5th {
+import com.onejo.seosuri.service.algorithm.category.Category;
+
+import java.util.Arrays;
+
+public class ProblemValueStruct {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // template
@@ -29,6 +33,7 @@ public class VarElementary5th {
 
     // 상황문장 유형id
     public int[] sentence_category_id_ls;
+    public Category[] category_ls;
 
     // sign
     public int[] var_sign_ls;  // input
@@ -49,5 +54,21 @@ public class VarElementary5th {
     // 숫자값
     public int[] variant_var_ls;   // 결과
     public int[] constant_var_ls;   // 결과
+
+    public void printTemplate(){
+        System.out.println("CONTENT ------------------------------------");
+        System.out.println(content_template);
+        System.out.println("EXPLANATION ------------------------------------");
+        System.out.println(explanation_template);
+        System.out.println("ANSWER ------------------------------------");
+        System.out.println(answer_template);
+        System.out.println("SENTENCE_CATEGORY_ID ------------------------------");
+        System.out.println(Arrays.toString(sentence_category_id_ls));
+        System.out.println("VAR_SIGN ------------------------------------");
+        System.out.println(Arrays.toString(var_sign_ls));
+        System.out.println("\n\n");
+    }
+
+
 
 }
