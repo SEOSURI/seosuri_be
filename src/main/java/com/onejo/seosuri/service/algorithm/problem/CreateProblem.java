@@ -46,8 +46,8 @@ public abstract class CreateProblem {
     ////////////////////////////////////////////////////////////////////////////
     // DB에서 값 가져오기
     protected void setDBTemplateValues(int prob_sentence_num, int constant_var_num){
-        problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
-        problemValueStruct.exprCategory_ls = new ExprCategory[prob_sentence_num];
+        problemValueStruct.sentence_expr_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
+        problemValueStruct.expr_category_ls = new ExprCategory[prob_sentence_num];
         problemValueStruct.var_sign_ls = new int[constant_var_num];    // DB에서 가져오기!!!
         problemValueStruct.useYear1_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
         problemValueStruct.useYear2_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
@@ -56,8 +56,8 @@ public abstract class CreateProblem {
 
         // DB에서 값 가져오기
         for(int i = 0; i < prob_sentence_num; i++){
-            problemValueStruct.sentence_category_id_ls[i] = 0;
-            problemValueStruct.exprCategory_ls[i] = new YXAgeExprCategory();
+            problemValueStruct.sentence_expr_category_id_ls[i] = 0;
+            problemValueStruct.expr_category_ls[i] = new YXAgeExprCategory();
             problemValueStruct.useYear1_ls[i] = true;
             problemValueStruct.useYear2_ls[i] = false;
             problemValueStruct.useMult_ls[i] = true;
@@ -131,7 +131,7 @@ public abstract class CreateProblem {
 
         int age0 = ExprCategory.getRandomIntValue(problemValueStruct.variant_var_min_value_ls[0], problemValueStruct.variant_var_max_value_ls[0]);
         int given_age = age0;
-        int num_sentence = problemValueStruct.sentence_category_id_ls.length;
+        int num_sentence = problemValueStruct.sentence_expr_category_id_ls.length;
         int start_index = num_sentence - 1;   // 마지막 상황문장부터 숫자 뽑음
         for(int i = start_index; i >= 0; i--){
             int age1_index = i;
@@ -142,7 +142,7 @@ public abstract class CreateProblem {
             int year2_index = var1_index + 3;
 
             try {
-                int[] ret_var = problemValueStruct.exprCategory_ls[i].getRandomValue(given_age,
+                int[] ret_var = problemValueStruct.expr_category_ls[i].getRandomValue(given_age,
                         problemValueStruct.var_sign_ls[var2_index], problemValueStruct.var_sign_ls[year1_index], problemValueStruct.var_sign_ls[year2_index],
                         problemValueStruct.variant_var_min_value_ls[age1_index], problemValueStruct.variant_var_max_value_ls[age1_index],
                         problemValueStruct.constant_var_min_value_ls[var1_index], problemValueStruct.constant_var_max_value_ls[var1_index],

@@ -7,6 +7,11 @@ import java.util.ArrayList;
 public class YXAgeExprCategory extends YXExprCategory {
 
     @Override
+    public String toString() {
+        return super.toString() + " - 나이 유형";
+    }
+
+    @Override
     public String createSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
                                         int ls_index, int var_num_per_sentence,
                                         boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,

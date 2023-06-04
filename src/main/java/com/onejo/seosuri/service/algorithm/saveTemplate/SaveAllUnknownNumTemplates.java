@@ -45,20 +45,25 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
         setVar_sign_ls_ls(var_num);                 // 2^var_num = 2^(prob_sentence_num*va4_num_per_sentence(=4)) = 16 * 2^prob_sentence_num)
         problemValueStruct.useYear1_ls = new boolean[prob_sentence_num];
         problemValueStruct.useYear2_ls = new boolean[prob_sentence_num];
-        problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];
+        problemValueStruct.sentence_expr_category_id_ls = new int[prob_sentence_num];
         for(int i = 0; i < prob_sentence_num; i++){
             problemValueStruct.useYear1_ls[i] = false;
             problemValueStruct.useYear2_ls[i] = true;
-            problemValueStruct.sentence_category_id_ls[i] = ProblemTokenStruct.CATEGORY_ID_YX;
+            problemValueStruct.sentence_expr_category_id_ls[i] = ProblemTokenStruct.CATEGORY_ID_YX;
         }
 
         for(int c_inx=0; c_inx<sentence_category_id_ls_ls.length; c_inx++) {    // 2^prob_sentence_num
-            problemValueStruct.sentence_category_id_ls = sentence_category_id_ls_ls[c_inx].stream().mapToInt(i -> i).toArray();
-            problemValueStruct.exprCategory_ls = arrayListToCategoryArray(category_ls_ls[c_inx]);
+            problemValueStruct.sentence_expr_category_id_ls = sentence_category_id_ls_ls[c_inx].stream().mapToInt(i -> i).toArray();
+            problemValueStruct.expr_category_ls = arrayListToCategoryArray(category_ls_ls[c_inx]);
             for (boolean[] useAddMinus_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
                 problemValueStruct.useAddMinus_ls = useAddMinus_ls;
                 for (boolean[] useMult_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
                     problemValueStruct.useMult_ls = useMult_ls;
+                    int template_level = 0;
+                    for(int i = 0; i < problemValueStruct.useMult_ls.length; i++){
+                        if(problemValueStruct.useMult_ls[i]) template_level++;
+                    }
+                    problemValueStruct.template_level = template_level;
                     for (ArrayList<Integer> var_sign_ls : var_sign_ls_ls) { // 16 * 2^prob_sentence_num
                         problemValueStruct.var_sign_ls = var_sign_ls.stream().mapToInt(i -> i).toArray();
                         // template 생성할 것인지 여부 결정

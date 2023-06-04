@@ -1,6 +1,9 @@
 package com.onejo.seosuri.service.algorithm.saveTemplate;
 
+import com.onejo.seosuri.controller.dto.template.TemplateDto;
+import com.onejo.seosuri.domain.classification.Category;
 import com.onejo.seosuri.domain.problem.ProblemTemplate;
+import com.onejo.seosuri.domain.problem.ProblemTemplateRepository;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.createTemplate.CreateTemplate;
@@ -31,49 +34,14 @@ public abstract class SaveAllTemplates {
     abstract public void saveAllTemplates();
 
     protected void saveInDB() {
-        problemValueStruct.printTemplate();
-        //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
-        /*
-        problemValueStruct.content_template = "내용";
-        problemValueStruct.explanation_template = "설명";
-        problemValueStruct.answer_template = "답";
-
-        problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
-        problemValueStruct.category_ls = new Category[prob_sentence_num];
-        problemValueStruct.var_sign_ls = new int[constant_var_num];    // DB에서 가져오기!!!
-        problemValueStruct.useYear1_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
-        problemValueStruct.useYear2_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
-        problemValueStruct.useMult_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
-        problemValueStruct.useAddMinus_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!! // entire addminus should be false
-
-        problemValueStruct.variant_var_min_value_ls = new int[name_var_num];
-        problemValueStruct.variant_var_max_value_ls = new int[name_var_num];
-        problemValueStruct.variant_var_string_ls = new String[name_var_num];
-
-        */
-
-        ProblemTemplate problemTemplate = new ProblemTemplate();
-
-        //Long id = template_id
-        //Category category = ???
-        //Long category_id
-        //SmallUnit smallUnit
-        //CategoryTitle title
-        //List<TestPaper> testPapers
-        //List<ProblemTemplate> problemTemplates
-        //String content = varElementary5th.content_template;
-        //String level = prob_sentence_num -> '상', '중', '하'
-        //String explanation = varElementary5th.explanation_template;
-        //String answer = varElementary5th.answer_template;
-        //String sentenceCategoryList = varElementary5th.sentence_category_id_ls;
-        //List<Problem> problems = ????
-
-        // 다음은 DB에 column 생성한 후 저장해야
-        //varElementary5th.var_sign_ls;
-        //varElementary5th.useYear1_ls;
-        //varElementary5th.useMult_ls;
-        //varElementary5th.useAddMinus_ls;
-
+        //problemValueStruct.printTemplate();
+        // problem
+        TemplateDto templateDto = new TemplateDto(problemValueStruct.template_level, problemValueStruct.category,
+                problemValueStruct.real_content, problemValueStruct.real_answer, problemValueStruct.explanation_template,
+                problemValueStruct.sentence_expr_category_id_ls, problemValueStruct.expr_category_ls, problemValueStruct.var_sign_ls,
+                problemValueStruct.useYear1_ls, problemValueStruct.useYear2_ls, problemValueStruct.useMult_ls, problemValueStruct.useAddMinus_ls);
+        ProblemTemplate problemTemplate = templateDto.toEntity();
+        //ProblemTemplate savedProblemTemplate = ProblemTemplateRepository.save(problemTemplate);
     }
 
 

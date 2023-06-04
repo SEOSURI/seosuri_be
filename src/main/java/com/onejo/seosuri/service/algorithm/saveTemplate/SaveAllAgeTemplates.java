@@ -37,6 +37,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
         int var_num_per_sentence = ProblemTokenStruct.AGE_PROB_VAR_NUM_PER_SENTENCE;
 
         for(int prob_sentence_num: new int[] {3, 2, 1}) {
+            problemValueStruct.template_level = prob_sentence_num;
             int name_var_num = prob_sentence_num + 1;
             int var_num = prob_sentence_num * var_num_per_sentence;
             int[] inx_ls = new int[prob_sentence_num];
@@ -50,8 +51,8 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
             setVar_sign_ls_ls(var_num);                 // 2^var_num = 2^(prob_sentence_num*va4_num_per_sentence(=4)) = 16 * 2^prob_sentence_num)
 
             for(int c_inx=0; c_inx<sentence_category_id_ls_ls.length; c_inx++){    // 2^prob_sentence_num
-                problemValueStruct.sentence_category_id_ls = sentence_category_id_ls_ls[c_inx].stream().mapToInt(i->i).toArray();
-                problemValueStruct.exprCategory_ls = arrayListToCategoryArray(category_ls_ls[c_inx]);
+                problemValueStruct.sentence_expr_category_id_ls = sentence_category_id_ls_ls[c_inx].stream().mapToInt(i->i).toArray();
+                problemValueStruct.expr_category_ls = arrayListToCategoryArray(category_ls_ls[c_inx]);
                 for(int answer_inx: inx_ls) {   // prob_sentence_num
                     for (int condition_inx = (answer_inx + 1) % name_var_num; condition_inx != answer_inx; condition_inx++) {
                         for (boolean[] useYear1_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
@@ -69,7 +70,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
                                             // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
                                             boolean generateTemplate = true;
                                             for (int i = 0; i < prob_sentence_num; i++) {
-                                                if ((problemValueStruct.sentence_category_id_ls[i] == ProblemTokenStruct.CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
+                                                if ((problemValueStruct.sentence_expr_category_id_ls[i] == ProblemTokenStruct.CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
                                                         && !(problemValueStruct.var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_MULT_VAR_OFFSET] == ProblemTokenStruct.PLUS_SIGN
                                                         && problemValueStruct.var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_ADDMIN_VAR_OFFSET] == ProblemTokenStruct.PLUS_SIGN
                                                         && problemValueStruct.var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR1_OFFSET] == ProblemTokenStruct.PLUS_SIGN

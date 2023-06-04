@@ -80,15 +80,15 @@ public class CreateUnknownNumTemplate extends CreateTemplate{
 
         // 어떤 수 문장 생성
         int var1_index = 0;
-        sentence_ls[0] = createSentence(problemValueStruct.exprCategory_ls[0], true, name_var_index_in_correctNum_ls[0], name_var_index_in_correctNum_ls[1],
-                problemValueStruct.sentence_category_id_ls[0], 0 , var_num_per_sentence, cond_inx_for_sentence,
+        sentence_ls[0] = createSentence(problemValueStruct.expr_category_ls[0], true, name_var_index_in_correctNum_ls[0], name_var_index_in_correctNum_ls[1],
+                problemValueStruct.sentence_expr_category_id_ls[0], 0 , var_num_per_sentence, cond_inx_for_sentence,
                 problemValueStruct.useYear1_ls[0], problemValueStruct.useYear2_ls[0], problemValueStruct.useMult_ls[0], problemValueStruct.useAddMinus_ls[0],
                 problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
 
 
         // 잘못 계산한 수 문장 생성
         var1_index = var_num_per_sentence;
-        sentence_ls[1] = createSentence(problemValueStruct.exprCategory_ls[1], false, name_var_index_in_wrongNum_ls[0], name_var_index_in_wrongNum_ls[1], problemValueStruct.sentence_category_id_ls[1], 1 , var_num_per_sentence, cond_inx_for_sentence,
+        sentence_ls[1] = createSentence(problemValueStruct.expr_category_ls[1], false, name_var_index_in_wrongNum_ls[0], name_var_index_in_wrongNum_ls[1], problemValueStruct.sentence_expr_category_id_ls[1], 1 , var_num_per_sentence, cond_inx_for_sentence,
                 problemValueStruct.useYear1_ls[1], problemValueStruct.useYear2_ls[1], problemValueStruct.useMult_ls[1], problemValueStruct.useAddMinus_ls[1],
                 problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
 

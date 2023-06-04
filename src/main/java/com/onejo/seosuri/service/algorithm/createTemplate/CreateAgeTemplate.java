@@ -41,14 +41,14 @@ public class CreateAgeTemplate extends CreateTemplate{
                                    boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
                                    int var_sign, int year1_sign, int year2_sign
              */
-            sentence_ls[i] = this.createSentence(problemValueStruct.exprCategory_ls[i], true, i, i+1, problemValueStruct.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+            sentence_ls[i] = this.createSentence(problemValueStruct.expr_category_ls[i], true, i, i+1, problemValueStruct.sentence_expr_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
                     problemValueStruct.useYear1_ls[i], problemValueStruct.useYear2_ls[i], problemValueStruct.useMult_ls[i], problemValueStruct.useAddMinus_ls[i],
                     problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
         cond_inx_for_sentence = 0;  // age1, age2 중 age1가 given
         for(int i = condition_inx; i < prob_sentence_num; i++){ // cond_inx+1~ -> age1 given
             int var1_index = i * var_num_per_sentence;
-            sentence_ls[i] = createSentence(problemValueStruct.exprCategory_ls[i], true, i, i+1, problemValueStruct.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+            sentence_ls[i] = createSentence(problemValueStruct.expr_category_ls[i], true, i, i+1, problemValueStruct.sentence_expr_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
                     problemValueStruct.useYear1_ls[i], problemValueStruct.useYear2_ls[i], problemValueStruct.useMult_ls[i], problemValueStruct.useAddMinus_ls[i],
                     problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }

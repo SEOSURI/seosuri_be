@@ -118,7 +118,7 @@ public class Elementary5th {
         int constant_var_num = prob_sentence_num * var_num_per_sentence;
 
 
-        problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
+        problemValueStruct.sentence_expr_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
         // DB에서 sentence_category_id_ls 가져오기!!!!
         problemValueStruct.var_sign_ls = new int[constant_var_num];    // DB에서 가져오기!!!
         problemValueStruct.useYear1_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
@@ -233,7 +233,7 @@ public void realAgeProblem(int level){
         int variable_var_num = prob_sentence_num + 1;   // 잘못 계산한 수, 바르게 계산한 수
         int constant_var_num = prob_sentence_num * var_num_per_sentence;
 
-        problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
+        problemValueStruct.sentence_expr_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
         // DB에서 sentence_category_id_ls 가져오기!!!!
         problemValueStruct.var_sign_ls = new int[constant_var_num];    // DB에서 가져오기!!!
         problemValueStruct.useYear1_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
@@ -298,7 +298,7 @@ public void realAgeProblem(int level){
 
         int age0 = getRandomIntValue(problemValueStruct.variant_var_min_value_ls[0], problemValueStruct.variant_var_max_value_ls[0]);
         int given_age = age0;
-        int num_sentence = problemValueStruct.sentence_category_id_ls.length;
+        int num_sentence = problemValueStruct.sentence_expr_category_id_ls.length;
         int start_index = num_sentence - 1;   // 마지막 상황문장부터 숫자 뽑음
         for(int i = start_index; i >= 0; i--){
             int age1_index = i;
@@ -309,7 +309,7 @@ public void realAgeProblem(int level){
             int year2_index = var1_index + 3;
 
             try {
-                if (problemValueStruct.sentence_category_id_ls[i] == CATEGORY_ID_YX) {
+                if (problemValueStruct.sentence_expr_category_id_ls[i] == CATEGORY_ID_YX) {
                     int[] ret_var = getRandomYXValue(given_age,
                             problemValueStruct.var_sign_ls[var2_index], problemValueStruct.var_sign_ls[year1_index], problemValueStruct.var_sign_ls[year2_index],
                             problemValueStruct.variant_var_min_value_ls[age1_index], problemValueStruct.variant_var_max_value_ls[age1_index],
@@ -324,7 +324,7 @@ public void realAgeProblem(int level){
                     problemValueStruct.constant_var_ls[var2_index] = ret_var[3];
                     problemValueStruct.constant_var_ls[year1_index] = ret_var[4];
                     problemValueStruct.constant_var_ls[year2_index] = ret_var[5];
-                } else if (problemValueStruct.sentence_category_id_ls[i] == CATEGORY_ID_SUM_DIFFERENCE) {
+                } else if (problemValueStruct.sentence_expr_category_id_ls[i] == CATEGORY_ID_SUM_DIFFERENCE) {
                     int[] ret_var = getRandomX1X2Value(given_age, problemValueStruct.var_sign_ls[i],
                             problemValueStruct.variant_var_min_value_ls[age1_index], problemValueStruct.variant_var_max_value_ls[age1_index]);
                     problemValueStruct.variant_var_ls[age1_index] = ret_var[0];
@@ -548,7 +548,7 @@ public void realAgeProblem(int level){
         System.out.println("ANSWER ------------------------------------");
         System.out.println(problemValueStruct.answer_template);
         System.out.println("SENTENCE_CATEGORY_ID ------------------------------");
-        System.out.println(Arrays.toString(problemValueStruct.sentence_category_id_ls));
+        System.out.println(Arrays.toString(problemValueStruct.sentence_expr_category_id_ls));
         System.out.println("VAR_SIGN ------------------------------------");
         System.out.println(Arrays.toString(problemValueStruct.var_sign_ls));
         System.out.println("\n\n");
@@ -679,7 +679,7 @@ public void realAgeProblem(int level){
             setVar_sign_ls_ls(var_num);                 // 2^var_num = 2^(prob_sentence_num*va4_num_per_sentence(=4)) = 16 * 2^prob_sentence_num)
 
             for(ArrayList<Integer> sentence_category_id_ls: sentence_category_id_ls_ls){    // 2^prob_sentence_num
-                problemValueStruct.sentence_category_id_ls = sentence_category_id_ls.stream().mapToInt(i->i).toArray();
+                problemValueStruct.sentence_expr_category_id_ls = sentence_category_id_ls.stream().mapToInt(i->i).toArray();
                 for(int answer_inx: inx_ls) {   // prob_sentence_num
                     for (int condition_inx = (answer_inx + 1) % name_var_num; condition_inx != answer_inx; condition_inx++) {
                         for (boolean[] useYear1_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
@@ -697,7 +697,7 @@ public void realAgeProblem(int level){
                                             // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
                                             boolean generateTemplate = true;
                                             for (int i = 0; i < prob_sentence_num; i++) {
-                                                if ((problemValueStruct.sentence_category_id_ls[i] == CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
+                                                if ((problemValueStruct.sentence_expr_category_id_ls[i] == CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
                                                         && !(problemValueStruct.var_sign_ls[i * var_num_per_sentence + AGE_PROB_MULT_VAR_OFFSET] == PLUS_SIGN
                                                         && problemValueStruct.var_sign_ls[i * var_num_per_sentence + AGE_PROB_ADDMIN_VAR_OFFSET] == PLUS_SIGN
                                                         && problemValueStruct.var_sign_ls[i * var_num_per_sentence + AGE_PROB_YEAR_VAR1_OFFSET] == PLUS_SIGN
@@ -784,11 +784,11 @@ public void realAgeProblem(int level){
         setVar_sign_ls_ls(var_num);                 // 2^var_num = 2^(prob_sentence_num*va4_num_per_sentence(=4)) = 16 * 2^prob_sentence_num)
         problemValueStruct.useYear1_ls = new boolean[prob_sentence_num];
         problemValueStruct.useYear2_ls = new boolean[prob_sentence_num];
-        problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];
+        problemValueStruct.sentence_expr_category_id_ls = new int[prob_sentence_num];
         for(int i = 0; i < prob_sentence_num; i++){
             problemValueStruct.useYear1_ls[i] = false;
             problemValueStruct.useYear2_ls[i] = true;
-            problemValueStruct.sentence_category_id_ls[i] = CATEGORY_ID_YX;
+            problemValueStruct.sentence_expr_category_id_ls[i] = CATEGORY_ID_YX;
         }
 
 
@@ -861,14 +861,14 @@ public void realAgeProblem(int level){
         if(prob_sentence_num==1)    cond_inx_for_sentence = condition_inx;
         for(int i = 0; i < condition_inx; i++){ // 0~cond_inx -> age2 given
             int var1_index = i * var_num_per_sentence;
-            sentence_ls[i] = create_age_sentence(i, i+1, problemValueStruct.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+            sentence_ls[i] = create_age_sentence(i, i+1, problemValueStruct.sentence_expr_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
                     problemValueStruct.useYear1_ls[i], problemValueStruct.useYear2_ls[i], problemValueStruct.useMult_ls[i], problemValueStruct.useAddMinus_ls[i],
                     problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
         cond_inx_for_sentence = 0;  // age1, age2 중 age1가 given
         for(int i = condition_inx; i < prob_sentence_num; i++){ // cond_inx+1~ -> age1 given
             int var1_index = i * var_num_per_sentence;
-            sentence_ls[i] = create_age_sentence(i, i+1, problemValueStruct.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+            sentence_ls[i] = create_age_sentence(i, i+1, problemValueStruct.sentence_expr_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
                     problemValueStruct.useYear1_ls[i], problemValueStruct.useYear2_ls[i], problemValueStruct.useMult_ls[i], problemValueStruct.useAddMinus_ls[i],
                     problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
@@ -957,14 +957,14 @@ public void realAgeProblem(int level){
         // 어떤 수 문장 생성
         int var1_index = 0;
         sentence_ls[0] = create_unknownnum_sentence(true, name_var_index_in_correctNum_ls[0], name_var_index_in_correctNum_ls[1],
-                problemValueStruct.sentence_category_id_ls[0], 0 , var_num_per_sentence, cond_inx_for_sentence,
+                problemValueStruct.sentence_expr_category_id_ls[0], 0 , var_num_per_sentence, cond_inx_for_sentence,
                 problemValueStruct.useYear1_ls[0], problemValueStruct.useYear2_ls[0], problemValueStruct.useMult_ls[0], problemValueStruct.useAddMinus_ls[0],
                 problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
 
 
         // 잘못 계산한 수 문장 생성
         var1_index = var_num_per_sentence;
-        sentence_ls[1] = create_unknownnum_sentence(false, name_var_index_in_wrongNum_ls[0], name_var_index_in_wrongNum_ls[1], problemValueStruct.sentence_category_id_ls[1], 1 , var_num_per_sentence, cond_inx_for_sentence,
+        sentence_ls[1] = create_unknownnum_sentence(false, name_var_index_in_wrongNum_ls[0], name_var_index_in_wrongNum_ls[1], problemValueStruct.sentence_expr_category_id_ls[1], 1 , var_num_per_sentence, cond_inx_for_sentence,
                 problemValueStruct.useYear1_ls[1], problemValueStruct.useYear2_ls[1], problemValueStruct.useMult_ls[1], problemValueStruct.useAddMinus_ls[1],
                 problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
 

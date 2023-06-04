@@ -40,6 +40,24 @@ public class ProblemTemplate extends BaseTimeEntity {
     @Column(name="prob_sentence_category_list")
     private String sentenceCategoryList;
 
+    @Column(name="prob_expression_category_list")
+    private String exprCategoryList;
+
+    @Column(name="prob_var_sign_list")
+    private String varSignList;
+
+    @Column(name="prob_bool_use_year_var1_list")
+    private String useYear1List;
+
+    @Column(name="prob_bool_use_year_var2_list")
+    private String useYear2List;
+
+    @Column(name="prob_bool_use_multiplication_list")
+    private String useMultList;
+
+    @Column(name="prob_bool_use_add_or_minus_list")
+    private String useAddMinusList;
+
     @OneToMany(mappedBy = "probTemp")
     private List<Problem> problems = new ArrayList<>();
 }

@@ -5,6 +5,9 @@ import java.util.concurrent.TimeoutException;
 
 public abstract class ExprCategory {
 
+    @Override
+    abstract public String toString();
+
     abstract public String createSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
                                                  int ls_index, int var_num_per_sentence,
                                                  boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
