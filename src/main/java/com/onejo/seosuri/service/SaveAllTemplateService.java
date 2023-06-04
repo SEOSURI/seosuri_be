@@ -11,6 +11,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class SaveAllTemplateService {
@@ -23,21 +26,29 @@ public class SaveAllTemplateService {
     }
 
     @Transactional
-    public void runSaveAllAgeTemplate(int start, int end){
+    public List<TemplateDto> runSaveAllAgeTemplate(int start, int end){
+        List<TemplateDto> res = new ArrayList<>();
         SaveAllAgeTemplates saveAllAgeTemplates = new SaveAllAgeTemplates();
         saveAllAgeTemplates.saveAllTemplates(start, end);
         for(TemplateDto templateDto: saveAllAgeTemplates.templateDtos){
-            ProblemTemplate saved_templateDto = saveOneTemplate(templateDto);
+            ProblemTemplate saved_problem_template = saveOneTemplate(templateDto);
+            TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
+            res.add(saved_template_dto);
         }
+        return res;
     }
 
     @Transactional
-    public void runSaveAllUnknownNumTemplate(int start, int end) {
+    public List<TemplateDto> runSaveAllUnknownNumTemplate(int start, int end) {
+        List<TemplateDto> res = new ArrayList<>();
         SaveAllUnknownNumTemplates saveAllUnknownNumTemplates = new SaveAllUnknownNumTemplates();
         saveAllUnknownNumTemplates.saveAllTemplates(start, end);
         for(TemplateDto templateDto: saveAllUnknownNumTemplates.templateDtos){
-            ProblemTemplate saved_templateDto = saveOneTemplate(templateDto);
+            ProblemTemplate saved_problem_template = saveOneTemplate(templateDto);
+            TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
+            res.add(saved_template_dto);
         }
+        return res;
     }
 
 }

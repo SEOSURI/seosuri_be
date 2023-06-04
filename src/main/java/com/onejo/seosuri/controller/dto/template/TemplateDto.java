@@ -80,6 +80,30 @@ public class TemplateDto {
         this.useAddMinusList = booleanArrayToString(this.useAddMinus_ls);
     }
 
+    public TemplateDto (ProblemTemplate problemTemplate){
+        this.int_level = Integer.parseInt(problemTemplate.getLevel());
+        this.category = problemTemplate.getCategory();
+        this.content = problemTemplate.getContent();
+        this.answer = problemTemplate.getAnswer();
+        this.explanation = problemTemplate.getExplanation();
+
+        this.sentence_expr_category_id_ls = stringToIntArray(problemTemplate.getSentenceCategoryList());
+        this.expr_category_ls = stringToExprCategoryArray(problemTemplate.getExprCategoryList());
+        this.var_sign_ls = stringToIntArray(problemTemplate.getVarSignList());
+        this.useYear1_ls = stringToBooleanArray(problemTemplate.getUseYear1List());
+        this.useYear2_ls = stringToBooleanArray(problemTemplate.getUseYear2List());
+        this.useMult_ls = stringToBooleanArray(problemTemplate.getUseMultList());
+        this.useAddMinus_ls = stringToBooleanArray(problemTemplate.getUseAddMinusList());
+
+        this.sentenceCategoryList = problemTemplate.getSentenceCategoryList();
+        this.exprCategoryList = problemTemplate.getExprCategoryList();
+        this.varSignList = problemTemplate.getVarSignList();
+        this.useYear1List = problemTemplate.getUseYear1List();
+        this.useYear2List = problemTemplate.getUseYear2List();
+        this.useMultList = problemTemplate.getUseMultList();
+        this.useAddMinusList = problemTemplate.getUseAddMinusList();
+    }
+
     public String exprCategoryArrayToString(ExprCategory[] target){
         String output = "";
         for(int i = 0; i < target.length; i++){
