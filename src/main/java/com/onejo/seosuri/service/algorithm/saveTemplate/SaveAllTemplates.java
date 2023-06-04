@@ -1,10 +1,7 @@
 package com.onejo.seosuri.service.algorithm.saveTemplate;
 
 import com.onejo.seosuri.controller.dto.template.TemplateDto;
-import com.onejo.seosuri.domain.classification.Category;
-import com.onejo.seosuri.domain.problem.ProblemTemplate;
-import com.onejo.seosuri.domain.problem.ProblemTemplateRepository;
-import com.onejo.seosuri.service.TemplateService;
+import com.onejo.seosuri.service.SaveAllTemplateService;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.createTemplate.CreateTemplate;
@@ -14,10 +11,8 @@ import java.util.ArrayList;
 
 public abstract class SaveAllTemplates {
 
-    TemplateService templateService;
-
     // DB에 저장할 값 모아둔 ArrayList
-    ArrayList<TemplateDto> templateDtos = new ArrayList<>();
+    public ArrayList<TemplateDto> templateDtos = new ArrayList<>();
 
     ExprCategory[] possible_Expr_category_ls;    // should be set in the lower classes
     protected int[] category_id_ls = new int[] {};
@@ -32,13 +27,13 @@ public abstract class SaveAllTemplates {
     public boolean[][] useBoolean_ls_ls;
     private static final boolean[] target_boolean = new boolean[] {true, false};
 
-    protected SaveAllTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct, CreateTemplate createTemplate){
+
+    // constructor
+    protected SaveAllTemplates(int[] category_id_ls){
         this.category_id_ls = category_id_ls;
-        this.problemValueStruct = problemValueStruct;
-        this.createTemplate = createTemplate;
     }
 
-    abstract public void saveAllTemplates();
+    abstract public void saveAllTemplates(int start_template_id, int end_template_id);
 
     protected void saveInDB() {
         //problemValueStruct.printTemplate();   // for debugging
@@ -47,7 +42,7 @@ public abstract class SaveAllTemplates {
                 problemValueStruct.sentence_expr_category_id_ls, problemValueStruct.expr_category_ls, problemValueStruct.var_sign_ls,
                 problemValueStruct.useYear1_ls, problemValueStruct.useYear2_ls, problemValueStruct.useMult_ls, problemValueStruct.useAddMinus_ls);
         templateDtos.add(templateDto);
-        templateService.saveTemplate(templateDto);
+        //saveAllTemplateService.saveOneTemplate(templateDto);
     }
 
 

@@ -12,28 +12,16 @@ import java.util.ArrayList;
 public class SaveAllAgeTemplates extends SaveAllTemplates{
 
 
-    public SaveAllAgeTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct) {
-        super(category_id_ls, problemValueStruct, new CreateAgeTemplate(problemValueStruct));
+    public SaveAllAgeTemplates() {
+        super(new int[] {ProblemTokenStruct.CATEGORY_ID_YX, ProblemTokenStruct.CATEGORY_ID_SUM_DIFFERENCE});
         possible_Expr_category_ls = new ExprCategory[] {new SumDiffExprCategory(), new YXAgeExprCategory()};
+        problemValueStruct = new ProblemValueStruct();
+        createTemplate = new CreateAgeTemplate(problemValueStruct);
     }
 
     @Override
-    public void saveAllTemplates() {
-        /*
-        prob_sentence_num(상황문장 갯수)
-        answer_inx
-        condition_inx
-        sentence_category_id
-        useYear
-        useMult
-        useAddMinus
-        var1_sign
-        var2_sign
-        var3_sign
-        var4_sign
-        */
-
-        int template_id = 0;    // template_id = 0, 1, 2, ...
+    public void saveAllTemplates(int start_template_id, int end_template_id) {
+        int template_id = start_template_id;    // template_id = 0, 1, 2, ...
         int var_num_per_sentence = ProblemTokenStruct.AGE_PROB_VAR_NUM_PER_SENTENCE;
 
         for(int prob_sentence_num: new int[] {3, 2, 1}) {
@@ -92,7 +80,9 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
                                                 createTemplate.createOneTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
                                                 saveInDB();
                                                 template_id++;
-                                                //System.out.println("" + template_id);
+                                                if(template_id > end_template_id){
+                                                    return;
+                                                }
                                             }
                                         }
                                     }

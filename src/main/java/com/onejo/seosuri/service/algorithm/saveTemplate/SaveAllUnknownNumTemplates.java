@@ -10,25 +10,17 @@ import java.util.ArrayList;
 
 public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
 
-    public SaveAllUnknownNumTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct) {
-        super(category_id_ls, problemValueStruct, new CreateUnknownNumTemplate(problemValueStruct));
+    public SaveAllUnknownNumTemplates() {
+        super(new int[] {ProblemTokenStruct.CATEGORY_ID_YX});
         possible_Expr_category_ls = new ExprCategory[] {new YXUnkownNumExprCategory()};
+        problemValueStruct = new ProblemValueStruct();
+        createTemplate = new CreateUnknownNumTemplate(problemValueStruct);
     }
 
     @Override
-    public void saveAllTemplates() {
-        /*
+    public void saveAllTemplates(int start_template_id, int end_template_id) {
+        int template_id = start_template_id;    // template_id = 0, 1, 2, ...
 
-        useYear
-        useMult
-        useAddMinus
-        var1_sign
-        var2_sign
-        var3_sign
-        var4_sign
-        */
-
-        int template_id = 0;    // template_id = 0, 1, 2, ...
         final int var_num_per_sentence = ProblemTokenStruct.UNKNOWNNUM_PROB_VAR_NUM_PER_SENTECE;
         final int prob_sentence_num = 2;
         final int answer_inx = ProblemTokenStruct.UNKNOWN_PROB_CORRECT_NUM_INDEX;    // 바르게 계산한 수
@@ -86,7 +78,9 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
                             createTemplate.createOneTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
                             saveInDB();
                             template_id++;
-                            //System.out.println("" + template_id);
+                            if(template_id > end_template_id){
+                                return;
+                            }
                         }
                     }
                 }

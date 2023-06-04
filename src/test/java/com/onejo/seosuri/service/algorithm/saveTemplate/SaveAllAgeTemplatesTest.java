@@ -34,15 +34,15 @@ class SaveAllAgeTemplatesTest {
     void saveAllUnknownNumTemplates() {
         int[] temp = {0, 0};
         ProblemValueStruct problemValueStruct = new ProblemValueStruct();
-        SaveAllUnknownNumTemplates saveAllUnknownNumTemplates = new SaveAllUnknownNumTemplates(temp, problemValueStruct);
-        saveAllUnknownNumTemplates.saveAllTemplates();
+        SaveAllUnknownNumTemplates saveAllUnknownNumTemplates = new SaveAllUnknownNumTemplates();
+        saveAllUnknownNumTemplates.saveAllTemplates(0, 2);
     }
     @Test
     void saveAllAgeTemplates() {
         int[] temp = {0, 0};
         ProblemValueStruct problemValueStruct = new ProblemValueStruct();
-        SaveAllAgeTemplates saveAllAgeTemplates = new SaveAllAgeTemplates(temp, problemValueStruct);
-        saveAllAgeTemplates.saveAllTemplates();
+        SaveAllAgeTemplates saveAllAgeTemplates = new SaveAllAgeTemplates();
+        saveAllAgeTemplates.saveAllTemplates(0, 2);
     }
 
     ProblemTokenStruct problemValueStruct = new ProblemTokenStruct();
