@@ -1,24 +1,22 @@
 package com.onejo.seosuri.service.algorithm.category;
 
-import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
-
 import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
 public abstract class Category {
 
-    abstract public String createContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
-                                int ls_index, int var_num_per_sentence,
-                                boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
-                                int var2_sign, int year1_sign, int year2_sign,
-                                String name_category_token, String name_unit_token, String var34_unit_token,
-                                String after_str_token, String before_str_token);
+    abstract public String createSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
+                                                 int ls_index, int var_num_per_sentence,
+                                                 boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
+                                                 int var2_sign, int year1_sign, int year2_sign,
+                                                 String name_category_token, String name_unit_token, String var34_unit_token,
+                                                 String after_str_token, String before_str_token);
 
-    abstract public String createExplanation(String content, int name_var_index1, int name_var_index2,
-                                    int ls_index, int var_num_per_sentence, int cond_inx,
-                                    boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
-                                    int var2_sign, int year1_sign, int year2_sign,
-                                    String name_category_token, String name_unit_token, String var34_unit_token, String after_str_token, String before_str_token);
+    abstract public String createSentenceExplanation(String content, int name_var_index1, int name_var_index2,
+                                                     int ls_index, int var_num_per_sentence, int cond_inx,
+                                                     boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
+                                                     int var2_sign, int year1_sign, int year2_sign,
+                                                     String name_category_token, String name_unit_token, String var34_unit_token, String after_str_token, String before_str_token);
 
     abstract public int[] getRandomValue(int given_name_var2, int var_sign, int year1_sign, int year2_sign,
                                          int name_var1_min_value, int name_var1_max_value,

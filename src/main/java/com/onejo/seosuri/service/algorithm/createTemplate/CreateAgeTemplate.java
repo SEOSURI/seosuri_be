@@ -77,9 +77,9 @@ public class CreateAgeTemplate extends CreateTemplate{
         String after_str_token = ProblemTokenStruct.time_after_token;  // "후"
         String before_str_token = ProblemTokenStruct.time_before_token; // "전"
 
-        String content = category.createContent(isCorrectNumSentence, name_var_index1, name_var_index2,
+        String content = category.createSentenceContent(isCorrectNumSentence, name_var_index1, name_var_index2,
                 index, var_num_per_sentence, useYear1, useYear2, useMult, useAddMinus, var_sign, year1_sign, year2_sign, name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
-        String explanation = category.createExplanation(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
+        String explanation = category.createSentenceExplanation(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
                 useYear1, useYear2, useMult, useAddMinus,
                 var_sign, year1_sign, year2_sign,
                 name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);

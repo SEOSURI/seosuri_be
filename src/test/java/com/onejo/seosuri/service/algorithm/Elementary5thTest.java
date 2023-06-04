@@ -101,15 +101,6 @@ class Elementary5thTest {
                             int year1_sign=0, year2_sign=0, var_sign=0;
                             System.out.println("\n\nCASE" + case_id + "\t@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                             System.out.println("cond="+cond_inx+" y1="+useYear1+" y2="+useYear2+" m="+useMult+" am="+useAddMinus+" yrs="+year1_sign+year2_sign+" vars="+var_sign);
-                                        /*
-                                        System.out.println("cond_inx = " + cond_inx);
-                                        System.out.println("useYear1 = " + useYear1);
-                                        System.out.println("useMult = " + useMult);
-                                        System.out.println("useAddMinus = " + useAddMinus);
-                                        System.out.println("year1_sign = " + year1_sign);
-                                        System.out.println("year2_sign = " + year2_sign);
-                                        System.out.println("var_sign = " + var_sign);
-                                         */
                             String content = elementary5th.create_ageProb_content_yx(0, 1, ls_index, var_num_per_sentence, cond_inx,
                                     useYear1, useYear2, useMult, useAddMinus,
                                     var_sign, year1_sign, year2_sign,
@@ -120,18 +111,6 @@ class Elementary5thTest {
                                     name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
                             System.out.println(content);
                             System.out.println(explanation);
-
-                                        /*
-                                        String[] sentence_ls = elementary5th.create_sentence_yx(0, 1, ls_index, var_num_per_sentence, cond_inx,
-                                                useYear1, useMult, useAddMinus,
-                                                var_sign, year1_sign, year2_sign,
-                                                name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);*/
-                                        /*
-                                        System.out.println("content-------------------------");
-                                        System.out.println(sentence_ls[0]);
-                                        System.out.println("explanation-------------------------------------");*/
-                            //System.out.println(sentence_ls[1]);
-
                         }
     }
 
