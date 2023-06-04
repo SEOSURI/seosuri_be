@@ -4,6 +4,7 @@ import com.onejo.seosuri.controller.dto.template.TemplateDto;
 import com.onejo.seosuri.domain.classification.Category;
 import com.onejo.seosuri.domain.problem.ProblemTemplate;
 import com.onejo.seosuri.domain.problem.ProblemTemplateRepository;
+import com.onejo.seosuri.service.TemplateService;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.createTemplate.CreateTemplate;
@@ -12,6 +13,12 @@ import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 import java.util.ArrayList;
 
 public abstract class SaveAllTemplates {
+
+    TemplateService templateService;
+
+    // DB에 저장할 값 모아둔 ArrayList
+    ArrayList<TemplateDto> templateDtos = new ArrayList<>();
+
     ExprCategory[] possible_Expr_category_ls;    // should be set in the lower classes
     protected int[] category_id_ls = new int[] {};
     protected ProblemValueStruct problemValueStruct = new ProblemValueStruct();
@@ -34,16 +41,14 @@ public abstract class SaveAllTemplates {
     abstract public void saveAllTemplates();
 
     protected void saveInDB() {
-        //problemValueStruct.printTemplate();
-        // problem
+        //problemValueStruct.printTemplate();   // for debugging
         TemplateDto templateDto = new TemplateDto(problemValueStruct.template_level, problemValueStruct.category,
                 problemValueStruct.real_content, problemValueStruct.real_answer, problemValueStruct.explanation_template,
                 problemValueStruct.sentence_expr_category_id_ls, problemValueStruct.expr_category_ls, problemValueStruct.var_sign_ls,
                 problemValueStruct.useYear1_ls, problemValueStruct.useYear2_ls, problemValueStruct.useMult_ls, problemValueStruct.useAddMinus_ls);
-        ProblemTemplate problemTemplate = templateDto.toEntity();
-        //ProblemTemplate savedProblemTemplate = ProblemTemplateRepository.save(problemTemplate);
+        templateDtos.add(templateDto);
+        templateService.saveTemplate(templateDto);
     }
-
 
 
 
