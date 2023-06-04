@@ -68,6 +68,19 @@ public class ProblemValueStruct {
         System.out.println(Arrays.toString(var_sign_ls));
         System.out.println("\n\n");
     }
+    public void printProblem(){
+        System.out.println("CONTENT ------------------------------------");
+        System.out.println(real_content);
+        System.out.println("EXPLANATION ------------------------------------");
+        System.out.println(real_explanation);
+        System.out.println("ANSWER ------------------------------------");
+        System.out.println(real_answer);
+        System.out.println("SENTENCE_CATEGORY_ID ------------------------------");
+        System.out.println(Arrays.toString(sentence_category_id_ls));
+        System.out.println("VAR_SIGN ------------------------------------");
+        System.out.println(Arrays.toString(var_sign_ls));
+        System.out.println("\n\n");
+    }
 
 
 

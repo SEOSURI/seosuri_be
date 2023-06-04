@@ -19,6 +19,8 @@ class SaveAllAgeTemplatesTest {
         ProblemValueStruct problemValueStruct1 = new ProblemValueStruct();
         CreateProblem createAgeProblem = new CreateAgeProblem(problemValueStruct1);
         createAgeProblem.createProblem(3);
+        problemValueStruct1.printTemplate();
+        problemValueStruct1.printProblem();
     }
 
     @Test
@@ -26,6 +28,8 @@ class SaveAllAgeTemplatesTest {
         ProblemValueStruct problemValueStruct1 = new ProblemValueStruct();
         CreateProblem createUnknownNumProblem = new CreateUnknownNumProblem(problemValueStruct1);
         createUnknownNumProblem.createProblem(3);
+        problemValueStruct1.printTemplate();
+        problemValueStruct1.printProblem();
     }
 
     @Test

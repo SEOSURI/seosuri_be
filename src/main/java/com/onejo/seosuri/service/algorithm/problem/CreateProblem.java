@@ -2,6 +2,7 @@ package com.onejo.seosuri.service.algorithm.problem;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.category.Category;
+import com.onejo.seosuri.service.algorithm.category.YXAgeCategory;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
@@ -15,6 +16,61 @@ public abstract class CreateProblem {
     }
 
     abstract public void createProblem(int level);
+
+    protected void createProblem(int prob_sentence_num, int constant_var_num, int variable_var_num, int var_num_per_sentence){
+        //////////////////////////////////////////////////////////////////////////
+        // 템플릿 DB값 가져오기
+
+        // 템플릿, 템플릿 관련 값
+        setDBTemplateValues(prob_sentence_num, constant_var_num);
+
+        // 변수 string, 변수 var 결정
+        setVariantVarMinMaxLsAndStringLs(variable_var_num); // name_ls, name_var_min_value_ls, name_var_max_value_ls 설정
+
+        // 상수 var 범위 설정 -> 문제 숫자 값 랜덤 뽑기 시 이용됨
+        setConstantVarMinMaxLs(prob_sentence_num, var_num_per_sentence);    // var_min_value_ls, var_max_value_ls 설정
+
+        // 상수 var, name_var 랜덤 뽑기 -> 숫자 변경 시 여기부터 다시 실행하면 됨!!!
+        // ageProblem의 variable_var_num = 4, var_num_per_sentence = level
+        // 인자 외에 내부에서 이용하는 값 : name_var_min_value_ls, name_value_max_value_ls, sentence_category_id_ls, var_sign_ls, var_min_value_ls, var_max_value_ls, useYear_ls, useMult_ls, useAddMinus_ls
+        setVar(variable_var_num, constant_var_num, var_num_per_sentence);  // name_var_ls, var_ls 설정
+
+
+        /////////////////////////////////////////////////////////////////////////////
+        // template -> problem
+        templateToProblem(problemValueStruct.variant_var_string_ls, problemValueStruct.variant_var_ls, problemValueStruct.constant_var_ls,
+                problemValueStruct.content_template, problemValueStruct.explanation_template, problemValueStruct.answer_template);
+    }
+
+
+    // DB 연결
+    protected void setDBTemplateValues(int prob_sentence_num, int constant_var_num){
+        problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
+        problemValueStruct.category_ls = new Category[prob_sentence_num];
+        problemValueStruct.var_sign_ls = new int[constant_var_num];    // DB에서 가져오기!!!
+        problemValueStruct.useYear1_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        problemValueStruct.useYear2_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        problemValueStruct.useMult_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        problemValueStruct.useAddMinus_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!! // entire addminus should be false
+
+        // DB에서 값 가져오기
+        for(int i = 0; i < prob_sentence_num; i++){
+            problemValueStruct.sentence_category_id_ls[i] = 0;
+            problemValueStruct.category_ls[i] = new YXAgeCategory();
+            problemValueStruct.useYear1_ls[i] = true;
+            problemValueStruct.useYear2_ls[i] = false;
+            problemValueStruct.useMult_ls[i] = true;
+            problemValueStruct.useAddMinus_ls[i] = true;
+        }
+        for(int i = 0; i < constant_var_num; i++){
+            problemValueStruct.var_sign_ls[i] = 0;
+        }
+
+        // DB에서 템플릿 가져오기 - 난이도로 템플릿 고르고 그 중에서 랜덤 뽑기!!!
+        problemValueStruct.content_template = "내용";
+        problemValueStruct.explanation_template = "설명";
+        problemValueStruct.answer_template = "답";
+    }
 
     // DB 연결
     protected void setConstantVarMinMaxLs(int prob_sentence_num, int num_var_per_sentence){
@@ -109,10 +165,8 @@ public abstract class CreateProblem {
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////
-    // template -> problem
-
-    // return new String[] {real_content, real_explanation, real_answer};
-    public String[] templateToProblem(String[] name_ls, int[] name_var_ls, int[] var_ls,
+    // template -> problem : store in ProblemValueStruct
+    public void templateToProblem(String[] name_ls, int[] name_var_ls, int[] var_ls,
                                       String content_template, String explanation_template, String answer_template){
         // content, explanation, answer
         String real_content = content_template;
@@ -140,11 +194,9 @@ public abstract class CreateProblem {
             real_answer = real_answer.replace(old_value, new_value);
         }
 
-        real_content = calcExpr(real_content);
-        real_explanation = calcExpr(real_explanation);
-        real_answer = calcExpr(real_answer);
-
-        return new String[] {real_content, real_explanation, real_answer};
+        problemValueStruct.real_content = calcExpr(real_content);
+        problemValueStruct.real_explanation = calcExpr(real_explanation);
+        problemValueStruct.real_answer = calcExpr(real_answer);
     }
 
     // templateToProblem에서 [식내용] -> 계산한 값
