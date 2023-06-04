@@ -1,6 +1,11 @@
 package com.onejo.seosuri.service.algorithm.saveTemplate;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
+import com.onejo.seosuri.service.algorithm.category.Category;
+import com.onejo.seosuri.service.algorithm.category.SumDiffCategory;
+import com.onejo.seosuri.service.algorithm.category.YXAgeCategory;
+import com.onejo.seosuri.service.algorithm.category.YXCategory;
+import com.onejo.seosuri.service.algorithm.createTemplate.CreateAgeTemplate;
 import com.onejo.seosuri.service.algorithm.createTemplate.CreateTemplate;
 import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 
@@ -9,8 +14,9 @@ import java.util.ArrayList;
 public class SaveAllAgeTemplates extends SaveAllTemplates{
 
 
-    public SaveAllAgeTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct, CreateTemplate createTemplate) {
-        super(category_id_ls, problemValueStruct, createTemplate);
+    public SaveAllAgeTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct) {
+        super(category_id_ls, problemValueStruct, new CreateAgeTemplate(problemValueStruct));
+        possible_category_ls = new Category[] {new SumDiffCategory(), new YXAgeCategory()};
     }
 
     @Override
@@ -85,15 +91,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
                                             // template 생성, DB에 저장
                                             if (generateTemplate) {
                                                 createTemplate.createOneTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
-                                                /*
-                                                System.out.println("" + template_id + ":: \n"
-                                                        + problemValueStruct.content_template + "\n\n"
-                                                        + problemValueStruct.answer_template + "\n\n"
-                                                        + problemValueStruct.explanation_template + "\n\n");
-                                                */
-
                                                 saveInDB();
-
                                                 template_id++;
                                                 //System.out.println("" + template_id);
                                             }
@@ -110,6 +108,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
 
     @Override
     public void saveInDB() {
+        problemValueStruct.printTemplate();
         //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
         //Long id = template_id
         //Category category = ???

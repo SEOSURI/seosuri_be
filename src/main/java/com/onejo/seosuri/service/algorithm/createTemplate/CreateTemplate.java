@@ -7,7 +7,7 @@ public abstract class CreateTemplate {
 
     ProblemValueStruct problemValueStruct = new ProblemValueStruct();
 
-    public CreateTemplate(ProblemValueStruct problemValueStruct) {
+    protected CreateTemplate(ProblemValueStruct problemValueStruct) {
         this.problemValueStruct = problemValueStruct;
     }
 

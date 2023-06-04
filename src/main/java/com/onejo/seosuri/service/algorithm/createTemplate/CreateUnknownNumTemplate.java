@@ -7,7 +7,7 @@ import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 public class CreateUnknownNumTemplate extends CreateTemplate{
 
 
-    CreateUnknownNumTemplate(ProblemValueStruct problemValueStruct) {
+    public CreateUnknownNumTemplate(ProblemValueStruct problemValueStruct) {
         super(problemValueStruct);
     }
 

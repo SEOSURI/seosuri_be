@@ -10,12 +10,12 @@ import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 import java.util.ArrayList;
 
 public abstract class SaveAllTemplates {
+    Category[] possible_category_ls;    // should be set in the lower classes
     protected int[] category_id_ls = new int[] {};
     protected ProblemValueStruct problemValueStruct = new ProblemValueStruct();
     protected CreateTemplate createTemplate;
 
     ArrayList<Category>[] category_ls_ls;
-    Category[] possible_category_ls = new Category[] {new SumDiffCategory(), new YXCategory()};
 
     ArrayList<Integer>[] sentence_category_id_ls_ls;
     int[] target_sentence_category_ls = new int[] {ProblemTokenStruct.CATEGORY_ID_YX, ProblemTokenStruct.CATEGORY_ID_SUM_DIFFERENCE};
@@ -23,7 +23,7 @@ public abstract class SaveAllTemplates {
     public boolean[][] useBoolean_ls_ls;
     private static final boolean[] target_boolean = new boolean[] {true, false};
 
-    public SaveAllTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct, CreateTemplate createTemplate){
+    protected SaveAllTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct, CreateTemplate createTemplate){
         this.category_id_ls = category_id_ls;
         this.problemValueStruct = problemValueStruct;
         this.createTemplate = createTemplate;

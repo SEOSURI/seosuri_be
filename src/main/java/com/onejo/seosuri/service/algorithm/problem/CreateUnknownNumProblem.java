@@ -5,7 +5,7 @@ import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import java.util.Random;
 
 public class CreateUnknownNumProblem extends CreateProblem{
-    CreateUnknownNumProblem(ProblemValueStruct problemValueStruct) {
+    public CreateUnknownNumProblem(ProblemValueStruct problemValueStruct) {
         super(problemValueStruct);
     }
 

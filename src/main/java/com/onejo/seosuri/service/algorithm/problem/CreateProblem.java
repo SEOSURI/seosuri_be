@@ -10,7 +10,7 @@ public abstract class CreateProblem {
 
     ProblemValueStruct problemValueStruct = new ProblemValueStruct();
 
-    CreateProblem(ProblemValueStruct problemValueStruct){
+    public CreateProblem(ProblemValueStruct problemValueStruct){
         this.problemValueStruct = problemValueStruct;
     }
 

@@ -1,16 +1,21 @@
 package com.onejo.seosuri.service.algorithm.saveTemplate;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
+import com.onejo.seosuri.service.algorithm.category.Category;
+import com.onejo.seosuri.service.algorithm.category.SumDiffCategory;
+import com.onejo.seosuri.service.algorithm.category.YXCategory;
+import com.onejo.seosuri.service.algorithm.category.YXUnkownNumCategory;
 import com.onejo.seosuri.service.algorithm.createTemplate.CreateTemplate;
+import com.onejo.seosuri.service.algorithm.createTemplate.CreateUnknownNumTemplate;
 import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 
 import java.util.ArrayList;
 
 public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
 
-
-    public SaveAllUnknownNumTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct, CreateTemplate createTemplate) {
-        super(category_id_ls, problemValueStruct, createTemplate);
+    public SaveAllUnknownNumTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct) {
+        super(category_id_ls, problemValueStruct, new CreateUnknownNumTemplate(problemValueStruct));
+        possible_category_ls = new Category[] {new SumDiffCategory(), new YXUnkownNumCategory()};
     }
 
     @Override
@@ -73,14 +78,7 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
                     if (generateTemplate) {
                         //unknownnumProblemTemplate();
                         createTemplate.createOneTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
-
-                        System.out.println("" + template_id + ":: \n"
-                                + problemValueStruct.content_template + "\n\n"
-                                + problemValueStruct.answer_template + "\n\n"
-                                + problemValueStruct.explanation_template + "\n\n");
-
                         saveInDB();
-
                         template_id++;
                         //System.out.println("" + template_id);
                     }
@@ -91,6 +89,6 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
 
     @Override
     public void saveInDB() {
-
+        problemValueStruct.printTemplate();
     }
 }

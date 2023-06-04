@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class CreateAgeProblem extends CreateProblem{
 
-    CreateAgeProblem(ProblemValueStruct problemValueStruct) {
+    public CreateAgeProblem(ProblemValueStruct problemValueStruct) {
         super(problemValueStruct);
     }
 
