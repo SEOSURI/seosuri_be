@@ -106,29 +106,4 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
         }
     }
 
-    @Override
-    public void saveInDB() {
-        problemValueStruct.printTemplate();
-        //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
-        //Long id = template_id
-        //Category category = ???
-        //Long category_id
-        //SmallUnit smallUnit
-        //CategoryTitle title
-        //List<TestPaper> testPapers
-        //List<ProblemTemplate> problemTemplates
-        //String content = varElementary5th.content_template;
-        //String level = prob_sentence_num -> '상', '중', '하'
-        //String explanation = varElementary5th.explanation_template;
-        //String answer = varElementary5th.answer_template;
-        //String sentenceCategoryList = varElementary5th.sentence_category_id_ls;
-        //List<Problem> problems = ????
-
-        // 다음은 DB에 column 생성한 후 저장해야
-        //varElementary5th.var_sign_ls;
-        //varElementary5th.useYear1_ls;
-        //varElementary5th.useMult_ls;
-        //varElementary5th.useAddMinus_ls;
-
-    }
 }

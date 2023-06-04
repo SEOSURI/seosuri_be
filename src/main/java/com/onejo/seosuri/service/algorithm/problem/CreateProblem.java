@@ -43,7 +43,8 @@ public abstract class CreateProblem {
     }
 
 
-    // DB 연결
+    ////////////////////////////////////////////////////////////////////////////
+    // DB에서 값 가져오기
     protected void setDBTemplateValues(int prob_sentence_num, int constant_var_num){
         problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
         problemValueStruct.category_ls = new Category[prob_sentence_num];
@@ -71,8 +72,6 @@ public abstract class CreateProblem {
         problemValueStruct.explanation_template = "설명";
         problemValueStruct.answer_template = "답";
     }
-
-    // DB 연결
     protected void setConstantVarMinMaxLs(int prob_sentence_num, int num_var_per_sentence){
         problemValueStruct.constant_var_min_value_ls = new int[prob_sentence_num * num_var_per_sentence];
         problemValueStruct.constant_var_max_value_ls = new int[prob_sentence_num * num_var_per_sentence];
@@ -108,8 +107,6 @@ public abstract class CreateProblem {
             }
         }
     }
-
-    // DB 연결
     protected void setVariantVarMinMaxLsAndStringLs(int name_var_num){
         problemValueStruct.variant_var_min_value_ls = new int[name_var_num];
         problemValueStruct.variant_var_max_value_ls = new int[name_var_num];
@@ -121,7 +118,8 @@ public abstract class CreateProblem {
         }
     }
 
-    // 나이 문제 숫자 뽑기
+    //////////////////////////////////////////////////////////////////////////////
+    // 나이 문제 숫자 뽑기 - DB에서 가져왔던 값 이용
     // input : name_var_min_value_ls, name_value_max_value_ls, sentence_category_id_ls, var_sign_ls, var_min_value_ls, var_max_value_ls, useYear_ls, useMult_ls, useAddMinus_ls
     // output : name_var_ls, var_ls
     protected void setVar(int variable_var_num, int constant_var_num, int num_constant_var_per_sentence){

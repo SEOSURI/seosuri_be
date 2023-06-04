@@ -92,8 +92,4 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
         }
     }
 
-    @Override
-    public void saveInDB() {
-        problemValueStruct.printTemplate();
-    }
 }

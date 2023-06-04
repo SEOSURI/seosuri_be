@@ -30,7 +30,56 @@ public abstract class SaveAllTemplates {
     }
 
     abstract public void saveAllTemplates();
-    abstract public void saveInDB();
+
+    protected void saveInDB() {
+        problemValueStruct.printTemplate();
+        //DB에 저장 - 다음 값들은 위에서 저장됨 -> 이제 DB에 저장해보자!!!
+        /*
+        problemValueStruct.content_template = "내용";
+        problemValueStruct.explanation_template = "설명";
+        problemValueStruct.answer_template = "답";
+
+        problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
+        problemValueStruct.category_ls = new Category[prob_sentence_num];
+        problemValueStruct.var_sign_ls = new int[constant_var_num];    // DB에서 가져오기!!!
+        problemValueStruct.useYear1_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        problemValueStruct.useYear2_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        problemValueStruct.useMult_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
+        problemValueStruct.useAddMinus_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!! // entire addminus should be false
+
+        problemValueStruct.constant_var_min_value_ls = new int[prob_sentence_num * num_var_per_sentence];
+        problemValueStruct.constant_var_max_value_ls = new int[prob_sentence_num * num_var_per_sentence];
+
+        problemValueStruct.variant_var_min_value_ls = new int[name_var_num];
+        problemValueStruct.variant_var_max_value_ls = new int[name_var_num];
+        problemValueStruct.variant_var_string_ls = new String[name_var_num];
+
+        */
+
+
+        //Long id = template_id
+        //Category category = ???
+        //Long category_id
+        //SmallUnit smallUnit
+        //CategoryTitle title
+        //List<TestPaper> testPapers
+        //List<ProblemTemplate> problemTemplates
+        //String content = varElementary5th.content_template;
+        //String level = prob_sentence_num -> '상', '중', '하'
+        //String explanation = varElementary5th.explanation_template;
+        //String answer = varElementary5th.answer_template;
+        //String sentenceCategoryList = varElementary5th.sentence_category_id_ls;
+        //List<Problem> problems = ????
+
+        // 다음은 DB에 column 생성한 후 저장해야
+        //varElementary5th.var_sign_ls;
+        //varElementary5th.useYear1_ls;
+        //varElementary5th.useMult_ls;
+        //varElementary5th.useAddMinus_ls;
+
+    }
+
+
 
 
     // 순열 메서드(cnt는 선택 횟수)
