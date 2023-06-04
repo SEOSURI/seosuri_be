@@ -1,6 +1,6 @@
 package com.onejo.seosuri.service.algorithm.createTemplate;
 
-import com.onejo.seosuri.service.algorithm.category.Category;
+import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 
 public abstract class CreateTemplate {
@@ -14,7 +14,7 @@ public abstract class CreateTemplate {
     abstract public void createOneTemplate(int prob_sentence_num, int var_num_per_sentence,
                                     int answer_inx, int condition_inx);
 
-    abstract public String[] createSentence(Category category, boolean isCorrectNumSentence, int name_var_index1, int name_var_index2, int category_id, int index, int var_num_per_sentence, int cond_inx,
+    abstract public String[] createSentence(ExprCategory exprCategory, boolean isCorrectNumSentence, int name_var_index1, int name_var_index2, int category_id, int index, int var_num_per_sentence, int cond_inx,
                                             boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
                                             int var_sign, int year1_sign, int year2_sign);
 

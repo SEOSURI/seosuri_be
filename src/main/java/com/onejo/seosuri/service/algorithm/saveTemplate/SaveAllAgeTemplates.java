@@ -1,12 +1,10 @@
 package com.onejo.seosuri.service.algorithm.saveTemplate;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
-import com.onejo.seosuri.service.algorithm.category.Category;
-import com.onejo.seosuri.service.algorithm.category.SumDiffCategory;
-import com.onejo.seosuri.service.algorithm.category.YXAgeCategory;
-import com.onejo.seosuri.service.algorithm.category.YXCategory;
+import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
+import com.onejo.seosuri.service.algorithm.exprCategory.SumDiffExprCategory;
+import com.onejo.seosuri.service.algorithm.exprCategory.YXAgeExprCategory;
 import com.onejo.seosuri.service.algorithm.createTemplate.CreateAgeTemplate;
-import com.onejo.seosuri.service.algorithm.createTemplate.CreateTemplate;
 import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
 
     public SaveAllAgeTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct) {
         super(category_id_ls, problemValueStruct, new CreateAgeTemplate(problemValueStruct));
-        possible_category_ls = new Category[] {new SumDiffCategory(), new YXAgeCategory()};
+        possible_Expr_category_ls = new ExprCategory[] {new SumDiffExprCategory(), new YXAgeExprCategory()};
     }
 
     @Override
@@ -53,7 +51,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
 
             for(int c_inx=0; c_inx<sentence_category_id_ls_ls.length; c_inx++){    // 2^prob_sentence_num
                 problemValueStruct.sentence_category_id_ls = sentence_category_id_ls_ls[c_inx].stream().mapToInt(i->i).toArray();
-                problemValueStruct.category_ls = arrayListToCategoryArray(category_ls_ls[c_inx]);
+                problemValueStruct.exprCategory_ls = arrayListToCategoryArray(category_ls_ls[c_inx]);
                 for(int answer_inx: inx_ls) {   // prob_sentence_num
                     for (int condition_inx = (answer_inx + 1) % name_var_num; condition_inx != answer_inx; condition_inx++) {
                         for (boolean[] useYear1_ls : useBoolean_ls_ls) { // 2^prob_sentence_num

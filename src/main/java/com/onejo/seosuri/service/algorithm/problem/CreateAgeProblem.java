@@ -1,10 +1,6 @@
 package com.onejo.seosuri.service.algorithm.problem;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
-import com.onejo.seosuri.service.algorithm.category.Category;
-import org.checkerframework.checker.units.qual.C;
-
-import java.util.Random;
 
 public class CreateAgeProblem extends CreateProblem{
 

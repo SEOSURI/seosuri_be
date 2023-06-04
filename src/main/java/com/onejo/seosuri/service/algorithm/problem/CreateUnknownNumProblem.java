@@ -1,10 +1,6 @@
 package com.onejo.seosuri.service.algorithm.problem;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
-import com.onejo.seosuri.service.algorithm.category.Category;
-import com.onejo.seosuri.service.algorithm.category.YXAgeCategory;
-
-import java.util.Random;
 
 public class CreateUnknownNumProblem extends CreateProblem{
     public CreateUnknownNumProblem(ProblemValueStruct problemValueStruct) {

@@ -1,10 +1,10 @@
-package com.onejo.seosuri.service.algorithm.category;
+package com.onejo.seosuri.service.algorithm.exprCategory;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 
 import java.util.ArrayList;
 
-public class YXAgeCategory extends YXCategory {
+public class YXAgeExprCategory extends YXExprCategory {
 
     @Override
     public String createSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,

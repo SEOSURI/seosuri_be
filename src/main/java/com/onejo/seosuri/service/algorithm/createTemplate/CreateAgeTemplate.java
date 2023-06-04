@@ -1,7 +1,7 @@
 package com.onejo.seosuri.service.algorithm.createTemplate;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
-import com.onejo.seosuri.service.algorithm.category.Category;
+import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 
 public class CreateAgeTemplate extends CreateTemplate{
@@ -41,14 +41,14 @@ public class CreateAgeTemplate extends CreateTemplate{
                                    boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
                                    int var_sign, int year1_sign, int year2_sign
              */
-            sentence_ls[i] = this.createSentence(problemValueStruct.category_ls[i], true, i, i+1, problemValueStruct.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+            sentence_ls[i] = this.createSentence(problemValueStruct.exprCategory_ls[i], true, i, i+1, problemValueStruct.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
                     problemValueStruct.useYear1_ls[i], problemValueStruct.useYear2_ls[i], problemValueStruct.useMult_ls[i], problemValueStruct.useAddMinus_ls[i],
                     problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
         cond_inx_for_sentence = 0;  // age1, age2 중 age1가 given
         for(int i = condition_inx; i < prob_sentence_num; i++){ // cond_inx+1~ -> age1 given
             int var1_index = i * var_num_per_sentence;
-            sentence_ls[i] = createSentence(problemValueStruct.category_ls[i], true, i, i+1, problemValueStruct.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
+            sentence_ls[i] = createSentence(problemValueStruct.exprCategory_ls[i], true, i, i+1, problemValueStruct.sentence_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
                     problemValueStruct.useYear1_ls[i], problemValueStruct.useYear2_ls[i], problemValueStruct.useMult_ls[i], problemValueStruct.useAddMinus_ls[i],
                     problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
@@ -66,7 +66,7 @@ public class CreateAgeTemplate extends CreateTemplate{
     }
 
     @Override
-    public String[] createSentence(Category category, boolean isCorrectNumSentence,
+    public String[] createSentence(ExprCategory exprCategory, boolean isCorrectNumSentence,
                                    int name_var_index1, int name_var_index2, int category_id, int index,
                                    int var_num_per_sentence, int cond_inx,
                                    boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
@@ -77,9 +77,9 @@ public class CreateAgeTemplate extends CreateTemplate{
         String after_str_token = ProblemTokenStruct.time_after_token;  // "후"
         String before_str_token = ProblemTokenStruct.time_before_token; // "전"
 
-        String content = category.createSentenceContent(isCorrectNumSentence, name_var_index1, name_var_index2,
+        String content = exprCategory.createSentenceContent(isCorrectNumSentence, name_var_index1, name_var_index2,
                 index, var_num_per_sentence, useYear1, useYear2, useMult, useAddMinus, var_sign, year1_sign, year2_sign, name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
-        String explanation = category.createSentenceExplanation(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
+        String explanation = exprCategory.createSentenceExplanation(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
                 useYear1, useYear2, useMult, useAddMinus,
                 var_sign, year1_sign, year2_sign,
                 name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);

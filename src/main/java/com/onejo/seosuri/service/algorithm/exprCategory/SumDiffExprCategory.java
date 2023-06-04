@@ -1,4 +1,4 @@
-package com.onejo.seosuri.service.algorithm.category;
+package com.onejo.seosuri.service.algorithm.exprCategory;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 
@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
-public class SumDiffCategory extends Category {
+public class SumDiffExprCategory extends ExprCategory {
 
     @Override
     public String createSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,

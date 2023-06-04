@@ -1,8 +1,8 @@
 package com.onejo.seosuri.service.algorithm.problem;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
-import com.onejo.seosuri.service.algorithm.category.Category;
-import com.onejo.seosuri.service.algorithm.category.YXAgeCategory;
+import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
+import com.onejo.seosuri.service.algorithm.exprCategory.YXAgeExprCategory;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
@@ -47,7 +47,7 @@ public abstract class CreateProblem {
     // DB에서 값 가져오기
     protected void setDBTemplateValues(int prob_sentence_num, int constant_var_num){
         problemValueStruct.sentence_category_id_ls = new int[prob_sentence_num];    // 각 상황문장이 어떤 유형의 문장인지를 저장한 배열
-        problemValueStruct.category_ls = new Category[prob_sentence_num];
+        problemValueStruct.exprCategory_ls = new ExprCategory[prob_sentence_num];
         problemValueStruct.var_sign_ls = new int[constant_var_num];    // DB에서 가져오기!!!
         problemValueStruct.useYear1_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
         problemValueStruct.useYear2_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
@@ -57,7 +57,7 @@ public abstract class CreateProblem {
         // DB에서 값 가져오기
         for(int i = 0; i < prob_sentence_num; i++){
             problemValueStruct.sentence_category_id_ls[i] = 0;
-            problemValueStruct.category_ls[i] = new YXAgeCategory();
+            problemValueStruct.exprCategory_ls[i] = new YXAgeExprCategory();
             problemValueStruct.useYear1_ls[i] = true;
             problemValueStruct.useYear2_ls[i] = false;
             problemValueStruct.useMult_ls[i] = true;
@@ -72,6 +72,19 @@ public abstract class CreateProblem {
         problemValueStruct.explanation_template = "설명";
         problemValueStruct.answer_template = "답";
     }
+    protected void setVariantVarMinMaxLsAndStringLs(int name_var_num){
+        problemValueStruct.variant_var_min_value_ls = new int[name_var_num];
+        problemValueStruct.variant_var_max_value_ls = new int[name_var_num];
+        problemValueStruct.variant_var_string_ls = new String[name_var_num];
+        for(int i = 0; i < name_var_num; i++){      // DB 연결 -> DB에서 값 받아와야
+            problemValueStruct.variant_var_min_value_ls[i] = 10;
+            problemValueStruct.variant_var_max_value_ls[i] = 100;
+            problemValueStruct.variant_var_string_ls[i] = i+"사람"+i;
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    // 값 설정 (DB에서 가져오는 것XX)
     protected void setConstantVarMinMaxLs(int prob_sentence_num, int num_var_per_sentence){
         problemValueStruct.constant_var_min_value_ls = new int[prob_sentence_num * num_var_per_sentence];
         problemValueStruct.constant_var_max_value_ls = new int[prob_sentence_num * num_var_per_sentence];
@@ -107,16 +120,6 @@ public abstract class CreateProblem {
             }
         }
     }
-    protected void setVariantVarMinMaxLsAndStringLs(int name_var_num){
-        problemValueStruct.variant_var_min_value_ls = new int[name_var_num];
-        problemValueStruct.variant_var_max_value_ls = new int[name_var_num];
-        problemValueStruct.variant_var_string_ls = new String[name_var_num];
-        for(int i = 0; i < name_var_num; i++){      // DB 연결 -> DB에서 값 받아와야
-            problemValueStruct.variant_var_min_value_ls[i] = 10;
-            problemValueStruct.variant_var_max_value_ls[i] = 100;
-            problemValueStruct.variant_var_string_ls[i] = i+"사람"+i;
-        }
-    }
 
     //////////////////////////////////////////////////////////////////////////////
     // 나이 문제 숫자 뽑기 - DB에서 가져왔던 값 이용
@@ -126,7 +129,7 @@ public abstract class CreateProblem {
         problemValueStruct.variant_var_ls = new int[variable_var_num];
         problemValueStruct.constant_var_ls = new int[constant_var_num];
 
-        int age0 = Category.getRandomIntValue(problemValueStruct.variant_var_min_value_ls[0], problemValueStruct.variant_var_max_value_ls[0]);
+        int age0 = ExprCategory.getRandomIntValue(problemValueStruct.variant_var_min_value_ls[0], problemValueStruct.variant_var_max_value_ls[0]);
         int given_age = age0;
         int num_sentence = problemValueStruct.sentence_category_id_ls.length;
         int start_index = num_sentence - 1;   // 마지막 상황문장부터 숫자 뽑음
@@ -139,7 +142,7 @@ public abstract class CreateProblem {
             int year2_index = var1_index + 3;
 
             try {
-                int[] ret_var = problemValueStruct.category_ls[i].getRandomValue(given_age,
+                int[] ret_var = problemValueStruct.exprCategory_ls[i].getRandomValue(given_age,
                         problemValueStruct.var_sign_ls[var2_index], problemValueStruct.var_sign_ls[year1_index], problemValueStruct.var_sign_ls[year2_index],
                         problemValueStruct.variant_var_min_value_ls[age1_index], problemValueStruct.variant_var_max_value_ls[age1_index],
                         problemValueStruct.constant_var_min_value_ls[var1_index], problemValueStruct.constant_var_max_value_ls[var1_index],

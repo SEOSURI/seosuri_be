@@ -1,21 +1,20 @@
 package com.onejo.seosuri.service.algorithm.saveTemplate;
 
+import com.onejo.seosuri.domain.problem.ProblemTemplate;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
-import com.onejo.seosuri.service.algorithm.category.Category;
-import com.onejo.seosuri.service.algorithm.category.SumDiffCategory;
-import com.onejo.seosuri.service.algorithm.category.YXCategory;
+import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.createTemplate.CreateTemplate;
 import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 
 import java.util.ArrayList;
 
 public abstract class SaveAllTemplates {
-    Category[] possible_category_ls;    // should be set in the lower classes
+    ExprCategory[] possible_Expr_category_ls;    // should be set in the lower classes
     protected int[] category_id_ls = new int[] {};
     protected ProblemValueStruct problemValueStruct = new ProblemValueStruct();
     protected CreateTemplate createTemplate;
 
-    ArrayList<Category>[] category_ls_ls;
+    ArrayList<ExprCategory>[] category_ls_ls;
 
     ArrayList<Integer>[] sentence_category_id_ls_ls;
     int[] target_sentence_category_ls = new int[] {ProblemTokenStruct.CATEGORY_ID_YX, ProblemTokenStruct.CATEGORY_ID_SUM_DIFFERENCE};
@@ -47,15 +46,13 @@ public abstract class SaveAllTemplates {
         problemValueStruct.useMult_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!!
         problemValueStruct.useAddMinus_ls = new boolean[prob_sentence_num];   // DB에서 가져오기!!! // entire addminus should be false
 
-        problemValueStruct.constant_var_min_value_ls = new int[prob_sentence_num * num_var_per_sentence];
-        problemValueStruct.constant_var_max_value_ls = new int[prob_sentence_num * num_var_per_sentence];
-
         problemValueStruct.variant_var_min_value_ls = new int[name_var_num];
         problemValueStruct.variant_var_max_value_ls = new int[name_var_num];
         problemValueStruct.variant_var_string_ls = new String[name_var_num];
 
         */
 
+        ProblemTemplate problemTemplate = new ProblemTemplate();
 
         //Long id = template_id
         //Category category = ???
@@ -139,15 +136,15 @@ public abstract class SaveAllTemplates {
         int row_num = (int)Math.pow(ProblemTokenStruct.SENTENCE_CATEGORY_NUM, prob_sentence_num);
         category_ls_ls = new ArrayList[row_num];   // 모든 순열 리스트
         for(int i = 0; i < row_num; i++){
-            category_ls_ls[i] = new ArrayList<Category>();
+            category_ls_ls[i] = new ArrayList<ExprCategory>();
         }
-        category_permutation(0, category_ls_ls, possible_category_ls, prob_sentence_num);
+        category_permutation(0, category_ls_ls, possible_Expr_category_ls, prob_sentence_num);
     }
 
-    protected Category[] arrayListToCategoryArray(ArrayList<Category> category_ls){
-        Category[] result = new Category[category_ls.size()];
-        for(int i = 0; i < category_ls.size(); i++){
-            result[i] = category_ls.get(i);
+    protected ExprCategory[] arrayListToCategoryArray(ArrayList<ExprCategory> exprCategory_ls){
+        ExprCategory[] result = new ExprCategory[exprCategory_ls.size()];
+        for(int i = 0; i < exprCategory_ls.size(); i++){
+            result[i] = exprCategory_ls.get(i);
         }
         return result;
     }
@@ -180,7 +177,7 @@ public abstract class SaveAllTemplates {
         int_permutation(cnt + 1, dest, target, r);
     }
 
-    public void category_permutation(int cnt, ArrayList<Category>[] dest, Category[] target, int r) {
+    public void category_permutation(int cnt, ArrayList<ExprCategory>[] dest, ExprCategory[] target, int r) {
         // target에서 숫자 골라 중복순열 만들기
         // cnt는 현재 탐색 깊이 (depth)
         int n = target.length;

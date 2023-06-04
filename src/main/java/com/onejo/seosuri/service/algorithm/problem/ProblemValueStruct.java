@@ -1,6 +1,6 @@
 package com.onejo.seosuri.service.algorithm.problem;
 
-import com.onejo.seosuri.service.algorithm.category.Category;
+import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 
 import java.util.Arrays;
 
@@ -33,7 +33,7 @@ public class ProblemValueStruct {
 
     // 상황문장 유형id
     public int[] sentence_category_id_ls;
-    public Category[] category_ls;
+    public ExprCategory[] exprCategory_ls;
 
     // sign
     public int[] var_sign_ls;  // input

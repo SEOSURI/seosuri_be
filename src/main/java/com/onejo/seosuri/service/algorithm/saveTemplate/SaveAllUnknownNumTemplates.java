@@ -1,11 +1,8 @@
 package com.onejo.seosuri.service.algorithm.saveTemplate;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
-import com.onejo.seosuri.service.algorithm.category.Category;
-import com.onejo.seosuri.service.algorithm.category.SumDiffCategory;
-import com.onejo.seosuri.service.algorithm.category.YXCategory;
-import com.onejo.seosuri.service.algorithm.category.YXUnkownNumCategory;
-import com.onejo.seosuri.service.algorithm.createTemplate.CreateTemplate;
+import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
+import com.onejo.seosuri.service.algorithm.exprCategory.YXUnkownNumExprCategory;
 import com.onejo.seosuri.service.algorithm.createTemplate.CreateUnknownNumTemplate;
 import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 
@@ -15,7 +12,7 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
 
     public SaveAllUnknownNumTemplates(int[] category_id_ls, ProblemValueStruct problemValueStruct) {
         super(category_id_ls, problemValueStruct, new CreateUnknownNumTemplate(problemValueStruct));
-        possible_category_ls = new Category[] {new YXUnkownNumCategory()};
+        possible_Expr_category_ls = new ExprCategory[] {new YXUnkownNumExprCategory()};
     }
 
     @Override
@@ -57,7 +54,7 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
 
         for(int c_inx=0; c_inx<sentence_category_id_ls_ls.length; c_inx++) {    // 2^prob_sentence_num
             problemValueStruct.sentence_category_id_ls = sentence_category_id_ls_ls[c_inx].stream().mapToInt(i -> i).toArray();
-            problemValueStruct.category_ls = arrayListToCategoryArray(category_ls_ls[c_inx]);
+            problemValueStruct.exprCategory_ls = arrayListToCategoryArray(category_ls_ls[c_inx]);
             for (boolean[] useAddMinus_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
                 problemValueStruct.useAddMinus_ls = useAddMinus_ls;
                 for (boolean[] useMult_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
