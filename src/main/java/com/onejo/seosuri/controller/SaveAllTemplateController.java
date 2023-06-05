@@ -24,7 +24,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@Tag(name = "문제 생성 및 수정 API")
+@Tag(name = "템플릿 DB 저장 API")
 @RequestMapping("/api/template")
 @RequiredArgsConstructor
 public class SaveAllTemplateController {
@@ -32,7 +32,7 @@ public class SaveAllTemplateController {
     private final SaveAllTemplateService saveAllTemplateService;
 
     @Operation(summary = "나이 문제 템플릿 DB 저장", description = "최초 템플릿 DB 데이터.\n나이 유형 문제 템플릿 정보 저장.")
-    @PostMapping("/save/age")
+    @PatchMapping("/save/age")
     public BaseResponse<List<TemplateDto>> saveAllAgeTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
         try{
             List<TemplateDto> problemList = saveAllTemplateService.runSaveAllAgeTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());
@@ -43,7 +43,7 @@ public class SaveAllTemplateController {
     }
 
     @Operation(summary = "어떤 수 문제 템플릿 DB 저장", description = "최초 템플릿 DB 데이터.\n어떤 수 유형 문제 템플릿 정보 저장.")
-    @PostMapping("/save/unknown_num")
+    @PatchMapping("/save/unknown_num")
     public BaseResponse<List<TemplateDto>> saveAllUnknownNumTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
         try{
             List<TemplateDto> problemList = saveAllTemplateService.runSaveAllUnknownNumTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());

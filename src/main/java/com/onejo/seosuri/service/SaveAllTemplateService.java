@@ -1,8 +1,14 @@
 package com.onejo.seosuri.service;
 
 import com.onejo.seosuri.controller.dto.template.TemplateDto;
+import com.onejo.seosuri.domain.classification.Category;
+import com.onejo.seosuri.domain.classification.CategoryRepository;
+import com.onejo.seosuri.domain.classification.CategoryTitle;
 import com.onejo.seosuri.domain.problem.ProblemTemplate;
 import com.onejo.seosuri.domain.problem.ProblemTemplateRepository;
+import com.onejo.seosuri.domain.testpaper.TestPaper;
+import com.onejo.seosuri.exception.common.BusinessException;
+import com.onejo.seosuri.exception.common.ErrorCode;
 import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 import com.onejo.seosuri.service.algorithm.saveTemplate.SaveAllAgeTemplates;
 import com.onejo.seosuri.service.algorithm.saveTemplate.SaveAllTemplates;
@@ -13,41 +19,70 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class SaveAllTemplateService {
     private final ProblemTemplateRepository problemTemplateRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public ProblemTemplate saveOneTemplate(TemplateDto templateDto){
+        System.out.println("\n\t\tSTARTED:: saveOneTemplate");
         ProblemTemplate problemTemplate = templateDto.toEntity();
+        System.out.println("\t\t저장할 내용 :: ");
+        templateDto.printTemplateDto();
         return problemTemplateRepository.save(problemTemplate);
     }
 
     @Transactional
     public List<TemplateDto> runSaveAllAgeTemplate(int start, int end){
+        System.out.println("\n\t\tSTARTED:: runSaveAllAgeTemplate\n");
+
+        Category id = new Category();
+        id.setTitle(CategoryTitle.AGE);
+        Optional<Category> opt_category = categoryRepository.findByTitle(id);
+        if(opt_category.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_CATEGORY_TITLE);
+        }
+        Category category = opt_category.get();
+
         List<TemplateDto> res = new ArrayList<>();
         SaveAllAgeTemplates saveAllAgeTemplates = new SaveAllAgeTemplates();
         saveAllAgeTemplates.saveAllTemplates(start, end);
         for(TemplateDto templateDto: saveAllAgeTemplates.templateDtos){
-            ProblemTemplate saved_problem_template = saveOneTemplate(templateDto);
+            templateDto.setCategory(category);
+            ProblemTemplate saved_problem_template = saveOneTemplate(templateDto);  // save in DB
             TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
             res.add(saved_template_dto);
         }
+
         return res;
     }
 
     @Transactional
     public List<TemplateDto> runSaveAllUnknownNumTemplate(int start, int end) {
+        System.out.println("\n\t\tSTARTED:: runSaveAllUnknownNumTemplate\n");
+
+        Category id = new Category();
+        id.setTitle(CategoryTitle.UNKNOWN_NUM);
+        Optional<Category> opt_category = categoryRepository.findByTitle(id);
+        if(opt_category.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_CATEGORY_TITLE);
+        }
+        Category category = opt_category.get();
+
         List<TemplateDto> res = new ArrayList<>();
         SaveAllUnknownNumTemplates saveAllUnknownNumTemplates = new SaveAllUnknownNumTemplates();
         saveAllUnknownNumTemplates.saveAllTemplates(start, end);
         for(TemplateDto templateDto: saveAllUnknownNumTemplates.templateDtos){
-            ProblemTemplate saved_problem_template = saveOneTemplate(templateDto);
+            templateDto.setCategory(category);
+            ProblemTemplate saved_problem_template = saveOneTemplate(templateDto);  // save in DB
             TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
             res.add(saved_template_dto);
         }
+
         return res;
     }
 

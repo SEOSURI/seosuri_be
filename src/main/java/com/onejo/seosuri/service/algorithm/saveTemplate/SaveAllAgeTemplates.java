@@ -80,7 +80,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
                                                 createTemplate.createOneTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
                                                 saveInDB();
                                                 template_id++;
-                                                if(template_id > end_template_id){
+                                                if(template_id >= end_template_id){
                                                     return;
                                                 }
                                             }

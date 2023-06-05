@@ -104,6 +104,22 @@ public class TemplateDto {
         this.useAddMinusList = problemTemplate.getUseAddMinusList();
     }
 
+    public void printTemplateDto(){
+        System.out.println("\t\t\tlevel:: \t"+ int_level);
+        System.out.println("\t\t\tcategory:: \t"+category);
+        System.out.println("\t\t\tcontent:: \t"+content);
+        System.out.println("\t\t\tanswer:: \t"+answer);
+        System.out.println("\t\t\texplanation:: \t"+explanation);
+
+        System.out.println("\t\t\tsentenceCategoryList:: \t"+sentenceCategoryList);
+        System.out.println("\t\t\texprCategoryList:: \t"+exprCategoryList);
+        System.out.println("\t\t\tvarSignList:: \t"+varSignList);
+        System.out.println("\t\t\tuseYear1List:: \t"+useYear1List);
+        System.out.println("\t\t\tuseYear2List:: \t"+useYear2List);
+        System.out.println("\t\t\tuseMultList:: \t"+useMultList);
+        System.out.println("\t\t\tuseAddMinusList:: \t"+useAddMinusList);
+    }
+
     public String exprCategoryArrayToString(ExprCategory[] target){
         String output = "";
         for(int i = 0; i < target.length; i++){
@@ -181,4 +197,7 @@ public class TemplateDto {
                 .build();
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

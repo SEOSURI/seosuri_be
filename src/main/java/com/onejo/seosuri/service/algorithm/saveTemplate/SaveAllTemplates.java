@@ -38,7 +38,7 @@ public abstract class SaveAllTemplates {
     protected void saveInDB() {
         //problemValueStruct.printTemplate();   // for debugging
         TemplateDto templateDto = new TemplateDto(problemValueStruct.template_level, problemValueStruct.category,
-                problemValueStruct.real_content, problemValueStruct.real_answer, problemValueStruct.explanation_template,
+                problemValueStruct.content_template, problemValueStruct.answer_template, problemValueStruct.explanation_template,
                 problemValueStruct.sentence_expr_category_id_ls, problemValueStruct.expr_category_ls, problemValueStruct.var_sign_ls,
                 problemValueStruct.useYear1_ls, problemValueStruct.useYear2_ls, problemValueStruct.useMult_ls, problemValueStruct.useAddMinus_ls);
         templateDtos.add(templateDto);
