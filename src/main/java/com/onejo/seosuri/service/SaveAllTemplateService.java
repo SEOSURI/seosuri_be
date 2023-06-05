@@ -37,7 +37,7 @@ public class SaveAllTemplateService {
     }
 
     @Transactional
-    public List<TemplateDto> runSaveAllAgeTemplate(int start, int end){
+    public List<ProblemTemplate> runSaveAllAgeTemplate(int start, int end){
         System.out.println("\n\t\tSTARTED:: runSaveAllAgeTemplate\n");
 
         Optional<Category> opt_category = categoryRepository.findByTitle(CategoryTitle.AGE);   // 여기서 오류 발생 : findByTitle을 콜 할 수 없다고 나옴 (InvocationTargetException)
@@ -46,21 +46,21 @@ public class SaveAllTemplateService {
         }
         Category category = opt_category.get();
 
-        List<TemplateDto> res = new ArrayList<>();
+        List<ProblemTemplate> res = new ArrayList<>();
         SaveAllAgeTemplates saveAllAgeTemplates = new SaveAllAgeTemplates();
         saveAllAgeTemplates.saveAllTemplates(start, end);
         for(TemplateDto templateDto: saveAllAgeTemplates.templateDtos){
             templateDto.setCategory(category);
             ProblemTemplate saved_problem_template = saveOneTemplate(templateDto);  // save in DB
-            TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
-            res.add(saved_template_dto);
+            //TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
+            res.add(saved_problem_template);
         }
 
         return res;
     }
 
     @Transactional
-    public List<TemplateDto> runSaveAllUnknownNumTemplate(int start, int end) {
+    public List<ProblemTemplate> runSaveAllUnknownNumTemplate(int start, int end) {
         System.out.println("\n\t\tSTARTED:: runSaveAllUnknownNumTemplate\n");
 
         Optional<Category> opt_category = categoryRepository.findByTitle(CategoryTitle.UNKNOWN_NUM);
@@ -69,14 +69,14 @@ public class SaveAllTemplateService {
         }
         Category category = opt_category.get();
 
-        List<TemplateDto> res = new ArrayList<>();
+        List<ProblemTemplate> res = new ArrayList<>();
         SaveAllUnknownNumTemplates saveAllUnknownNumTemplates = new SaveAllUnknownNumTemplates();
         saveAllUnknownNumTemplates.saveAllTemplates(start, end);
         for(TemplateDto templateDto: saveAllUnknownNumTemplates.templateDtos){
             templateDto.setCategory(category);
             ProblemTemplate saved_problem_template = saveOneTemplate(templateDto);  // save in DB
-            TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
-            res.add(saved_template_dto);
+            //TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
+            res.add(saved_problem_template);
         }
 
         return res;

@@ -4,6 +4,7 @@ import com.onejo.seosuri.controller.dto.problem.CreateProbReq;
 import com.onejo.seosuri.controller.dto.problem.ProbRes;
 import com.onejo.seosuri.controller.dto.template.SaveTemplateReq;
 import com.onejo.seosuri.controller.dto.template.TemplateDto;
+import com.onejo.seosuri.domain.problem.ProblemTemplate;
 import com.onejo.seosuri.exception.common.BusinessException;
 import com.onejo.seosuri.response.BaseResponse;
 import com.onejo.seosuri.service.SaveAllTemplateService;
@@ -33,9 +34,9 @@ public class SaveAllTemplateController {
 
     @Operation(summary = "나이 문제 템플릿 DB 저장", description = "최초 템플릿 DB 데이터.\n나이 유형 문제 템플릿 정보 저장.")
     @PatchMapping("/save/age")
-    public BaseResponse<List<TemplateDto>> saveAllAgeTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
+    public BaseResponse<List<ProblemTemplate>> saveAllAgeTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
         try{
-            List<TemplateDto> problemList = saveAllTemplateService.runSaveAllAgeTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());
+            List<ProblemTemplate> problemList = saveAllTemplateService.runSaveAllAgeTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());
             return new BaseResponse<>(problemList);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
@@ -44,9 +45,9 @@ public class SaveAllTemplateController {
 
     @Operation(summary = "어떤 수 문제 템플릿 DB 저장", description = "최초 템플릿 DB 데이터.\n어떤 수 유형 문제 템플릿 정보 저장.")
     @PatchMapping("/save/unknown_num")
-    public BaseResponse<List<TemplateDto>> saveAllUnknownNumTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
+    public BaseResponse<List<ProblemTemplate>> saveAllUnknownNumTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
         try{
-            List<TemplateDto> problemList = saveAllTemplateService.runSaveAllUnknownNumTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());
+            List<ProblemTemplate> problemList = saveAllTemplateService.runSaveAllUnknownNumTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());
             return new BaseResponse<>(problemList);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());

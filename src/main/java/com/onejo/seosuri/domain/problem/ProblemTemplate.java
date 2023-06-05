@@ -5,6 +5,7 @@ import com.onejo.seosuri.domain.classification.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 @Getter @Setter @Entity
 @Table(name = "problem_template")
 public class ProblemTemplate extends BaseTimeEntity {
@@ -34,7 +36,7 @@ public class ProblemTemplate extends BaseTimeEntity {
     @Column(name="prob_temp_answer")
     private String answer;
 
-    @Column(name="prob_temp_explanation")
+    @Column(name="prob_temp_explanation", columnDefinition = "TEXT")
     private String explanation;
 
     @Column(name="prob_sentence_category_list")
