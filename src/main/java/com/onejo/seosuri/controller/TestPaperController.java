@@ -31,7 +31,7 @@ public class TestPaperController {
     private final TestPaperService testPaperService;
 
     @Operation(summary = "시험지 이메일 발송", description = "입력한 이메일로 시험지 전송")
-    @GetMapping("/email")
+    @PostMapping("/email")
     public BaseResponse<String> sendTestPaperEmail(@RequestBody EmailDto emailDto){
         try{
             testPaperService.sendEmail(emailDto.getEmail(), emailDto.getTestPaperId());
