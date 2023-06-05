@@ -40,9 +40,7 @@ public class SaveAllTemplateService {
     public List<TemplateDto> runSaveAllAgeTemplate(int start, int end){
         System.out.println("\n\t\tSTARTED:: runSaveAllAgeTemplate\n");
 
-        Category id = new Category();
-        id.setTitle(CategoryTitle.AGE);
-        Optional<Category> opt_category = categoryRepository.findByTitle(id);
+        Optional<Category> opt_category = categoryRepository.findByTitle(CategoryTitle.AGE);   // 여기서 오류 발생 : findByTitle을 콜 할 수 없다고 나옴 (InvocationTargetException)
         if(opt_category.isEmpty()){
             throw new BusinessException(ErrorCode.NO_EXIST_CATEGORY_TITLE);
         }
@@ -65,9 +63,7 @@ public class SaveAllTemplateService {
     public List<TemplateDto> runSaveAllUnknownNumTemplate(int start, int end) {
         System.out.println("\n\t\tSTARTED:: runSaveAllUnknownNumTemplate\n");
 
-        Category id = new Category();
-        id.setTitle(CategoryTitle.UNKNOWN_NUM);
-        Optional<Category> opt_category = categoryRepository.findByTitle(id);
+        Optional<Category> opt_category = categoryRepository.findByTitle(CategoryTitle.UNKNOWN_NUM);
         if(opt_category.isEmpty()){
             throw new BusinessException(ErrorCode.NO_EXIST_CATEGORY_TITLE);
         }

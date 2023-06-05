@@ -2,6 +2,7 @@ package com.onejo.seosuri.controller.dto.template;
 
 import com.google.type.Expr;
 import com.onejo.seosuri.domain.classification.Category;
+import com.onejo.seosuri.domain.problem.Problem;
 import com.onejo.seosuri.domain.problem.ProblemTemplate;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.exprCategory.SumDiffExprCategory;
@@ -58,6 +59,8 @@ public class TemplateDto {
     public TemplateDto(int level, Category category, String content, String answer, String explanation,
                        int[] sentence_expr_category_id_ls, ExprCategory[] expr_category_ls, int[] var_sign_ls, boolean[] useYear1_ls, boolean[] useYear2_ls, boolean[] useMult_ls, boolean[] useAddMinus_ls) {
         this.int_level = level;
+        this.level = String.valueOf(this.int_level);
+
         this.category = category;
         this.content = content;
         this.answer = answer;
@@ -82,6 +85,7 @@ public class TemplateDto {
 
     public TemplateDto (ProblemTemplate problemTemplate){
         this.int_level = Integer.parseInt(problemTemplate.getLevel());
+        this.level = problemTemplate.getLevel();
         this.category = problemTemplate.getCategory();
         this.content = problemTemplate.getContent();
         this.answer = problemTemplate.getAnswer();
@@ -194,6 +198,7 @@ public class TemplateDto {
                 .useYear2List(useYear2List)
                 .useMultList(useMultList)
                 .useAddMinusList(useAddMinusList)
+                .problems(new ArrayList<Problem>())
                 .build();
     }
 
