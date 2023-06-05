@@ -21,7 +21,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
 
     @Override
     public void saveAllTemplates(int start_template_id, int end_template_id) {
-        int template_id = start_template_id;    // template_id = 0, 1, 2, ...
+        int template_id = 0;    // template_id = 0, 1, 2, ...
         int var_num_per_sentence = ProblemTokenStruct.AGE_PROB_VAR_NUM_PER_SENTENCE;
 
         for(int prob_sentence_num: new int[] {3, 2, 1}) {
@@ -76,7 +76,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
                                             }
 
                                             // template 생성, DB에 저장
-                                            if (generateTemplate) {
+                                            if (generateTemplate && template_id >= start_template_id) {
                                                 createTemplate.createOneTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
                                                 saveInDB();
                                                 template_id++;

@@ -27,7 +27,7 @@ public class SaveAllTemplateService {
     private final ProblemTemplateRepository problemTemplateRepository;
     private final CategoryRepository categoryRepository;
 
-    @Transactional
+    @Transactional  // 나중에 삭제해야 - 디버깅용 annotation
     public ProblemTemplate saveOneTemplate(TemplateDto templateDto){
         System.out.println("\n\t\tSTARTED:: saveOneTemplate");
         ProblemTemplate problemTemplate = templateDto.toEntity();

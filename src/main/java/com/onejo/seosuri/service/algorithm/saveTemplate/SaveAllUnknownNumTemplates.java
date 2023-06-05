@@ -19,7 +19,7 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
 
     @Override
     public void saveAllTemplates(int start_template_id, int end_template_id) {
-        int template_id = start_template_id;    // template_id = 0, 1, 2, ...
+        int template_id = 0;    // template_id = 0, 1, 2, ...
 
         final int var_num_per_sentence = ProblemTokenStruct.UNKNOWNNUM_PROB_VAR_NUM_PER_SENTECE;
         final int prob_sentence_num = 2;
@@ -73,12 +73,12 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
                         }
 
                         // template 생성, DB에 저장
-                        if (generateTemplate) {
+                        if (generateTemplate && template_id >= start_template_id) {
                             //unknownnumProblemTemplate();
                             createTemplate.createOneTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
                             saveInDB();
                             template_id++;
-                            if(template_id > end_template_id){
+                            if(template_id >= end_template_id){
                                 return;
                             }
                         }
