@@ -21,7 +21,9 @@ public abstract class SaveAllTemplates {
     ArrayList<ExprCategory>[] category_ls_ls;
 
     ArrayList<Integer>[] sentence_category_id_ls_ls;
+
     int[] target_sentence_category_ls = new int[] {ProblemTokenStruct.EXPR_CATEGORY_ID_YX, ProblemTokenStruct.EXPR_CATEGORY_ID_SUM_DIFFERENCE};
+
     ArrayList<Integer>[] var_sign_ls_ls;
     public boolean[][] useBoolean_ls_ls;
     private static final boolean[] target_boolean = new boolean[] {true, false};
