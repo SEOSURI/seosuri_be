@@ -44,7 +44,7 @@ public abstract class SaveAllTemplates {
                 problemValueStruct.useYear1_ls, problemValueStruct.useYear2_ls, problemValueStruct.useMult_ls, problemValueStruct.useAddMinus_ls);
         templateDtos.add(templateDto);
         //templateDto.printTemplateDto();
-        System.out.println(templateDto.getContent()+"\n");
+        //System.out.println(templateDto.getContent()+"\n");
     }
 
 

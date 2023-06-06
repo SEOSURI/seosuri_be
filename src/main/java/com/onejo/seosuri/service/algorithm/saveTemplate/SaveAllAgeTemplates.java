@@ -1,5 +1,6 @@
 package com.onejo.seosuri.service.algorithm.saveTemplate;
 
+import com.onejo.seosuri.controller.dto.template.TemplateDto;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.exprCategory.SumDiffExprCategory;
@@ -25,7 +26,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
         int template_id = 0;    // template_id = 0, 1, 2, ...
         int var_num_per_sentence = ProblemTokenStruct.AGE_PROB_VAR_NUM_PER_SENTENCE;
 
-        for(int prob_sentence_num: new int[] {1, 2, 3}) {
+        for(int prob_sentence_num: new int[] {3}) {
             problemValueStruct.template_level = prob_sentence_num;
             int name_var_num = prob_sentence_num + 1;
             int var_num = prob_sentence_num * var_num_per_sentence;
@@ -51,43 +52,50 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
                                         problemValueStruct.useAddMinus_ls = useAddMinus_ls;
                                         for (ArrayList<Integer> var_sign_ls : var_sign_ls_ls) { // 16 * 2^prob_sentence_num
                                             problemValueStruct.constant_var_sign_ls = var_sign_ls.stream().mapToInt(i -> i).toArray();
-
-                                            // template 생성할 것인지 여부 결정
-                                            // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
-                                            boolean generateTemplate = true;
-                                            for (int i = 0; i < prob_sentence_num; i++) {
-                                                if ((problemValueStruct.useMult_ls[i] == false && problemValueStruct.useAddMinus_ls[i] == false && problemValueStruct.useYear1_ls[i] == false && problemValueStruct.useYear2_ls[i] == false)
-                                                        ||(problemValueStruct.sentence_expr_category_id_ls[i] == ProblemTokenStruct.EXPR_CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
+                                            if(template_id >= start_template_id) {
+                                                // template 생성할 것인지 여부 결정
+                                                // ex) year 사용 안 하는 경우 -> year에 따른 sign value 변화는 무시해도 좋음
+                                                boolean generateTemplate = true;
+                                                for (int i = 0; i < prob_sentence_num; i++) {
+                                                    if ((problemValueStruct.useMult_ls[i] == false && problemValueStruct.useAddMinus_ls[i] == false && problemValueStruct.useYear1_ls[i] == false && problemValueStruct.useYear2_ls[i] == false)
+                                                            || (problemValueStruct.sentence_expr_category_id_ls[i] == ProblemTokenStruct.EXPR_CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
                                                             && !(problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_MULT_VAR_OFFSET] == ProblemTokenStruct.PLUS_SIGN
-                                                                && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR1_OFFSET] == ProblemTokenStruct.PLUS_SIGN
-                                                                && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR2_OFFSET] == ProblemTokenStruct.PLUS_SIGN
-                                                                && problemValueStruct.useYear1_ls[i] == true
-                                                                && problemValueStruct.useYear2_ls[i] == true
-                                                                && problemValueStruct.useMult_ls[i] == true
-                                                                && problemValueStruct.useAddMinus_ls[i] == true))
-                                                        || (problemValueStruct.sentence_expr_category_id_ls[i] == ProblemTokenStruct.EXPR_CATEGORY_ID_YX
+                                                            && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR1_OFFSET] == ProblemTokenStruct.PLUS_SIGN
+                                                            && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR2_OFFSET] == ProblemTokenStruct.PLUS_SIGN
+                                                            && problemValueStruct.useYear1_ls[i] == true
+                                                            && problemValueStruct.useYear2_ls[i] == true
+                                                            && problemValueStruct.useMult_ls[i] == true
+                                                            && problemValueStruct.useAddMinus_ls[i] == true))
+                                                            || (problemValueStruct.sentence_expr_category_id_ls[i] == ProblemTokenStruct.EXPR_CATEGORY_ID_YX
                                                             && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_MULT_VAR_OFFSET] == ProblemTokenStruct.MINUS_SIGN)
-                                                        || (useYear1_ls[i] == false  // year1 사용하지 않는 경우, year sign에 따른 변화 무시
-                                                        && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR1_OFFSET] == ProblemTokenStruct.MINUS_SIGN)
-                                                        || (useYear2_ls[i] == false  // year2 사용하지 않는 경우, year sign에 따른 변화 무시
-                                                        && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR2_OFFSET] == ProblemTokenStruct.MINUS_SIGN)
-                                                        || (useMult_ls[i] == false && (problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence] == ProblemTokenStruct.MINUS_SIGN)) // mult 사용하지 않는 경우, mult sign 에 따른 변화 무시
-                                                        || (useAddMinus_ls[i] == false && (problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_ADDMIN_VAR_OFFSET] == ProblemTokenStruct.MINUS_SIGN))) // addminus 사용하지 않는 경우, addminus sign 에 따른 변화 무시
-                                                {
-                                                    generateTemplate = false;
-                                                    break;
+                                                            || (useYear1_ls[i] == false  // year1 사용하지 않는 경우, year sign에 따른 변화 무시
+                                                            && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR1_OFFSET] == ProblemTokenStruct.MINUS_SIGN)
+                                                            || (useYear2_ls[i] == false  // year2 사용하지 않는 경우, year sign에 따른 변화 무시
+                                                            && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR2_OFFSET] == ProblemTokenStruct.MINUS_SIGN)
+                                                            || (useMult_ls[i] == false && (problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence] == ProblemTokenStruct.MINUS_SIGN)) // mult 사용하지 않는 경우, mult sign 에 따른 변화 무시
+                                                            || (useAddMinus_ls[i] == false && (problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_ADDMIN_VAR_OFFSET] == ProblemTokenStruct.MINUS_SIGN))) // addminus 사용하지 않는 경우, addminus sign 에 따른 변화 무시
+                                                    {
+                                                        generateTemplate = false;
+                                                        break;
+                                                    }
+                                                }
+
+                                                // template 생성, DB에 저장
+                                                if (generateTemplate && template_id >= start_template_id) {
+                                                    createTemplate.createOneTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
+                                                    //saveInList();
+                                                    TemplateDto templateDto = new TemplateDto(problemValueStruct.template_level, problemValueStruct.category,
+                                                            problemValueStruct.content_template, problemValueStruct.answer_template, problemValueStruct.explanation_template,
+                                                            problemValueStruct.sentence_expr_category_id_ls, problemValueStruct.expr_category_ls, problemValueStruct.constant_var_sign_ls,
+                                                            problemValueStruct.useYear1_ls, problemValueStruct.useYear2_ls, problemValueStruct.useMult_ls, problemValueStruct.useAddMinus_ls);
+                                                    templateDtos.add(templateDto);
                                                 }
                                             }
 
-                                            // template 생성, DB에 저장
-                                            if (generateTemplate && template_id >= start_template_id) {
-                                                createTemplate.createOneTemplate(prob_sentence_num, var_num_per_sentence, condition_inx, answer_inx);
-                                                saveInList();
-                                                template_id++;
-                                                if(template_id >= end_template_id){
-                                                    return;
-                                                }
+                                            if(template_id >= end_template_id){
+                                                return;
                                             }
+                                            template_id++;
                                         }
                                     }
                                 }

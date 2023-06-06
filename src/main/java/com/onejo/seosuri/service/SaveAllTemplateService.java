@@ -26,10 +26,10 @@ public class SaveAllTemplateService {
 
     @Transactional  // 나중에 삭제해야 - 디버깅용 annotation
     public ProblemTemplate saveOneTemplate(TemplateDto templateDto){
-        System.out.println("\n\t\tSTARTED:: saveOneTemplate");
+        //System.out.println("\n\t\tSTARTED:: saveOneTemplate");
         ProblemTemplate problemTemplate = templateDto.toEntity();
-        System.out.println("\t\t저장할 내용 :: ");
-        templateDto.printTemplateDto();
+        //System.out.println("\t\t저장할 내용 :: ");
+        //templateDto.printTemplateDto();
         return problemTemplateRepository.save(problemTemplate);
     }
 
@@ -43,14 +43,22 @@ public class SaveAllTemplateService {
         }
         Category category = opt_category.get();
 
-        List<ProblemTemplate> res = new ArrayList<>();
+        int chunk_size = 1000;
+        int e;
+        for(int s = 0; s < end; s += chunk_size){
+            e = s + chunk_size;
+            if(e > end) e = end;
+            saveWithChunk(category, s, e);
+        }
+    }
+
+    public void saveWithChunk(Category category, int start, int end){
         SaveAllAgeTemplates saveAllAgeTemplates = new SaveAllAgeTemplates();
         saveAllAgeTemplates.saveAllTemplates(start, end);
         for(TemplateDto templateDto: saveAllAgeTemplates.templateDtos){
             templateDto.setCategory(category);
-            ProblemTemplate saved_problem_template = saveOneTemplate(templateDto);  // save in DB
-            //TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
-            res.add(saved_problem_template);
+            ProblemTemplate problemTemplate = templateDto.toEntity();
+            problemTemplateRepository.save(problemTemplate);
         }
     }
 
