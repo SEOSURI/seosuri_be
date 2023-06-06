@@ -1,6 +1,7 @@
 package com.onejo.seosuri.service;
 
 import com.onejo.seosuri.controller.dto.problem.ProbRes;
+import com.onejo.seosuri.controller.dto.template.TemplateDto;
 import com.onejo.seosuri.domain.classification.Category;
 import com.onejo.seosuri.domain.classification.CategoryRepository;
 import com.onejo.seosuri.domain.classification.CategoryTitle;
@@ -31,7 +32,7 @@ public class ProblemService {
 
 
     @Transactional
-    public List<ProbRes> createProblem(String categoryTitle, int level){
+    public List<ProbRes> createProblem(String categoryTitle, String level_){
         // 나이 구하기 문제 알고리즘 -> 실제 문제 생성: 결과: varElementary5th.real_content, real_explanation, real_answer에 저장됨
         // 0-0. 시험지 만들기
         // 0-1. 서비스 단에서 시험지 레벨 받아오면, 시험지 레벨 맞춰서 각 문제 별 난이도 개수 정하기
@@ -55,6 +56,20 @@ public class ProblemService {
         List<ProbRes> probList = new ArrayList<>();  // 완성된 문제
         // 기타 필요한 필드
         CategoryTitle categoryTitle_;
+        int level = -1;
+
+        if(level_.equals("하")){
+            level = 1;
+        }
+        else if(level_.equals("중")){
+            level = 2;
+        }
+        else{
+            level = 3;
+        }
+        // ################### test ###################
+        System.out.println("testpaper level: " + level);
+        // ################### test ###################
 
         // 0-0. 시험지 만들기
         TestPaper testPaper = new TestPaper();
@@ -87,19 +102,28 @@ public class ProblemService {
         // 0-1. 서비스 단에서 시험지 레벨 받아오면, 시험지 레벨 맞춰서 각 문제 별 난이도 개수 정하기
         int high=0, mid=0, low=0;
         if(level == 1){
-            high = 6;
-            mid = 3;
-            low = 1;
+//            high = 6;
+//            mid = 3;
+//            low = 1;
+            high = 0;
+            mid = 2;
+            low = 8;
         }
         else if(level == 2){
-            high = 4;
-            mid = 4;
-            low = 2;
+//            high = 4;
+//            mid = 4;
+//            low = 2;
+            high = 0;
+            mid = 5;
+            low = 5;
         }
         else{
-            high = 1;
-            mid = 4;
-            low = 5;
+//            high = 1;
+//            mid = 4;
+//            low = 5;
+            high = 0;
+            mid = 8;
+            low = 2;
         }
 
         // 0-2. 난이도 별로 다음과 같은 과정 반복
@@ -151,10 +175,14 @@ public class ProblemService {
         // 카테고리에 따른 CreateProblem 진행
         if(categoryTitle.equals("나이_구하기")){
             for(int i=0; i<tmplList1.size(); i++){
-                // 문제 생성 객체 만들기
-                ProblemValueStruct problemValueStruct = new ProblemValueStruct();
-                CreateAgeProblem createAgeProblem = new CreateAgeProblem(problemValueStruct);
-                createAgeProblem.createProblem(level);
+                // 템플릿을 TemplateDto로 변경
+                TemplateDto templateDto = new TemplateDto(tmplList1.get(i));
+                // TemplateDto 내용 ProblemValueStruct에 저장
+                ProblemValueStruct problemValueStruct = templateDto.setProblemValueStruct();
+                // 나이 문제 생성 객체 만들기
+                //CreateAgeProblem createAgeProblem = new CreateAgeProblem(problemValueStruct);
+
+                //createAgeProblem.createProblem(level);
             }
 
             for(int i=0; i<tmplList2.size(); i++){
@@ -211,27 +239,27 @@ public class ProblemService {
 
 
         // Problem 테이블에서 완성된 문제 가져오기
-        Optional<TestPaper> tmpTestPaper = testPaperRepository.findById(testPaperId);
-
-        List<Problem> probs = problemRepository.findAllByTestPaper(tmpTestPaper.get());
-        if(probs.isEmpty()){
-            throw new BusinessException(ErrorCode.NO_EXIST_PROBLEM);
-        }
-        for(int i = 0; i< probs.size(); i++){
-            Problem tmpProb = probs.get(i);
-            ProbRes probRes = new ProbRes();
-
-            probRes.setTestPaperId(1L);  // 나중에 고쳐야 함!!
-            probRes.setNum(tmpProb.getProbNum());
-            probRes.setLevel(tmpProb.getLevel());
-            probRes.setContent(tmpProb.getContent());
-            probRes.setExplanation(tmpProb.getExplanation());
-            probRes.setAnswer(tmpProb.getAnswer());
-
-            probList.add(probRes);
-        }
-
-        Collections.sort(probList, new ProbNumComparator());
+//        Optional<TestPaper> tmpTestPaper = testPaperRepository.findById(testPaperId);
+//
+//        List<Problem> probs = problemRepository.findAllByTestPaper(tmpTestPaper.get());
+//        if(probs.isEmpty()){
+//            throw new BusinessException(ErrorCode.NO_EXIST_PROBLEM);
+//        }
+//        for(int i = 0; i< probs.size(); i++){
+//            Problem tmpProb = probs.get(i);
+//            ProbRes probRes = new ProbRes();
+//
+//            probRes.setTestPaperId(1L);  // 나중에 고쳐야 함!!
+//            probRes.setNum(tmpProb.getProbNum());
+//            probRes.setLevel(tmpProb.getLevel());
+//            probRes.setContent(tmpProb.getContent());
+//            probRes.setExplanation(tmpProb.getExplanation());
+//            probRes.setAnswer(tmpProb.getAnswer());
+//
+//            probList.add(probRes);
+//        }
+//
+//        Collections.sort(probList, new ProbNumComparator());
 
         // 문제 리스트 반환
         return probList;

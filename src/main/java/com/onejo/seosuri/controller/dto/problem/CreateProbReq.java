@@ -12,5 +12,5 @@ public class CreateProbReq {
     private String categoryTitle;
 
     @Schema(description = "난이도", example = "상\n중\n하")
-    private int level;
+    private String level;
 }

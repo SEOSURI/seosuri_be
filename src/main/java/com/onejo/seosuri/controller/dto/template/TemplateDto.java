@@ -86,7 +86,9 @@ public class TemplateDto {
     // 알고리즘 : ProblemValueStruct
 
     // TemplateDto안의 값들을 ProblemValueStruct에 저장
-    public void setProblemValueStruct(ProblemValueStruct problemValueStruct){
+    public ProblemValueStruct setProblemValueStruct(){
+        ProblemValueStruct problemValueStruct = new ProblemValueStruct();
+
         problemValueStruct.template_level = this.int_level;
         problemValueStruct.category = this.category;
         problemValueStruct.content_template = content;
@@ -99,6 +101,8 @@ public class TemplateDto {
         problemValueStruct.useYear2_ls = this.useYear2_ls;
         problemValueStruct.useMult_ls = this.useMult_ls;
         problemValueStruct.useAddMinus_ls = this.useAddMinus_ls;
+
+        return problemValueStruct;
     }
 
     public TemplateDto (ProblemTemplate problemTemplate){
@@ -180,7 +184,8 @@ public class TemplateDto {
         String[] res_str = target.split(DELIMETER);
         int[] res = new int[res_str.length];
         for(int i = 0; i < res.length; i++){
-            res[i] = Integer.valueOf(res_str[i]);
+            if(!res_str[i].equals(""))
+                res[i] = Integer.valueOf(res_str[i]);
         }
         return res;
     }
