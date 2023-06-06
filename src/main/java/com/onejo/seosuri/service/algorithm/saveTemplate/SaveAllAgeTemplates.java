@@ -15,6 +15,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
     public SaveAllAgeTemplates() {
         super(new int[] {ProblemTokenStruct.EXPR_CATEGORY_ID_YX, ProblemTokenStruct.EXPR_CATEGORY_ID_SUM_DIFFERENCE});
         possible_Expr_category_ls = new ExprCategory[] {new SumDiffExprCategory(), new YXAgeExprCategory()};
+
         problemValueStruct = new ProblemValueStruct();
         createTemplate = new CreateAgeTemplate(problemValueStruct);
     }
