@@ -1,6 +1,5 @@
 package com.onejo.seosuri.controller.dto.template;
 
-import com.google.type.Expr;
 import com.onejo.seosuri.domain.classification.Category;
 import com.onejo.seosuri.domain.problem.Problem;
 import com.onejo.seosuri.domain.problem.ProblemTemplate;
@@ -8,9 +7,8 @@ import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.exprCategory.SumDiffExprCategory;
 import com.onejo.seosuri.service.algorithm.exprCategory.YXAgeExprCategory;
 import com.onejo.seosuri.service.algorithm.exprCategory.YXUnkownNumExprCategory;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 
@@ -81,6 +79,26 @@ public class TemplateDto {
         this.useYear2List = booleanArrayToString(this.useYear2_ls);
         this.useMultList = booleanArrayToString(this.useMult_ls);
         this.useAddMinusList = booleanArrayToString(this.useAddMinus_ls);
+    }
+
+    // 실제 DB : ProblemTemplate
+    // TemplateDto - DB에서 값 가져오거나 저장할 때만 사용
+    // 알고리즘 : ProblemValueStruct
+
+    // TemplateDto안의 값들을 ProblemValueStruct에 저장
+    public void setProblemValueStruct(ProblemValueStruct problemValueStruct){
+        problemValueStruct.template_level = this.int_level;
+        problemValueStruct.category = this.category;
+        problemValueStruct.content_template = content;
+        problemValueStruct.answer_template = answer;
+        problemValueStruct.explanation_template = explanation;
+        problemValueStruct.sentence_expr_category_id_ls = this.sentence_expr_category_id_ls;
+        problemValueStruct.expr_category_ls = this.expr_category_ls;
+        problemValueStruct.constant_var_sign_ls = this.var_sign_ls;
+        problemValueStruct.useYear1_ls = this.useYear1_ls;
+        problemValueStruct.useYear2_ls = this.useYear2_ls;
+        problemValueStruct.useMult_ls = this.useMult_ls;
+        problemValueStruct.useAddMinus_ls = this.useAddMinus_ls;
     }
 
     public TemplateDto (ProblemTemplate problemTemplate){

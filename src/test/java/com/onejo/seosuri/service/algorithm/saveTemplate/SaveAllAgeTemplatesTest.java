@@ -7,7 +7,7 @@ import com.onejo.seosuri.service.algorithm.exprCategory.YXAgeExprCategory;
 import com.onejo.seosuri.service.algorithm.problem.CreateAgeProblem;
 import com.onejo.seosuri.service.algorithm.problem.CreateProblem;
 import com.onejo.seosuri.service.algorithm.problem.CreateUnknownNumProblem;
-import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
+import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 import org.junit.jupiter.api.Test;
 
 class SaveAllAgeTemplatesTest {
@@ -35,14 +35,14 @@ class SaveAllAgeTemplatesTest {
         int[] temp = {0, 0};
         ProblemValueStruct problemValueStruct = new ProblemValueStruct();
         SaveAllUnknownNumTemplates saveAllUnknownNumTemplates = new SaveAllUnknownNumTemplates();
-        saveAllUnknownNumTemplates.saveAllTemplates(0, 2);
+        saveAllUnknownNumTemplates.saveAllTemplates(0, 100000);
     }
     @Test
     void saveAllAgeTemplates() {
         int[] temp = {0, 0};
         ProblemValueStruct problemValueStruct = new ProblemValueStruct();
         SaveAllAgeTemplates saveAllAgeTemplates = new SaveAllAgeTemplates();
-        saveAllAgeTemplates.saveAllTemplates(0, 2);
+        saveAllAgeTemplates.saveAllTemplates(1000000, 1100000);
     }
 
     ProblemTokenStruct problemValueStruct = new ProblemTokenStruct();
@@ -76,9 +76,9 @@ class SaveAllAgeTemplatesTest {
                             System.out.println("\n\nCASE" + case_id + "\t@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                             System.out.println("cond="+cond_inx+" y1="+useYear1+" y2="+useYear2+" m="+useMult+" am="+useAddMinus+" yrs="+year1_sign+year2_sign+" vars="+var_sign);
 
-                            String content = exprCategory.createSentenceContent(true, 1, 2,
+                            String content = exprCategory.createTemplateSentenceContent(true, 1, 2,
                                     1, var_num_per_sentence, useYear1, useYear2, useMult, useAddMinus, var_sign, year1_sign, year2_sign, name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
-                            String explanation = exprCategory.createSentenceExplanation(content, 1, 2, 1, var_num_per_sentence, cond_inx,
+                            String explanation = exprCategory.createTemplateSentenceExplanation(content, 1, 2, 1, var_num_per_sentence, cond_inx,
                                     useYear1, useYear2, useMult, useAddMinus,
                                     var_sign, year1_sign, year2_sign,
                                     name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
@@ -98,9 +98,9 @@ class SaveAllAgeTemplatesTest {
         for(int cond_inx: new int[] {0, 1})
             for(int sign: new int[] {0, 1}) {
                 System.out.println("content-------------------------");
-                String content = exprCategory.createSentenceContent(true, 1, 2,
+                String content = exprCategory.createTemplateSentenceContent(true, 1, 2,
                         1, var_num_per_sentence, useYear1, useYear2, useMult, useAddMinus, var_sign, year1_sign, year2_sign, name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
-                String explanation = exprCategory.createSentenceExplanation(content, 1, 2, 1, var_num_per_sentence, cond_inx,
+                String explanation = exprCategory.createTemplateSentenceExplanation(content, 1, 2, 1, var_num_per_sentence, cond_inx,
                         useYear1, useYear2, useMult, useAddMinus,
                         var_sign, year1_sign, year2_sign,
                         name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);

@@ -6,12 +6,9 @@ import com.onejo.seosuri.domain.classification.CategoryRepository;
 import com.onejo.seosuri.domain.classification.CategoryTitle;
 import com.onejo.seosuri.domain.problem.ProblemTemplate;
 import com.onejo.seosuri.domain.problem.ProblemTemplateRepository;
-import com.onejo.seosuri.domain.testpaper.TestPaper;
 import com.onejo.seosuri.exception.common.BusinessException;
 import com.onejo.seosuri.exception.common.ErrorCode;
-import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
 import com.onejo.seosuri.service.algorithm.saveTemplate.SaveAllAgeTemplates;
-import com.onejo.seosuri.service.algorithm.saveTemplate.SaveAllTemplates;
 import com.onejo.seosuri.service.algorithm.saveTemplate.SaveAllUnknownNumTemplates;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +24,7 @@ public class SaveAllTemplateService {
     private final ProblemTemplateRepository problemTemplateRepository;
     private final CategoryRepository categoryRepository;
 
-    @Transactional
+    @Transactional  // 나중에 삭제해야 - 디버깅용 annotation
     public ProblemTemplate saveOneTemplate(TemplateDto templateDto){
         System.out.println("\n\t\tSTARTED:: saveOneTemplate");
         ProblemTemplate problemTemplate = templateDto.toEntity();
@@ -37,7 +34,7 @@ public class SaveAllTemplateService {
     }
 
     @Transactional
-    public List<ProblemTemplate> runSaveAllAgeTemplate(int start, int end){
+    public void runSaveAllAgeTemplate(int start, int end){
         System.out.println("\n\t\tSTARTED:: runSaveAllAgeTemplate\n");
 
         Optional<Category> opt_category = categoryRepository.findByTitle(CategoryTitle.AGE);   // 여기서 오류 발생 : findByTitle을 콜 할 수 없다고 나옴 (InvocationTargetException)
@@ -55,12 +52,10 @@ public class SaveAllTemplateService {
             //TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
             res.add(saved_problem_template);
         }
-
-        return res;
     }
 
     @Transactional
-    public List<ProblemTemplate> runSaveAllUnknownNumTemplate(int start, int end) {
+    public void runSaveAllUnknownNumTemplate(int start, int end) {
         System.out.println("\n\t\tSTARTED:: runSaveAllUnknownNumTemplate\n");
 
         Optional<Category> opt_category = categoryRepository.findByTitle(CategoryTitle.UNKNOWN_NUM);
@@ -78,8 +73,6 @@ public class SaveAllTemplateService {
             //TemplateDto saved_template_dto = new TemplateDto(saved_problem_template);
             res.add(saved_problem_template);
         }
-
-        return res;
     }
 
 }

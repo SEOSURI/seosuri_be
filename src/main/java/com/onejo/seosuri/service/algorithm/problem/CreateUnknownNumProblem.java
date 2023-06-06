@@ -1,6 +1,7 @@
 package com.onejo.seosuri.service.algorithm.problem;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
+import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 
 public class CreateUnknownNumProblem extends CreateProblem{
     public CreateUnknownNumProblem(ProblemValueStruct problemValueStruct) {
@@ -10,7 +11,7 @@ public class CreateUnknownNumProblem extends CreateProblem{
     @Override
     public void createProblem(int level)  {
         int prob_sentence_num = 2;  // 잘못 계산한 수, 바르게 계산한 수
-        int var_num_per_sentence = ProblemTokenStruct.UNKNOWNNUM_PROB_VAR_NUM_PER_SENTECE;
+        int var_num_per_sentence = ProblemTokenStruct.UNKNOWNNUM_PROB_VAR_NUM_PER_SENTENCE;
 
         int variable_var_num = prob_sentence_num + 1;   // 잘못 계산한 수, 바르게 계산한 수
         int constant_var_num = prob_sentence_num * var_num_per_sentence;

@@ -8,19 +8,20 @@ public abstract class ExprCategory {
     @Override
     abstract public String toString();
 
-    abstract public String createSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
-                                                 int ls_index, int var_num_per_sentence,
-                                                 boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
-                                                 int var2_sign, int year1_sign, int year2_sign,
-                                                 String name_category_token, String name_unit_token, String var34_unit_token,
-                                                 String after_str_token, String before_str_token);
+    abstract public String createTemplateSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
+                                                         int ls_index, int var_num_per_sentence,
+                                                         boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
+                                                         int var2_sign, int year1_sign, int year2_sign,
+                                                         String name_category_token, String name_unit_token, String var34_unit_token,
+                                                         String after_str_token, String before_str_token);
 
-    abstract public String createSentenceExplanation(String content, int name_var_index1, int name_var_index2,
-                                                     int ls_index, int var_num_per_sentence, int cond_inx,
-                                                     boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
-                                                     int var2_sign, int year1_sign, int year2_sign,
-                                                     String name_category_token, String name_unit_token, String var34_unit_token, String after_str_token, String before_str_token);
+    abstract public String createTemplateSentenceExplanation(String content, int name_var_index1, int name_var_index2,
+                                                             int ls_index, int var_num_per_sentence, int cond_inx,
+                                                             boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
+                                                             int var2_sign, int year1_sign, int year2_sign,
+                                                             String name_category_token, String name_unit_token, String var34_unit_token, String after_str_token, String before_str_token);
 
+    // 숫자 값 뽑기
     abstract public int[] getRandomValue(int given_name_var2, int var_sign, int year1_sign, int year2_sign,
                                          int name_var1_min_value, int name_var1_max_value,
                                          int var1_min_value, int var1_max_value,
@@ -30,7 +31,7 @@ public abstract class ExprCategory {
                                          boolean useYear1, boolean useYear2, boolean useAddMinus, boolean useMult)
             throws TimeoutException;
 
-    // random int 값 뽑기
+    // random int 값 뽑기 - getRandomValue()에서 호출해서 사용
     public static int getRandomIntValue(int min_value, int max_value){
         Random random = new Random();
         random.setSeed(System.currentTimeMillis()); //시드값 설정을 따로 할수도 있음

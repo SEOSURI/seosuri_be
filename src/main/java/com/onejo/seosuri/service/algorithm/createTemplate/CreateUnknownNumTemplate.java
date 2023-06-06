@@ -2,7 +2,7 @@ package com.onejo.seosuri.service.algorithm.createTemplate;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
-import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
+import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 
 public class CreateUnknownNumTemplate extends CreateTemplate{
 
@@ -17,7 +17,7 @@ public class CreateUnknownNumTemplate extends CreateTemplate{
         prob_sentence_num = 2;  // 바르게 계산한 수 문장, 잘못 계산한 수 문장
         answer_inx = ProblemTokenStruct.UNKNOWN_PROB_CORRECT_NUM_INDEX;    // 바르게 계산한 수
         condition_inx = ProblemTokenStruct.UNKNOWN_PROB_WRONG_NUM_INDEX;   // 잘못 계산한 수
-        var_num_per_sentence = ProblemTokenStruct.UNKNOWNNUM_PROB_VAR_NUM_PER_SENTECE;
+        var_num_per_sentence = ProblemTokenStruct.UNKNOWNNUM_PROB_VAR_NUM_PER_SENTENCE;
 
         // 바르게 계산한 수(name_var0), 잘못 계산한 수(name_var1), 어떤 수(name_var2)
         int[] name_var_index_in_correctNum_ls = new int[] {ProblemTokenStruct.UNKNOWN_PROB_CORRECT_NUM_INDEX, ProblemTokenStruct.UNKNOWN_PROB_X_INDEX};
@@ -83,14 +83,14 @@ public class CreateUnknownNumTemplate extends CreateTemplate{
         sentence_ls[0] = createSentence(problemValueStruct.expr_category_ls[0], true, name_var_index_in_correctNum_ls[0], name_var_index_in_correctNum_ls[1],
                 problemValueStruct.sentence_expr_category_id_ls[0], 0 , var_num_per_sentence, cond_inx_for_sentence,
                 problemValueStruct.useYear1_ls[0], problemValueStruct.useYear2_ls[0], problemValueStruct.useMult_ls[0], problemValueStruct.useAddMinus_ls[0],
-                problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
+                problemValueStruct.constant_var_sign_ls[var1_index+1], problemValueStruct.constant_var_sign_ls[var1_index+2], problemValueStruct.constant_var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
 
 
         // 잘못 계산한 수 문장 생성
         var1_index = var_num_per_sentence;
         sentence_ls[1] = createSentence(problemValueStruct.expr_category_ls[1], false, name_var_index_in_wrongNum_ls[0], name_var_index_in_wrongNum_ls[1], problemValueStruct.sentence_expr_category_id_ls[1], 1 , var_num_per_sentence, cond_inx_for_sentence,
                 problemValueStruct.useYear1_ls[1], problemValueStruct.useYear2_ls[1], problemValueStruct.useMult_ls[1], problemValueStruct.useAddMinus_ls[1],
-                problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
+                problemValueStruct.constant_var_sign_ls[var1_index+1], problemValueStruct.constant_var_sign_ls[var1_index+2], problemValueStruct.constant_var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,9 +114,9 @@ public class CreateUnknownNumTemplate extends CreateTemplate{
         final String after_str_token = "";
         final String before_str_token = "";
 
-        String content = exprCategory.createSentenceContent(isCorrectNumSentence, name_var_index1, name_var_index2,
+        String content = exprCategory.createTemplateSentenceContent(isCorrectNumSentence, name_var_index1, name_var_index2,
                 index, var_num_per_sentence, useYear1, useYear2, useMult, useAddMinus, var_sign, year1_sign, ProblemTokenStruct.PLUS_SIGN, "", "", "", "", "");
-        String explanation = exprCategory.createSentenceExplanation(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
+        String explanation = exprCategory.createTemplateSentenceExplanation(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
                 useYear1, useYear2, useMult, useAddMinus,
                 var_sign, year1_sign, year2_sign,
                 name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
