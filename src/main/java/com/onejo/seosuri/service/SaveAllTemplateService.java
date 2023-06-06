@@ -45,7 +45,7 @@ public class SaveAllTemplateService {
 
         int chunk_size = 1000;
         int e;
-        for(int s = 0; s < end; s += chunk_size){
+        for(int s = start; s < end; s += chunk_size){
             e = s + chunk_size;
             if(e > end) e = end;
             saveWithChunk(category, s, e);
@@ -53,6 +53,7 @@ public class SaveAllTemplateService {
     }
 
     public void saveWithChunk(Category category, int start, int end){
+        System.out.println("STARTED:: saveWithChunk  - start = "+start+"   end = "+end);
         SaveAllAgeTemplates saveAllAgeTemplates = new SaveAllAgeTemplates();
         saveAllAgeTemplates.saveAllTemplates(start, end);
         for(TemplateDto templateDto: saveAllAgeTemplates.templateDtos){
