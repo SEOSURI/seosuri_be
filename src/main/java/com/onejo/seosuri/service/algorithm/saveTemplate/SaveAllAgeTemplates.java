@@ -13,7 +13,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
 
 
     public SaveAllAgeTemplates() {
-        super(new int[] {ProblemTokenStruct.EXPR_CATEGORY_ID_YX, ProblemTokenStruct.EXPR_CATEGORY_ID_SUM_DIFFERENCE});
+        super(new int[] {ProblemTokenStruct.EXPR_CATEGORY_ID_SUM_DIFFERENCE, ProblemTokenStruct.EXPR_CATEGORY_ID_YX});
         possible_Expr_category_ls = new ExprCategory[] {new SumDiffExprCategory(), new YXAgeExprCategory()};
 
         problemValueStruct = new ProblemValueStruct();
@@ -25,14 +25,10 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
         int template_id = 0;    // template_id = 0, 1, 2, ...
         int var_num_per_sentence = ProblemTokenStruct.AGE_PROB_VAR_NUM_PER_SENTENCE;
 
-        for(int prob_sentence_num: new int[] {3, 2, 1}) {
+        for(int prob_sentence_num: new int[] {1, 2, 3}) {
             problemValueStruct.template_level = prob_sentence_num;
             int name_var_num = prob_sentence_num + 1;
             int var_num = prob_sentence_num * var_num_per_sentence;
-            int[] inx_ls = new int[prob_sentence_num];
-            for(int i = 0; i < prob_sentence_num; i++){
-                inx_ls[i] = i;
-            }
 
             setSentence_category_id_ls_ls(prob_sentence_num);   // category_num(2)^prob_sentence_num
             setCategory_ls_ls(prob_sentence_num);
@@ -42,8 +38,9 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
             for(int c_inx=0; c_inx<sentence_category_id_ls_ls.length; c_inx++){    // 2^prob_sentence_num
                 problemValueStruct.sentence_expr_category_id_ls = sentence_category_id_ls_ls[c_inx].stream().mapToInt(i->i).toArray();
                 problemValueStruct.expr_category_ls = arrayListToCategoryArray(category_ls_ls[c_inx]);
-                for(int answer_inx: inx_ls) {   // prob_sentence_num
-                    for (int condition_inx = (answer_inx + 1) % name_var_num; condition_inx != answer_inx; condition_inx++) {
+                for(int answer_inx = 0; answer_inx < name_var_num; answer_inx++) {   // prob_sentence_num
+                    for (int condition_inx = 0; condition_inx < name_var_num; condition_inx++) {
+                        if(answer_inx == condition_inx) continue;
                         for (boolean[] useYear1_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
                             problemValueStruct.useYear1_ls = useYear1_ls;
                             for (boolean[] useYear2_ls : useBoolean_ls_ls) { // 2^prob_sentence_num
@@ -61,10 +58,15 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
                                             for (int i = 0; i < prob_sentence_num; i++) {
                                                 if ((problemValueStruct.useMult_ls[i] == false && problemValueStruct.useAddMinus_ls[i] == false && problemValueStruct.useYear1_ls[i] == false && problemValueStruct.useYear2_ls[i] == false)
                                                         ||(problemValueStruct.sentence_expr_category_id_ls[i] == ProblemTokenStruct.EXPR_CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
-                                                        && !(problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_MULT_VAR_OFFSET] == ProblemTokenStruct.PLUS_SIGN
-                                                        && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_ADDMIN_VAR_OFFSET] == ProblemTokenStruct.PLUS_SIGN
-                                                        && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR1_OFFSET] == ProblemTokenStruct.PLUS_SIGN
-                                                        && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR2_OFFSET] == ProblemTokenStruct.PLUS_SIGN))
+                                                            && !(problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_MULT_VAR_OFFSET] == ProblemTokenStruct.PLUS_SIGN
+                                                                && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR1_OFFSET] == ProblemTokenStruct.PLUS_SIGN
+                                                                && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR2_OFFSET] == ProblemTokenStruct.PLUS_SIGN
+                                                                && problemValueStruct.useYear1_ls[i] == true
+                                                                && problemValueStruct.useYear2_ls[i] == true
+                                                                && problemValueStruct.useMult_ls[i] == true
+                                                                && problemValueStruct.useAddMinus_ls[i] == true))
+                                                        || (problemValueStruct.sentence_expr_category_id_ls[i] == ProblemTokenStruct.EXPR_CATEGORY_ID_YX
+                                                            && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_MULT_VAR_OFFSET] == ProblemTokenStruct.MINUS_SIGN)
                                                         || (useYear1_ls[i] == false  // year1 사용하지 않는 경우, year sign에 따른 변화 무시
                                                         && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR1_OFFSET] == ProblemTokenStruct.MINUS_SIGN)
                                                         || (useYear2_ls[i] == false  // year2 사용하지 않는 경우, year sign에 따른 변화 무시
