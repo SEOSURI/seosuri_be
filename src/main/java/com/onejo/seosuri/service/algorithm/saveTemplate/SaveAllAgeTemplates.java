@@ -14,7 +14,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
 
     public SaveAllAgeTemplates() {
         super(new int[] {ProblemTokenStruct.CATEGORY_ID_YX, ProblemTokenStruct.CATEGORY_ID_SUM_DIFFERENCE});
-        possible_Expr_category_ls = new ExprCategory[] {new SumDiffExprCategory(), new YXAgeExprCategory()};
+        possible_Expr_category_ls = new ExprCategory[] {new YXAgeExprCategory(), new SumDiffExprCategory()};
         problemValueStruct = new ProblemValueStruct();
         createTemplate = new CreateAgeTemplate(problemValueStruct);
     }
@@ -24,7 +24,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
         int template_id = 0;    // template_id = 0, 1, 2, ...
         int var_num_per_sentence = ProblemTokenStruct.AGE_PROB_VAR_NUM_PER_SENTENCE;
 
-        for(int prob_sentence_num: new int[] {1, 2, 3}) {
+        for(int prob_sentence_num: new int[] {3, 2, 1}) {
             problemValueStruct.template_level = prob_sentence_num;
             int name_var_num = prob_sentence_num + 1;
             int var_num = prob_sentence_num * var_num_per_sentence;

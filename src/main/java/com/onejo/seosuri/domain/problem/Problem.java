@@ -33,7 +33,7 @@ public class Problem extends BaseTimeEntity {
     @Column(name="prob_number")
     private Long probNum;
 
-    @Column(name="prob_content")
+    @Column(name="prob_content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name="prob_level")
@@ -42,7 +42,7 @@ public class Problem extends BaseTimeEntity {
     @Column(name="prob_answer")
     private String answer;
 
-    @Column(name="prob_explanation")
+    @Column(name="prob_explanation", columnDefinition = "TEXT")
     private String explanation;
 
     @Column(name="prob_state")

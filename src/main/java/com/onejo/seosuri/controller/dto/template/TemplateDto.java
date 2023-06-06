@@ -16,7 +16,7 @@ import java.util.ArrayList;
 @Getter
 public class TemplateDto {
 
-    private static final String DELIMETER = " ";
+    private static final String DELIMETER = "            ";
 
     //@Column(name="prob_temp_level")
     private String level;

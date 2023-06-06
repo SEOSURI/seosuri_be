@@ -27,7 +27,7 @@ public class ProblemTemplate extends BaseTimeEntity {
     @JoinColumn(name="category_id")
     private Category category;
 
-    @Column(name="prob_temp_content")
+    @Column(name="prob_temp_content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name="prob_temp_level")
