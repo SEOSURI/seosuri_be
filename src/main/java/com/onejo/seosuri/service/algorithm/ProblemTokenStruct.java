@@ -18,8 +18,8 @@ public class ProblemTokenStruct {
 
     // 상황 문장 id
     public static final int SENTENCE_CATEGORY_NUM = 2;  // 상황 문장 유형 갯수
-    public static final int CATEGORY_ID_YX = 0;
-    public static final int CATEGORY_ID_SUM_DIFFERENCE = 1;
+    public static final int EXPR_CATEGORY_ID_YX = 0;
+    public static final int EXPR_CATEGORY_ID_SUM_DIFFERENCE = 1;
 
     // 상황문장 1개당 상수 변수의 개수
     // 참고 - 문제에서 등장하는 변수 = 구하는값 관련 변수(나이) + 상수 변수(year, 곱해지는 수(var1), 더하거나 빼는 수(var2))
