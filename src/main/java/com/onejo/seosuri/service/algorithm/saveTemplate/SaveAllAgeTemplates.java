@@ -25,7 +25,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
         int template_id = 0;    // template_id = 0, 1, 2, ...
         int var_num_per_sentence = ProblemTokenStruct.AGE_PROB_VAR_NUM_PER_SENTENCE;
 
-        for(int prob_sentence_num: new int[] {1, 2, 3}) {
+        for(int prob_sentence_num: new int[] {3, 2, 1}) {
             problemValueStruct.template_level = prob_sentence_num;
             int name_var_num = prob_sentence_num + 1;
             int var_num = prob_sentence_num * var_num_per_sentence;

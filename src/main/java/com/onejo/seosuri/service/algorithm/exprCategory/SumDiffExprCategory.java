@@ -11,7 +11,7 @@ public class SumDiffExprCategory extends ExprCategory {
 
     @Override
     public String toString() {
-        return "합차 유형";
+        return "합차유형";
     }
 
     @Override

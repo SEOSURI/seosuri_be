@@ -8,7 +8,7 @@ public class YXAgeExprCategory extends YXExprCategory {
 
     @Override
     public String toString() {
-        return super.toString() + " - 나이 유형";
+        return "YX-나이유형";
     }
 
     @Override

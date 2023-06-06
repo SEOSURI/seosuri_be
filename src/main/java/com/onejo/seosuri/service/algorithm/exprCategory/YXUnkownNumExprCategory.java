@@ -8,7 +8,7 @@ public class YXUnkownNumExprCategory extends YXExprCategory {
 
     @Override
     public String toString(){
-        return super.toString() + " - 어떤 수";
+        return "YX-어떤수유형";
     }
 
     @Override

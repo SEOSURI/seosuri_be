@@ -9,11 +9,6 @@ import java.util.concurrent.TimeoutException;
 
 public abstract class YXExprCategory extends ExprCategory {
 
-    @Override
-    public String toString(){
-        return "YX 유형";
-    }
-
     abstract public String createTemplateSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
                                                          int ls_index, int var_num_per_sentence,
                                                          boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
