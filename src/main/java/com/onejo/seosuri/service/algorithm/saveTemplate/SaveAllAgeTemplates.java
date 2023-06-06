@@ -13,8 +13,13 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
 
 
     public SaveAllAgeTemplates() {
+<<<<<<< HEAD
         super(new int[] {ProblemTokenStruct.CATEGORY_ID_YX, ProblemTokenStruct.CATEGORY_ID_SUM_DIFFERENCE});
         possible_Expr_category_ls = new ExprCategory[] {new YXAgeExprCategory(), new SumDiffExprCategory()};
+=======
+        super(new int[] {ProblemTokenStruct.EXPR_CATEGORY_ID_YX, ProblemTokenStruct.EXPR_CATEGORY_ID_SUM_DIFFERENCE});
+        possible_Expr_category_ls = new ExprCategory[] {new SumDiffExprCategory(), new YXAgeExprCategory()};
+>>>>>>> feat/template
         problemValueStruct = new ProblemValueStruct();
         createTemplate = new CreateAgeTemplate(problemValueStruct);
     }
@@ -59,7 +64,7 @@ public class SaveAllAgeTemplates extends SaveAllTemplates{
                                             boolean generateTemplate = true;
                                             for (int i = 0; i < prob_sentence_num; i++) {
                                                 if ((problemValueStruct.useMult_ls[i] == false && problemValueStruct.useAddMinus_ls[i] == false && problemValueStruct.useYear1_ls[i] == false && problemValueStruct.useYear2_ls[i] == false)
-                                                        ||(problemValueStruct.sentence_expr_category_id_ls[i] == ProblemTokenStruct.CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
+                                                        ||(problemValueStruct.sentence_expr_category_id_ls[i] == ProblemTokenStruct.EXPR_CATEGORY_ID_SUM_DIFFERENCE // 합차 유형에서 사용되는 변수는 var1(mult_offset에 해당하는 변수) 뿐, var1의 부호는 양수
                                                         && !(problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_MULT_VAR_OFFSET] == ProblemTokenStruct.PLUS_SIGN
                                                         && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_ADDMIN_VAR_OFFSET] == ProblemTokenStruct.PLUS_SIGN
                                                         && problemValueStruct.constant_var_sign_ls[i * var_num_per_sentence + ProblemTokenStruct.AGE_PROB_YEAR_VAR1_OFFSET] == ProblemTokenStruct.PLUS_SIGN

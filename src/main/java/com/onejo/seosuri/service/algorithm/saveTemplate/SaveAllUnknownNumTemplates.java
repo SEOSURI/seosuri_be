@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
 
     public SaveAllUnknownNumTemplates() {
-        super(new int[] {ProblemTokenStruct.CATEGORY_ID_YX});
+        super(new int[] {ProblemTokenStruct.EXPR_CATEGORY_ID_YX});
         possible_Expr_category_ls = new ExprCategory[] {new YXUnkownNumExprCategory()};
         problemValueStruct = new ProblemValueStruct();
         createTemplate = new CreateUnknownNumTemplate(problemValueStruct);
@@ -42,7 +42,7 @@ public class SaveAllUnknownNumTemplates extends SaveAllTemplates{
         for(int i = 0; i < prob_sentence_num; i++){
             problemValueStruct.useYear1_ls[i] = false;
             problemValueStruct.useYear2_ls[i] = true;
-            problemValueStruct.sentence_expr_category_id_ls[i] = ProblemTokenStruct.CATEGORY_ID_YX;
+            problemValueStruct.sentence_expr_category_id_ls[i] = ProblemTokenStruct.EXPR_CATEGORY_ID_YX;
             problemValueStruct.expr_category_ls[i] = new YXUnkownNumExprCategory();
         }
 
