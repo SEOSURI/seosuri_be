@@ -34,10 +34,10 @@ public class SaveAllTemplateController {
 
     @Operation(summary = "나이 문제 템플릿 DB 저장", description = "최초 템플릿 DB 데이터.\n나이 유형 문제 템플릿 정보 저장.")
     @PatchMapping("/save/age")
-    public BaseResponse<List<ProblemTemplate>> saveAllAgeTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
+    public BaseResponse<String> saveAllAgeTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
         try{
-            List<ProblemTemplate> problemList = saveAllTemplateService.runSaveAllAgeTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());
-            return new BaseResponse<>(problemList);
+            saveAllTemplateService.runSaveAllAgeTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());
+            return new BaseResponse<>("saving succeed");
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }
@@ -45,10 +45,10 @@ public class SaveAllTemplateController {
 
     @Operation(summary = "어떤 수 문제 템플릿 DB 저장", description = "최초 템플릿 DB 데이터.\n어떤 수 유형 문제 템플릿 정보 저장.")
     @PatchMapping("/save/unknown_num")
-    public BaseResponse<List<ProblemTemplate>> saveAllUnknownNumTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
+    public BaseResponse<String> saveAllUnknownNumTemplates(@RequestBody SaveTemplateReq saveTemplateReq){
         try{
-            List<ProblemTemplate> problemList = saveAllTemplateService.runSaveAllUnknownNumTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());
-            return new BaseResponse<>(problemList);
+            saveAllTemplateService.runSaveAllUnknownNumTemplate(saveTemplateReq.getStart_template_id(), saveTemplateReq.getEnd_template_id());
+            return new BaseResponse<>("saving succeed");
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }

@@ -1,7 +1,7 @@
 package com.onejo.seosuri.service.algorithm.createTemplate;
 
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
-import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
+import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 
 public abstract class CreateTemplate {
 

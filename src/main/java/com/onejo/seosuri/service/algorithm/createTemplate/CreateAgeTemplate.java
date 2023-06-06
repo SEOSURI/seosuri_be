@@ -2,7 +2,7 @@ package com.onejo.seosuri.service.algorithm.createTemplate;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
-import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
+import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 
 public class CreateAgeTemplate extends CreateTemplate{
 
@@ -43,14 +43,14 @@ public class CreateAgeTemplate extends CreateTemplate{
              */
             sentence_ls[i] = this.createSentence(problemValueStruct.expr_category_ls[i], true, i, i+1, problemValueStruct.sentence_expr_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
                     problemValueStruct.useYear1_ls[i], problemValueStruct.useYear2_ls[i], problemValueStruct.useMult_ls[i], problemValueStruct.useAddMinus_ls[i],
-                    problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
+                    problemValueStruct.constant_var_sign_ls[var1_index+1], problemValueStruct.constant_var_sign_ls[var1_index+2], problemValueStruct.constant_var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
         cond_inx_for_sentence = 0;  // age1, age2 중 age1가 given
         for(int i = condition_inx; i < prob_sentence_num; i++){ // cond_inx+1~ -> age1 given
             int var1_index = i * var_num_per_sentence;
             sentence_ls[i] = createSentence(problemValueStruct.expr_category_ls[i], true, i, i+1, problemValueStruct.sentence_expr_category_id_ls[i], i , var_num_per_sentence, cond_inx_for_sentence,
                     problemValueStruct.useYear1_ls[i], problemValueStruct.useYear2_ls[i], problemValueStruct.useMult_ls[i], problemValueStruct.useAddMinus_ls[i],
-                    problemValueStruct.var_sign_ls[var1_index+1], problemValueStruct.var_sign_ls[var1_index+2], problemValueStruct.var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
+                    problemValueStruct.constant_var_sign_ls[var1_index+1], problemValueStruct.constant_var_sign_ls[var1_index+2], problemValueStruct.constant_var_sign_ls[var1_index+3]);  // sentence_ls[i] = {content, explanation}
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,9 +77,9 @@ public class CreateAgeTemplate extends CreateTemplate{
         String after_str_token = ProblemTokenStruct.time_after_token;  // "후"
         String before_str_token = ProblemTokenStruct.time_before_token; // "전"
 
-        String content = exprCategory.createSentenceContent(isCorrectNumSentence, name_var_index1, name_var_index2,
+        String content = exprCategory.createTemplateSentenceContent(isCorrectNumSentence, name_var_index1, name_var_index2,
                 index, var_num_per_sentence, useYear1, useYear2, useMult, useAddMinus, var_sign, year1_sign, year2_sign, name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);
-        String explanation = exprCategory.createSentenceExplanation(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
+        String explanation = exprCategory.createTemplateSentenceExplanation(content, name_var_index1, name_var_index2, index, var_num_per_sentence, cond_inx,
                 useYear1, useYear2, useMult, useAddMinus,
                 var_sign, year1_sign, year2_sign,
                 name_category_token, name_unit_token, var34_unit_token, after_str_token, before_str_token);

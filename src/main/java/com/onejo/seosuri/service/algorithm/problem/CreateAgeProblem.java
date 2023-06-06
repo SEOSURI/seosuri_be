@@ -1,6 +1,7 @@
 package com.onejo.seosuri.service.algorithm.problem;
 
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
+import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 
 public class CreateAgeProblem extends CreateProblem{
 

@@ -15,12 +15,12 @@ public class SumDiffExprCategory extends ExprCategory {
     }
 
     @Override
-    public String createSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
-                                        int ls_index, int var_num_per_sentence,
-                                        boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
-                                        int var2_sign, int year1_sign, int year2_sign,
-                                        String name_category_token, String name_unit_token, String var34_unit_token,
-                                        String after_str_token, String before_str_token) {
+    public String createTemplateSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
+                                                int ls_index, int var_num_per_sentence,
+                                                boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
+                                                int var2_sign, int year1_sign, int year2_sign,
+                                                String name_category_token, String name_unit_token, String var34_unit_token,
+                                                String after_str_token, String before_str_token) {
         // index
         int index1 = ls_index;
         int index2 = ls_index + 1;
@@ -75,12 +75,12 @@ public class SumDiffExprCategory extends ExprCategory {
 
 
     @Override
-    public String createSentenceExplanation(String content, int name_var_index1, int name_var_index2,
-                                            int ls_index, int var_num_per_sentence, int cond_inx,
-                                            boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
-                                            int var2_sign, int year1_sign, int year2_sign,
-                                            String name_category_token, String name_unit_token, String var34_unit_token,
-                                            String after_str_token, String before_str_token) {
+    public String createTemplateSentenceExplanation(String content, int name_var_index1, int name_var_index2,
+                                                    int ls_index, int var_num_per_sentence, int cond_inx,
+                                                    boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
+                                                    int var2_sign, int year1_sign, int year2_sign,
+                                                    String name_category_token, String name_unit_token, String var34_unit_token,
+                                                    String after_str_token, String before_str_token) {
         // index
         int index1 = ls_index;
         int index2 = ls_index + 1;

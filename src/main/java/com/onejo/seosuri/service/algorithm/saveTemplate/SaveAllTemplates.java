@@ -1,11 +1,10 @@
 package com.onejo.seosuri.service.algorithm.saveTemplate;
 
 import com.onejo.seosuri.controller.dto.template.TemplateDto;
-import com.onejo.seosuri.service.SaveAllTemplateService;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.createTemplate.CreateTemplate;
-import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
+import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 
 import java.util.ArrayList;
 
@@ -35,14 +34,15 @@ public abstract class SaveAllTemplates {
 
     abstract public void saveAllTemplates(int start_template_id, int end_template_id);
 
-    protected void saveInDB() {
+    protected void saveInList() {
         //problemValueStruct.printTemplate();   // for debugging
         TemplateDto templateDto = new TemplateDto(problemValueStruct.template_level, problemValueStruct.category,
                 problemValueStruct.content_template, problemValueStruct.answer_template, problemValueStruct.explanation_template,
-                problemValueStruct.sentence_expr_category_id_ls, problemValueStruct.expr_category_ls, problemValueStruct.var_sign_ls,
+                problemValueStruct.sentence_expr_category_id_ls, problemValueStruct.expr_category_ls, problemValueStruct.constant_var_sign_ls,
                 problemValueStruct.useYear1_ls, problemValueStruct.useYear2_ls, problemValueStruct.useMult_ls, problemValueStruct.useAddMinus_ls);
         templateDtos.add(templateDto);
-        //saveAllTemplateService.saveOneTemplate(templateDto);
+        //templateDto.printTemplateDto();
+        System.out.println(templateDto.getContent()+"\n");
     }
 
 

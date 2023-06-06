@@ -2,15 +2,6 @@
 
 package com.onejo.seosuri.service.algorithm;
 
-import com.onejo.seosuri.service.algorithm.problem.ProblemValueStruct;
-
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.*;
-
 /*
 남은 일
     saveAgeProblemTemplates() 코드 작성
@@ -33,7 +24,7 @@ public class ProblemTokenStruct {
     // 상황문장 1개당 상수 변수의 개수
     // 참고 - 문제에서 등장하는 변수 = 구하는값 관련 변수(나이) + 상수 변수(year, 곱해지는 수(var1), 더하거나 빼는 수(var2))
     public static final int AGE_PROB_VAR_NUM_PER_SENTENCE = 4;     // var1, var2, year1, year2
-    public static final int UNKNOWNNUM_PROB_VAR_NUM_PER_SENTECE = 4;
+    public static final int UNKNOWNNUM_PROB_VAR_NUM_PER_SENTENCE = 4;
 
 
     public static final int AGE_PROB_MULT_VAR_OFFSET = 0;

@@ -12,12 +12,12 @@ public class YXAgeExprCategory extends YXExprCategory {
     }
 
     @Override
-    public String createSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
-                                        int ls_index, int var_num_per_sentence,
-                                        boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
-                                        int var2_sign, int year1_sign, int year2_sign,
-                                        String name_category_token, String name_unit_token, String var34_unit_token,
-                                        String after_str_token, String before_str_token) {
+    public String createTemplateSentenceContent(boolean isCorrectNumSentence, int name_var_index1, int name_var_index2,
+                                                int ls_index, int var_num_per_sentence,
+                                                boolean useYear1, boolean useYear2, boolean useMult, boolean useAddMinus,
+                                                int var2_sign, int year1_sign, int year2_sign,
+                                                String name_category_token, String name_unit_token, String var34_unit_token,
+                                                String after_str_token, String before_str_token) {
         String name_chosa_token = ProblemTokenStruct.ui_token;
 
         ArrayList<String> content_ls = new ArrayList<>(1);
