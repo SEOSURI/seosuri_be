@@ -30,7 +30,10 @@ public enum ErrorCode {
     DATABASE_ERROR(false, 4000, "DB에 문제가 발생했습니다."),
     NO_EXIST_CATEGORY_TITLE(false, 4001, "없는 카테고리 입니다."),
     NO_EXIST_PROBLEM(false, 4002, "문제가 존재하지 않습니다."),
-    NO_EXIST_TEST_PAPER(false, 4003, "시험지가 존재하지 않습니다.")
+    NO_EXIST_TEST_PAPER(false, 4003, "시험지가 존재하지 않습니다."),
+
+    /*OCR, 5000*/
+    NO_EXIST_FILE(false, 5001, "사진 파일이 존재하지 않습니다.")
 
     ;
 

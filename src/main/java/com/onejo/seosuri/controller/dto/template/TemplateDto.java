@@ -160,7 +160,7 @@ public class TemplateDto {
                     new SumDiffExprCategory(), new YXAgeExprCategory(), new YXUnkownNumExprCategory()};
             for(int j = 0; j < possible_values.length; j++){
                 if(id == possible_values[j].toString()){
-                    res[i] = possible_values[i];
+                    res[i] = possible_values[j];
                 }
             }
         }
