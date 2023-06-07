@@ -288,7 +288,7 @@ public class ProblemService {
         List<ProbRes> probList = new ArrayList<>();  // 완성된 문제
 
 //        Optional<TestPaper> testPaper = testPaperRepository.findById(testPaperId);
-        Optional<TestPaper> testPaper = testPaperRepository.findById(1L); // 이거 고쳐야 함... 위에서 나중에 시험지 생성하면 그걸로 하기
+        Optional<TestPaper> testPaper = testPaperRepository.findById(testPaperId); // 이거 고쳐야 함... 위에서 나중에 시험지 생성하면 그걸로 하기
         if(testPaper.isEmpty()){
             throw new BusinessException(ErrorCode.NO_EXIST_TEST_PAPER);
         }
@@ -311,7 +311,7 @@ public class ProblemService {
             Problem tmpProb = probs.get(i);
             ProbRes probRes = new ProbRes();
 
-            probRes.setTestPaperId(1L);  // 나중에 고쳐야 함!!
+            probRes.setTestPaperId(testPaperId);  // 나중에 고쳐야 함!!
             probRes.setNum(tmpProb.getProbNum());
             probRes.setLevel(tmpProb.getLevel());
             probRes.setContent(tmpProb.getContent());
@@ -337,8 +337,21 @@ public class ProblemService {
         return probList;
     }
 
+    // 3. 문제 바꾸기 api
+//    @Transactional
+//    public void
+
 
     private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList) {
+        // 문제에 대한 모든 정보 출력
+        System.out.println("---------------###################################");
+        System.out.println("시험지번호: " + testPaperId);
+        System.out.println("문제 템플릿 번호: " + tmplList.get(i).getId());
+        System.out.println("문제 번호: " + probNum);
+        System.out.println("문제 난이도: " + tmplList.get(i).getLevel());
+
+
+
         // 시험지 객체 찾기
         TestPaper tmpTestPaper = testPaperRepository.findById(testPaperId).get();
         // 템플릿을 TemplateDto로 변경
@@ -392,6 +405,12 @@ public class ProblemService {
             probWord.setProb(problem);
             probWordRepository.save(probWord);
         }
+
+        // 문제 정보 출력
+        System.out.println("문제 내용: " + problem.getContent());
+        System.out.println("문제 해설: " + problem.getExplanation());
+        System.out.println("문제 답: " + problem.getAnswer());
+        System.out.println("---------------###################################");
     }
 }
 
