@@ -145,16 +145,21 @@ public class ProblemService {
         List<Integer> midRandNumList = new ArrayList<>(midRandNumSet);
         List<Integer> highRandNumList = new ArrayList<>(highRandNumSet);
 
+        Long fixed_template_id = 22L;
+
         for(int i=0; i<lowRandNumList.size(); i++){
             Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)lowRandNumList.get(i));
+            //Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById(fixed_template_id);
             tmplList1.add(tmpProblemTemplate.get());
         }
         for(int i=0; i<midRandNumList.size(); i++){
             Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)midRandNumList.get(i));
+            //Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById(fixed_template_id);
             tmplList2.add(tmpProblemTemplate.get());
         }
         for(int i=0; i<highRandNumList.size(); i++){
             Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)highRandNumList.get(i));
+            //Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById(fixed_template_id);
             tmplList3.add(tmpProblemTemplate.get());
         }
 
