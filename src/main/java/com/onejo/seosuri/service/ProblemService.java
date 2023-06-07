@@ -338,8 +338,96 @@ public class ProblemService {
     }
 
     // 3. 문제 바꾸기 api
-//    @Transactional
-//    public void
+    @Transactional
+    public ProbRes changeProblem(Long testPaperId, Long probNum){
+        // 전달할 문제는 이렇게 생겼습니다
+        ProbRes probRes = new ProbRes();
+
+        // 시험지 객체 얻기
+        TestPaper tmpTestPaper = testPaperRepository.findById(testPaperId).get();
+        // 시험지, 문제 번호는 인자로 주어짐 -> 이걸로 Problem id 찾기
+        Problem oldProb = problemRepository.findByTestPaperAndProbNum(tmpTestPaper, probNum).get();
+        Long oldProbId = oldProb.getId();
+        // 난이도 정보 얻기 -> 이걸로 template 새로 랜덤 뽑기
+        String oldProbLevel = oldProb.getLevel();
+        Random random = new Random();
+        ProblemTemplate newProbTemp;
+        if(oldProbLevel.equals("1")){
+            int tmp = random.nextInt(110)+1;
+            newProbTemp = problemTemplateRepository.findById((long)tmp).get();
+        }
+        else if(oldProbLevel.equals("2")){
+            int tmp = random.nextInt(18150)+111;
+            newProbTemp = problemTemplateRepository.findById((long)tmp).get();
+        }
+        else{
+            int tmp = random.nextInt(498880)+18260;
+            newProbTemp = problemTemplateRepository.findById((long)tmp).get();
+        }
+
+        System.out.println("템플릿 아이디: "+ newProbTemp.getId());
+
+        // 템플릿을 TemplateDto로 변경
+        TemplateDto templateDto = new TemplateDto(newProbTemp);
+        // TemplateDto 내용 ProblemValueStruct에 저장
+        ProblemValueStruct problemValueStruct = templateDto.setProblemValueStruct();
+        // 시험지, 템플릿, 문제 번호 정보 problemValueSturct에 저장 (레벨은 템플릿에서 뽑아쓰기)
+        problemValueStruct.setProblemTemplate(newProbTemp);
+        problemValueStruct.setTestPaper(tmpTestPaper);
+        problemValueStruct.setProbNum((long)(probNum));
+        // WordList 생성
+        String wordType = "인외";
+        List<Word> tmpWordList = wordRepository.findByType(wordType);
+        if(tmpWordList.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_WORD_TYPE);
+        }
+        Set<Word> wordSet = new HashSet<>();
+        Random wordRandom = new Random();
+        while(wordSet.size() < 50){
+            int idx = wordRandom.nextInt(tmpWordList.size())+1;
+            wordSet.add(tmpWordList.get(idx));
+        }
+        List<Word> wordList = new ArrayList<>(wordSet);
+        problemValueStruct.setWordListDirect(wordList);
+        tmpWordList.clear();
+        wordList.clear();
+        wordSet.clear();
+
+        // CreateAgeProblem 호출
+        CreateAgeProblem createAgeProblem = new CreateAgeProblem(problemValueStruct);
+        createAgeProblem.createProblem(problemValueStruct.getTemplate_level());
+
+        // 얻어진 prob_id에 해당하는 prob_word 모두 삭제
+        Long count = probWordRepository.deleteByProb(oldProb);
+        System.out.println("지워진 word 개수: " + count);
+
+        // 얻어진 problemValueStruct 필드 뽑아서 DB 내용 변경
+        problemRepository.updateProbTemp(oldProbId, problemValueStruct.getProblemTemplate());
+        problemRepository.updateContent(oldProbId, problemValueStruct.getReal_content());
+        problemRepository.updateAnswer(oldProbId, problemValueStruct.getReal_answer());
+        problemRepository.updateExplanation(oldProbId, problemValueStruct.getReal_explanation());
+        problemRepository.updateLevel(oldProbId, "" + problemValueStruct.getTemplate_level());
+
+        // probRes 채우기
+        probRes.setNum(probNum);
+        probRes.setAnswer(problemValueStruct.getReal_answer());
+        probRes.setLevel("" + problemValueStruct.getTemplate_level());
+        probRes.setExplanation(problemValueStruct.getReal_explanation());
+        probRes.setContent(problemValueStruct.getReal_content());
+        probRes.setTestPaperId(testPaperId);
+
+        // prob_word 새로 삽입
+        for (int j = 0; j < problemValueStruct.getWordList().size(); j++) {
+            ProbWord probWord = new ProbWord();
+            probWord.setPosition("");
+            probWord.setWord(problemValueStruct.getWordList().get(j));
+            probWord.setProb(oldProb);
+            probWordRepository.save(probWord);
+        }
+
+        // probRes에 정보 저장해서 return 하기
+        return probRes;
+    }
 
 
     private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList) {
