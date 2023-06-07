@@ -355,10 +355,6 @@ public class ProblemService {
 //    public void
 
 
-<<<<<<< HEAD
-    private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList)
-    throws BusinessException {
-=======
     private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList) {
         // 문제에 대한 모든 정보 출력
         System.out.println("---------------###################################");
@@ -369,7 +365,6 @@ public class ProblemService {
 
 
 
->>>>>>> feat/prob
         // 시험지 객체 찾기
         TestPaper tmpTestPaper = testPaperRepository.findById(testPaperId).get();
         // 템플릿을 TemplateDto로 변경
