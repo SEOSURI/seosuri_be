@@ -21,3 +21,4 @@ public class ChangeProbRes {
     @Schema(description = "답", example = "")
     private String answer;
 }
+

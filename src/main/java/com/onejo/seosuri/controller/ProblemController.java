@@ -51,9 +51,10 @@ public class ProblemController {
 
     @Operation(summary = "문제 변경", description = "새로운 문제로 변경")
     @PutMapping("/change")
-    public BaseResponse<String> change(@RequestBody ChangeProbReq changeProbReq){
+    public BaseResponse<ProbRes> change(@RequestBody ChangeProbReq changeProbReq){
         try{
-            return new BaseResponse<>("tmp");
+            ProbRes probRes = problemService.changeProblem(changeProbReq.getTestPaperId(), changeProbReq.getProbNum());
+            return new BaseResponse<>(probRes);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }
