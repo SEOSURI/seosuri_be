@@ -162,12 +162,12 @@ public class TestPaperService {
         if(isAnswer == true){
 //            try (FileOutputStream os = new FileOutputStream(classPathResource.getFile())){
             try {
-                ClassPathResource classPathResource = new ClassPathResource("/pdf/TestPaper.pdf");
+                ClassPathResource classPathResource = new ClassPathResource("/pdf/AnswerSheet.pdf");
                 InputStream inputStream = classPathResource.getInputStream();
-                File testPaperFile = File.createTempFile("TestPaper",".pdf");
+                File answerPaperFile = File.createTempFile("AnswerSheet",".pdf");
                 try {
-                    FileUtils.copyInputStreamToFile(inputStream, testPaperFile);
-                    FileOutputStream os = new FileOutputStream(testPaperFile);
+                    FileUtils.copyInputStreamToFile(inputStream, answerPaperFile);
+                    FileOutputStream os = new FileOutputStream(answerPaperFile);
 
                     PdfWriter.getInstance(document, os);
                     document.open();
@@ -190,12 +190,12 @@ public class TestPaperService {
         else{
 //            try (FileOutputStream os = new FileOutputStream(classPathResource2.getFile())){
             try{
-                ClassPathResource classPathResource = new ClassPathResource("/pdf/AnswerSheet.pdf");
+                ClassPathResource classPathResource = new ClassPathResource("/pdf/TestPaper.pdf");
                 InputStream inputStream = classPathResource.getInputStream();
-                File answerPaperFile = File.createTempFile("AnswerSheet",".pdf");
+                File testPaperFile = File.createTempFile("TestPaper",".pdf");
                 try {
-                    FileUtils.copyInputStreamToFile(inputStream, answerPaperFile);
-                    FileOutputStream os = new FileOutputStream(answerPaperFile);
+                    FileUtils.copyInputStreamToFile(inputStream, testPaperFile);
+                    FileOutputStream os = new FileOutputStream(testPaperFile);
 
                     PdfWriter.getInstance(document, os);
                     document.open();
