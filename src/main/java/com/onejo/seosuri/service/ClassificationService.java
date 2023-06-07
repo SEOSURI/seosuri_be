@@ -4,11 +4,9 @@ import com.onejo.seosuri.ai.orc.ImageToText;
 import com.onejo.seosuri.controller.dto.classification.CategoryResDto;
 import com.onejo.seosuri.domain.classification.CategoryTitle;
 import com.onejo.seosuri.exception.common.BusinessException;
-import com.onejo.seosuri.exception.common.ErrorCode;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,9 +15,23 @@ import java.util.Random;
 public class ClassificationService {
 
     @Transactional
-    public String ocrImage(String filePath) throws BusinessException {
+    public String ocrImage(String image_filename) throws BusinessException {
         ImageToText imageToText = new ImageToText();
         String ocr_res_str = null;
+        String filePath = image_filename;
+        /*
+        try {
+            InputStream tempInputStream = getClass().getResourceAsStream("/image/"+image_filename);
+            StringWriter writer = new StringWriter();
+            IOUtils.copy(tempInputStream, writer, "UTF-8");
+            //filePath = writer.toString();
+            //filePath = IOUtils.toString(getClass().getResourceAsStream("/image/"+image_filename), "UTF-8");
+            System.out.println("\nFILEPATH:: "+filePath+"\n");
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.NO_EXIST_FILE);
+        }
+
+         */
         ocr_res_str = imageToText.detectText(filePath);
         return ocr_res_str;
     }

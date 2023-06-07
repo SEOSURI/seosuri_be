@@ -11,7 +11,7 @@ public class CalculateExpr {
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
 
-            if (c == '+' || c == '-' || c == '*') {
+            if (c == '+' || c == '-' || c == '*' || c == '/') {
                 while (!operatorStack.isEmpty() && hasPrecedence(c, operatorStack.peek())) {
                     char operator = operatorStack.pop();
                     int operand2 = operandStack.pop();
@@ -63,7 +63,7 @@ public class CalculateExpr {
         if (operator2 == '(' || operator2 == ')') {
             return false;
         }
-        if (operator1 == '*' && (operator2 == '+' || operator2 == '-')) {
+        if ((operator1 == '*' || operator1 == '/') && (operator2 == '+' || operator2 == '-')) {
             return false;
         }
         return true;
@@ -77,6 +77,8 @@ public class CalculateExpr {
                 return operand1 - operand2;
             case '*':
                 return operand1 * operand2;
+            case '/':
+                return operand1 / operand2;
             default:
                 throw new IllegalArgumentException("잘못된 연산자입니다.");
         }
