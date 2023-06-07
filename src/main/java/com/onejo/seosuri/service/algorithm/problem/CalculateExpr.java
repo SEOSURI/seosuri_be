@@ -1,10 +1,13 @@
 package com.onejo.seosuri.service.algorithm.problem;
 
+import com.onejo.seosuri.exception.common.BusinessException;
+import com.onejo.seosuri.exception.common.ErrorCode;
+
 import java.util.Stack;
 
 public class CalculateExpr {
 
-    public static int calculate(String expression) {
+    public static int calculate(String expression) throws BusinessException{
         Stack<Integer> operandStack = new Stack<>();
         Stack<Character> operatorStack = new Stack<>();
 
@@ -24,11 +27,15 @@ public class CalculateExpr {
                 operatorStack.push(c);
             } else if (c == ')') {
                 while (!operatorStack.isEmpty() && operatorStack.peek() != '(') {
-                    char operator = operatorStack.pop();
-                    int operand2 = operandStack.pop();
-                    int operand1 = operandStack.pop();
-                    int result = performOperation(operator, operand1, operand2);
-                    operandStack.push(result);
+                    try {
+                        char operator = operatorStack.pop();
+                        int operand2 = operandStack.pop();
+                        int operand1 = operandStack.pop();
+                        int result = performOperation(operator, operand1, operand2);
+                        operandStack.push(result);
+                    } catch(Exception e){
+                        throw new BusinessException(ErrorCode.POP_ON_EMPTY_STACK);
+                    }
                 }
                 operatorStack.pop(); // Pop '(' from the stack
             } else if (Character.isDigit(c)) {
@@ -40,7 +47,7 @@ public class CalculateExpr {
                 i--;
                 operandStack.push(operand);
             } else {
-                throw new IllegalArgumentException("잘못된 식입니다.");
+                throw new BusinessException(ErrorCode.EXPRESSION_CALCULATE_ERROR);
             }
         }
 
@@ -53,7 +60,7 @@ public class CalculateExpr {
         }
 
         if (operandStack.isEmpty()) {
-            throw new IllegalArgumentException("잘못된 식입니다.");
+            throw new BusinessException(ErrorCode.EXPRESSION_CALCULATE_ERROR);
         }
 
         return operandStack.pop();
@@ -80,7 +87,7 @@ public class CalculateExpr {
             case '/':
                 return operand1 / operand2;
             default:
-                throw new IllegalArgumentException("잘못된 연산자입니다.");
+                throw new BusinessException(ErrorCode.NO_EXPRESSION_OPERATOR_TYPE);
         }
     }
 

@@ -195,17 +195,30 @@ public class ProblemService {
         }
 
         // 카테고리에 따른 CreateProblem 진행
+        // createAgeProblemPart 수행에서 Business Exception 발생에 대한 try, catch 및 후속 대응
         if(categoryTitle.equals("나이_구하기")){
             for(int i=0; i<tmplList1.size(); i++){
-                createAgeProblemPart(testPaperId, tmplList1, i, i+1, tmpWordList);
+                try {
+                    createAgeProblemPart(testPaperId, tmplList1, i, i + 1, tmpWordList);
+                } catch(BusinessException e){
+
+                }
             }
 
             for(int i=0; i<tmplList2.size(); i++){
-                createAgeProblemPart(testPaperId, tmplList2, i, i+tmplList1.size()+1, tmpWordList);
+                try {
+                    createAgeProblemPart(testPaperId, tmplList2, i, i + tmplList1.size() + 1, tmpWordList);
+                } catch(BusinessException e){
+
+                }
             }
 
             for(int i=0; i<tmplList3.size(); i++){
-                createAgeProblemPart(testPaperId, tmplList2, i, i+tmplList1.size() + tmplList2.size() +1, tmpWordList);
+                try {
+                    createAgeProblemPart(testPaperId, tmplList2, i, i + tmplList1.size() + tmplList2.size() + 1, tmpWordList);
+                } catch(BusinessException e){
+
+                }
             }
 
         }
@@ -338,7 +351,8 @@ public class ProblemService {
     }
 
 
-    private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList) {
+    private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList)
+    throws BusinessException {
         // 시험지 객체 찾기
         TestPaper tmpTestPaper = testPaperRepository.findById(testPaperId).get();
         // 템플릿을 TemplateDto로 변경
@@ -368,7 +382,6 @@ public class ProblemService {
         wordList.clear();
         // 나이 문제 생성 객체 만들기
         CreateAgeProblem createAgeProblem = new CreateAgeProblem(problemValueStruct);
-
         createAgeProblem.createProblem(problemValueStruct.getTemplate_level());
 
         // 문제 생성

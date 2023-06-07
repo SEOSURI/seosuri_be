@@ -6,6 +6,7 @@ import com.onejo.seosuri.domain.problem.ProblemRepository;
 import com.onejo.seosuri.domain.word.Word;
 import com.onejo.seosuri.domain.word.WordRepository;
 import com.onejo.seosuri.domain.word.WordType;
+import com.onejo.seosuri.exception.common.BusinessException;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
@@ -28,9 +29,10 @@ public abstract class CreateProblem {
     }
 
 
-    abstract public void createProblem(int level);
+    abstract public void createProblem(int level) throws BusinessException;
 
-    protected void createProblem(int prob_sentence_num, int constant_var_num, int variable_var_num, int var_num_per_sentence){
+    protected void createProblem(int prob_sentence_num, int constant_var_num, int variable_var_num, int var_num_per_sentence)
+            throws BusinessException{
         //////////////////////////////////////////////////////////////////////////
         // 템플릿 DB값 가져오기 -> 가져옴
 
@@ -55,7 +57,7 @@ public abstract class CreateProblem {
         /////////////////////////////////////////////////////////////////////////////
         // template -> problem
         templateToProblem(problemValueStruct.variant_var_string_ls, problemValueStruct.variant_var_ls, problemValueStruct.constant_var_ls,
-                problemValueStruct.content_template, problemValueStruct.explanation_template, problemValueStruct.answer_template);
+                    problemValueStruct.content_template, problemValueStruct.explanation_template, problemValueStruct.answer_template);
     }
 
 
@@ -192,7 +194,8 @@ public abstract class CreateProblem {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // template -> problem : store in ProblemValueStruct
     public void templateToProblem(String[] name_ls, int[] name_var_ls, int[] var_ls,
-                                      String content_template, String explanation_template, String answer_template){
+                                      String content_template, String explanation_template, String answer_template)
+    throws BusinessException{
         // content, explanation, answer
         String real_content = content_template;
         String real_explanation = explanation_template;
@@ -225,7 +228,7 @@ public abstract class CreateProblem {
     }
 
     // templateToProblem에서 [식내용] -> 계산한 값
-    public String calcExpr(String target){
+    public String calcExpr(String target) throws BusinessException{
         // [] 속 식 계산
 
         String res = "";
@@ -242,6 +245,7 @@ public abstract class CreateProblem {
                 for(Character c: expression){
                     expr += c;
                 }
+
                 String calc_res = String.valueOf(CalculateExpr.calculate(expr));
                 res += calc_res;
             } else {

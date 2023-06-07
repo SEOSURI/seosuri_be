@@ -38,7 +38,12 @@ public enum ErrorCode {
     OCR_PROCESSING_ERROR(false, 5004, "OCR 프로세싱 과정 중 문제가 발생했습니다."),
     IMAGE_TO_TEXT_PROCESSING_ERROR(false, 5005, "이미지를 텍스트로 변환하는 도중 문제가 발생했습니다."),
 
-    NO_EXIST_WORD_TYPE(false, 4004, "단어 타입이 존재하지 않습니다.")
+    NO_EXIST_WORD_TYPE(false, 4004, "단어 타입이 존재하지 않습니다."),
+
+    /*식 계산 : 6000*/
+    EXPRESSION_CALCULATE_ERROR(false, 6001, "식 계산 오류"),
+    NO_EXPRESSION_OPERATOR_TYPE(false, 6002, "연산자 타입이 존재하지 않습니다."),
+    POP_ON_EMPTY_STACK(false, 6003, "빈 스택에서 pop을 수행하고 있습니다.")
 
     ;
 
