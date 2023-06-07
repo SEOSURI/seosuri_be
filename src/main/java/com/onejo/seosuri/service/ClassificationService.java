@@ -17,14 +17,10 @@ import java.util.Random;
 public class ClassificationService {
 
     @Transactional
-    public String ocrImage(String filePath)  {
+    public String ocrImage(String filePath) throws BusinessException {
         ImageToText imageToText = new ImageToText();
         String ocr_res_str = null;
-        try {
-            ocr_res_str = imageToText.detectText(filePath);
-        } catch (IOException e) {
-            throw new BusinessException(ErrorCode.NO_EXIST_FILE);
-        }
+        ocr_res_str = imageToText.detectText(filePath);
         return ocr_res_str;
     }
 

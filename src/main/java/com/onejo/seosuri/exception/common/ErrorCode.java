@@ -1,7 +1,6 @@
 package com.onejo.seosuri.exception.common;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
@@ -33,7 +32,10 @@ public enum ErrorCode {
     NO_EXIST_TEST_PAPER(false, 4003, "시험지가 존재하지 않습니다."),
 
     /*OCR, 5000*/
-    NO_EXIST_FILE(false, 5001, "사진 파일이 존재하지 않습니다.")
+    FILE_IO_ERROR(false, 5001, "사진 파일을 읽는 도중 문제가 발생했습니다."),
+    OCR_CLIENT_CREATION_ERROR(false, 5002, "OCR 클라이언트 생성에 실패했습니다."),
+    OCR_PROCESSING_ERROR(false, 5003, "OCR 프로세싱 과정 중 문제가 발생했습니다."),
+    IMAGE_TO_TEXT_PROCESSING_ERROR(false, 5004, "이미지를 텍스트로 변환하는 도중 문제가 발생했습니다.")
 
     ;
 
