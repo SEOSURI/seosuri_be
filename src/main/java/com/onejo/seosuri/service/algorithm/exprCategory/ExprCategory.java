@@ -29,7 +29,7 @@ public abstract class ExprCategory {
                                          int var3_min_value, int var3_max_value,
                                          int var4_min_value, int var4_max_value,
                                          boolean useYear1, boolean useYear2, boolean useAddMinus, boolean useMult)
-            throws TimeoutException;
+            throws TimeoutException, InterruptedException;
 
     // random int 값 뽑기 - getRandomValue()에서 호출해서 사용
     public static int getRandomIntValue(int min_value, int max_value){

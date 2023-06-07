@@ -155,6 +155,7 @@ public abstract class CreateProblem {
         int num_sentence = problemValueStruct.sentence_expr_category_id_ls.length;
         int start_index = num_sentence-1;   // 마지막 상황문장부터 숫자 뽑음
         for(int i = start_index; i >= 0; i--){
+            System.out.println("가장 밖이에유aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             int age1_index = i;
             int age2_index = (i + 1) % problemValueStruct.variant_var_ls.length;
             int var1_index = age1_index * num_constant_var_per_sentence;
@@ -180,6 +181,8 @@ public abstract class CreateProblem {
             } catch (TimeoutException e){
                 i = start_index;
                 continue;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }

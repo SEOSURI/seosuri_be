@@ -187,25 +187,30 @@ public class SumDiffExprCategory extends ExprCategory {
         int age1 = 0;
         int age2 = given_name_var2;
 
-        long timeoutInMn = 3;   // timeout 시간
+        long timeoutInMn = 500;   // timeout 시간
         LocalDateTime startTime = LocalDateTime.now();
 
         int var1 = -1;
-        while (var1 < 0){
-            age1 = getRandomIntValue(name_var1_min_value, name_var1_max_value);
-            if(var_sign == ProblemTokenStruct.PLUS_SIGN){  // age1 + age2 = var1
-                var1 = age1 + age2;
-            } else { // age1 - age2 = var1
-                var1 = age1 - age2;
-            }
+        while(true && ChronoUnit.MILLIS.between(startTime, LocalDateTime.now()) <= timeoutInMn) {
+            System.out.println("sumDiffaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            while (var1 < 0) {
+                System.out.println("sumDiffInaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                age1 = getRandomIntValue(name_var1_min_value, name_var1_max_value);
+                if (var_sign == ProblemTokenStruct.PLUS_SIGN) {  // age1 + age2 = var1
+                    var1 = age1 + age2;
+                } else { // age1 - age2 = var1
+                    var1 = age1 - age2;
+                }
 
-            // timeout
-            if(ChronoUnit.MINUTES.between(startTime, LocalDateTime.now()) > timeoutInMn){
-                throw new TimeoutException();
+                /*// timeout
+                if (ChronoUnit.MINUTES.between(startTime, LocalDateTime.now()) > timeoutInMn) {
+                    throw new TimeoutException();
+                }*/
             }
+            return new int[] {age1, age2, var1, 0, 0, 0};
         }
+        throw new TimeoutException();
 
-        return new int[] {age1, age2, var1, 0, 0, 0};
     }
 
 
