@@ -39,6 +39,7 @@ public class ClassificationController {
     public BaseResponse<List<CategoryResDto>> classification(@RequestBody ProblemPictureReqDto problemPictureReqDto){
         try{
             String ocrRes = classificationService.ocrImage(problemPictureReqDto.getFilePath());
+            System.out.println("\nOCR RESULT START ::\n"+ocrRes+"\n::OCR RESULT END\n");
             List<CategoryResDto> categoryResDtos = classificationService.classification(ocrRes);
             return new BaseResponse<>(categoryResDtos);
         } catch(BusinessException e) {
