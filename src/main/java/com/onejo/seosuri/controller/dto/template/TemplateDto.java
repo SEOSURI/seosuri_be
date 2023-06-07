@@ -94,13 +94,14 @@ public class TemplateDto {
         problemValueStruct.content_template = content;
         problemValueStruct.answer_template = answer;
         problemValueStruct.explanation_template = explanation;
-        problemValueStruct.sentence_expr_category_id_ls = this.sentence_expr_category_id_ls;
-        problemValueStruct.expr_category_ls = this.expr_category_ls;
-        problemValueStruct.constant_var_sign_ls = this.var_sign_ls;
-        problemValueStruct.useYear1_ls = this.useYear1_ls;
-        problemValueStruct.useYear2_ls = this.useYear2_ls;
-        problemValueStruct.useMult_ls = this.useMult_ls;
-        problemValueStruct.useAddMinus_ls = this.useAddMinus_ls;
+
+        problemValueStruct.setSentence_expr_category_id_lsDirect(this.sentence_expr_category_id_ls);
+        problemValueStruct.setExpr_category_lsDirect(this.expr_category_ls);
+        problemValueStruct.setConstant_var_sign_lsDirect(this.var_sign_ls);
+        problemValueStruct.setUseYear1_lsDirect(this.useYear1_ls);
+        problemValueStruct.setUseYear2_lsDirect(this.useYear2_ls);
+        problemValueStruct.setUseMult_lsDirect(this.useMult_ls);
+        problemValueStruct.setUseAddMinus_lsDirect(this.useAddMinus_ls);
 
         return problemValueStruct;
     }
@@ -114,6 +115,7 @@ public class TemplateDto {
         this.explanation = problemTemplate.getExplanation();
 
         this.sentence_expr_category_id_ls = stringToIntArray(problemTemplate.getSentenceCategoryList());
+        System.out.println(problemTemplate.getExprCategoryList()); // test>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         this.expr_category_ls = stringToExprCategoryArray(problemTemplate.getExprCategoryList());
         this.var_sign_ls = stringToIntArray(problemTemplate.getVarSignList());
         this.useYear1_ls = stringToBooleanArray(problemTemplate.getUseYear1List());
@@ -155,7 +157,13 @@ public class TemplateDto {
     }
 
     public ExprCategory[] stringToExprCategoryArray(String target){
+        target = target.trim();
         String[] res_str = target.split(DELIMETER);
+        // test>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        for(int i=0; i<res_str.length; i++){
+            System.out.println("res_str" + i + ": " + res_str[i] );
+        }
+        // test>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         ExprCategory[] res = new ExprCategory[res_str.length];
         for(int i = 0; i < res.length; i++){
             String id = res_str[i];
@@ -163,8 +171,8 @@ public class TemplateDto {
             ExprCategory[] possible_values = new ExprCategory[] {
                     new SumDiffExprCategory(), new YXAgeExprCategory(), new YXUnkownNumExprCategory()};
             for(int j = 0; j < possible_values.length; j++){
-                if(id == possible_values[j].toString()){
-                    res[i] = possible_values[i];
+                if(id.equals(possible_values[j].toString())){
+                    res[i] = possible_values[j];
                 }
             }
         }
@@ -181,6 +189,7 @@ public class TemplateDto {
     }
 
     public int[] stringToIntArray(String target){
+        target = target.trim();
         String[] res_str = target.split(DELIMETER);
         int[] res = new int[res_str.length];
         for(int i = 0; i < res.length; i++){
@@ -199,6 +208,7 @@ public class TemplateDto {
     }
 
     public boolean[] stringToBooleanArray(String target){
+        target = target.trim();
         String[] res_str = target.split(DELIMETER);
         boolean[] res = new boolean[res_str.length];
         for(int i = 0; i < res.length; i++){

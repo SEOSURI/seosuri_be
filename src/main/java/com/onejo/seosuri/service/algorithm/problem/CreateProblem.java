@@ -1,12 +1,23 @@
 package com.onejo.seosuri.service.algorithm.problem;
 
+import com.onejo.seosuri.domain.problem.ProbWord;
+import com.onejo.seosuri.domain.problem.Problem;
+import com.onejo.seosuri.domain.problem.ProblemRepository;
+import com.onejo.seosuri.domain.word.Word;
+import com.onejo.seosuri.domain.word.WordRepository;
+import com.onejo.seosuri.domain.word.WordType;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.exprCategory.YXAgeExprCategory;
+import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeoutException;
+
 
 public abstract class CreateProblem {
 
@@ -16,14 +27,15 @@ public abstract class CreateProblem {
         this.problemValueStruct = problemValueStruct;
     }
 
+
     abstract public void createProblem(int level);
 
     protected void createProblem(int prob_sentence_num, int constant_var_num, int variable_var_num, int var_num_per_sentence){
         //////////////////////////////////////////////////////////////////////////
-        // 템플릿 DB값 가져오기
+        // 템플릿 DB값 가져오기 -> 가져옴
 
-        // 템플릿, 템플릿 관련 값
-        setDBTemplateValues(prob_sentence_num, constant_var_num);
+        // 템플릿, 템플릿 관련 값 -> 가져옴
+        //setDBTemplateValues(prob_sentence_num, constant_var_num);
 
         // 변수 string, 변수 var 결정 - 변수 ex) 변수 string(어머니, 동생), 변수 var(어머니 나이가 51살일 경우, 바로 51이 변수 var)
         setVariantVarMinMaxLsAndStringLs(variable_var_num); // name_ls, name_var_min_value_ls, name_var_max_value_ls 설정
@@ -83,10 +95,12 @@ public abstract class CreateProblem {
         problemValueStruct.variant_var_min_value_ls = new int[name_var_num];
         problemValueStruct.variant_var_max_value_ls = new int[name_var_num];
         problemValueStruct.variant_var_string_ls = new String[name_var_num];
-        for(int i = 0; i < name_var_num; i++){
-            problemValueStruct.variant_var_min_value_ls[i] = 10;    // DB에서 값 가져오기
-            problemValueStruct.variant_var_max_value_ls[i] = 100;    // DB에서 값 가져오기
-            problemValueStruct.variant_var_string_ls[i] = i+"사람"+i;    // DB에서 값 가져오기
+
+        // 섞은 목록 각 필드에 저장
+        for(int i=0; i<name_var_num; i++){
+            problemValueStruct.variant_var_min_value_ls[i] = problemValueStruct.getWordList().get(i).getNumStart().intValue();
+            problemValueStruct.variant_var_max_value_ls[i] = problemValueStruct.getWordList().get(i).getNumEnd().intValue();
+            problemValueStruct.variant_var_string_ls[i] = problemValueStruct.getWordList().get(i).getContent();
         }
     }
 
@@ -99,28 +113,28 @@ public abstract class CreateProblem {
             int var1_index = i * num_var_per_sentence;
             if(problemValueStruct.useMult_ls[i]) {    // var1
                 problemValueStruct.constant_var_min_value_ls[var1_index] = 2;
-                problemValueStruct.constant_var_max_value_ls[var1_index] = 5;
+                problemValueStruct.constant_var_max_value_ls[var1_index] = 100;
             } else{ // 0~100 =  0~100 * 2 - 100 // 99 *
                 problemValueStruct.constant_var_min_value_ls[var1_index] = 1;
                 problemValueStruct.constant_var_max_value_ls[var1_index] = 1;
             }
             if(problemValueStruct.useAddMinus_ls[i]){ // var2
                 problemValueStruct.constant_var_min_value_ls[var1_index+1] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+1] = 20;
+                problemValueStruct.constant_var_max_value_ls[var1_index+1] = 500;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+1] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+1] = 0;
             }
             if(problemValueStruct.useYear1_ls[i]){
                 problemValueStruct.constant_var_min_value_ls[var1_index+2] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+2] = 100;
+                problemValueStruct.constant_var_max_value_ls[var1_index+2] = 500;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+2] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+2] = 0;
             }
             if(problemValueStruct.useYear2_ls[i]){
                 problemValueStruct.constant_var_min_value_ls[var1_index+3] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+3] = 100;
+                problemValueStruct.constant_var_max_value_ls[var1_index+3] = 500;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+3] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+3] = 0;
@@ -139,7 +153,7 @@ public abstract class CreateProblem {
         int age0 = ExprCategory.getRandomIntValue(problemValueStruct.variant_var_min_value_ls[0], problemValueStruct.variant_var_max_value_ls[0]);
         int given_age = age0;
         int num_sentence = problemValueStruct.sentence_expr_category_id_ls.length;
-        int start_index = num_sentence - 1;   // 마지막 상황문장부터 숫자 뽑음
+        int start_index = num_sentence-1;   // 마지막 상황문장부터 숫자 뽑음
         for(int i = start_index; i >= 0; i--){
             int age1_index = i;
             int age2_index = (i + 1) % problemValueStruct.variant_var_ls.length;
@@ -210,18 +224,7 @@ public abstract class CreateProblem {
     // templateToProblem에서 [식내용] -> 계산한 값
     public String calcExpr(String target){
         // [] 속 식 계산
-        /*
-        ScriptEngineManager s = new ScriptEngineManager();
-        ScriptEngine engine = s.getEngineByName("JavaScript");
-        String str = "(10+20)*2";
-        int num = 0;
-        try {
-            num = (int)engine.eval(str);
-        } catch (ScriptException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(str + " = " + num);
-         */
+
         String res = "";
         ArrayList<Character> expression = new ArrayList<>();
         boolean inExpr = false;
@@ -232,15 +235,11 @@ public abstract class CreateProblem {
                 inExpr = true;
             } else if(char_i == ']'){
                 inExpr = false;
-                String calc_res = "DEFAULT_EXPR_STR:: ";
-
-                // calculate
-
-                // 임시 dummy 값
-                for(int j = 0; j < expression.size(); j++){
-                    calc_res += expression.get(j);
+                String expr = "";
+                for(Character c: expression){
+                    expr += c;
                 }
-
+                String calc_res = String.valueOf(CalculateExpr.calculate(expr));
                 res += calc_res;
             } else {
                 if (inExpr == true) {   // 식 속의 문자

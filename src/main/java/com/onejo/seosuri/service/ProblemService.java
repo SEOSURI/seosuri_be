@@ -9,6 +9,9 @@ import com.onejo.seosuri.domain.problem.*;
 import com.onejo.seosuri.domain.testpaper.TestPaper;
 import com.onejo.seosuri.domain.testpaper.TestPaperRepository;
 
+import com.onejo.seosuri.domain.word.Word;
+import com.onejo.seosuri.domain.word.WordRepository;
+import com.onejo.seosuri.domain.word.WordType;
 import com.onejo.seosuri.exception.common.BusinessException;
 import com.onejo.seosuri.exception.common.ErrorCode;
 import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
@@ -18,6 +21,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ public class ProblemService {
     private final ProblemTemplateRepository problemTemplateRepository;
     private final CategoryRepository categoryRepository;
     private final ProbWordRepository probWordRepository;
+    private final WordRepository wordRepository;
 
 
     @Transactional
@@ -101,62 +106,57 @@ public class ProblemService {
         // 상(6 3 1) 중(4 4 2) 하(1 4 5)
         // 0-1. 서비스 단에서 시험지 레벨 받아오면, 시험지 레벨 맞춰서 각 문제 별 난이도 개수 정하기
         int high=0, mid=0, low=0;
-        if(level == 1){
-//            high = 6;
-//            mid = 3;
-//            low = 1;
-            high = 0;
-            mid = 2;
-            low = 8;
+        if(level == 3){
+            high = 6;
+            mid = 3;
+            low = 1;
         }
         else if(level == 2){
-//            high = 4;
-//            mid = 4;
-//            low = 2;
-            high = 0;
-            mid = 5;
-            low = 5;
+            high = 4;
+            mid = 4;
+            low = 2;
         }
         else{
-//            high = 1;
-//            mid = 4;
-//            low = 5;
-            high = 0;
-            mid = 8;
-            low = 2;
+            high = 1;
+            mid = 4;
+            low = 5;
         }
 
         // 0-2. 난이도 별로 다음과 같은 과정 반복
-        // 난이도 별 템플릿 불러오기
-        tmpList1 = problemTemplateRepository.findByLevelAndCategory("1", tmpCategory.get());
-        tmpList2 = problemTemplateRepository.findByLevelAndCategory("2", tmpCategory.get());
-        tmpList3 = problemTemplateRepository.findByLevelAndCategory("3", tmpCategory.get());
-        // 각 후보 리스트 사이즈 측정해서 랜덤으로 ArrayList 추출
-        ArrayList<Integer> random = new ArrayList<Integer>();
-
-        for(int i=1; i<=tmpList1.size(); i++){ random.add(i); } // tmpList1 사이즈 만큼 int 값 원소에 넣기
-        Collections.shuffle(random);                            // 랜덤으로 섞기
-        for(int i=0; i<low; i++){
-            int id = random.get(i);
-            tmplList1.add(tmpList1.get(id));
+        // 난이도 별 랜덤 인덱스 선택하기 (1: 1~110, 2:111~18260 , 3:18260~517139
+        Set<Integer> lowRandNumSet = new HashSet<>();
+        Set<Integer> midRandNumSet = new HashSet<>();
+        Set<Integer> highRandNumSet = new HashSet<>();
+        Random random = new Random();
+        while(lowRandNumSet.size() < low){
+            int tmp = random.nextInt(110)+1;
+            lowRandNumSet.add(tmp);
         }
-        random.clear();
-
-        for(int i=1; i<=tmpList2.size(); i++){ random.add(i); } // tmpList1 사이즈 만큼 int 값 원소에 넣기
-        Collections.shuffle(random);                            // 랜덤으로 섞기
-        for(int i=0; i<mid; i++){
-            int id = random.get(i);
-            tmplList2.add(tmpList2.get(id));
+        while(midRandNumSet.size() < mid){
+            int tmp = random.nextInt(18150)+111;
+            midRandNumSet.add(tmp);
         }
-        random.clear();
-
-        for(int i=1; i<=tmpList3.size(); i++){ random.add(i); } // tmpList1 사이즈 만큼 int 값 원소에 넣기
-        Collections.shuffle(random);                            // 랜덤으로 섞기
-        for(int i=0; i<high; i++){
-            int id = random.get(i);
-            tmplList3.add(tmpList3.get(id));
+        while(highRandNumSet.size() < high){
+            int tmp = random.nextInt(498880)+18260;
+            highRandNumSet.add(tmp);
         }
-        random.clear();
+
+        List<Integer> lowRandNumList = new ArrayList<>(lowRandNumSet);
+        List<Integer> midRandNumList = new ArrayList<>(midRandNumSet);
+        List<Integer> highRandNumList = new ArrayList<>(highRandNumSet);
+
+        for(int i=0; i<lowRandNumList.size(); i++){
+            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)lowRandNumList.get(i));
+            tmplList1.add(tmpProblemTemplate.get());
+        }
+        for(int i=0; i<midRandNumList.size(); i++){
+            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)midRandNumList.get(i));
+            tmplList2.add(tmpProblemTemplate.get());
+        }
+        for(int i=0; i<highRandNumList.size(); i++){
+            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)highRandNumList.get(i));
+            tmplList3.add(tmpProblemTemplate.get());
+        }
 
         ////// ####################### test 용 출력 ##############################
         for(int i=0; i<tmplList1.size(); i++){
@@ -172,26 +172,42 @@ public class ProblemService {
         }
         ////// ####################### test 용 출력 ##############################
 
+        // 단어 정보 셋
+        // 단어 타입 4개 중 랜덤 하나 선택
+        String wordType;
+        Random typeRand = new Random();
+//        int typeRandResult = typeRand.nextInt(6);
+//        if (problemValueStruct.getTemplate_level() == 3) {
+//            wordType = "인외";
+//        } else {
+//            if (typeRandResult == 0) {
+//                wordType = "직업";
+//            } else if (typeRandResult == 1) {
+//                wordType = "가족";
+//            } else {
+//                wordType = "이름";
+//            }
+//        }
+        wordType = "인외";
+        List<Word> tmpWordList = wordRepository.findByType(wordType);
+        if(tmpWordList.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_WORD_TYPE);
+        }
+
         // 카테고리에 따른 CreateProblem 진행
         if(categoryTitle.equals("나이_구하기")){
             for(int i=0; i<tmplList1.size(); i++){
-                // 템플릿을 TemplateDto로 변경
-                TemplateDto templateDto = new TemplateDto(tmplList1.get(i));
-                // TemplateDto 내용 ProblemValueStruct에 저장
-                ProblemValueStruct problemValueStruct = templateDto.setProblemValueStruct();
-                // 나이 문제 생성 객체 만들기
-                //CreateAgeProblem createAgeProblem = new CreateAgeProblem(problemValueStruct);
-
-                //createAgeProblem.createProblem(level);
+                createAgeProblemPart(testPaperId, tmplList1, i, i+1, tmpWordList);
             }
 
             for(int i=0; i<tmplList2.size(); i++){
-
+                createAgeProblemPart(testPaperId, tmplList2, i, i+tmplList1.size()+1, tmpWordList);
             }
 
             for(int i=0; i<tmplList3.size(); i++){
-
+                createAgeProblemPart(testPaperId, tmplList2, i, i+tmplList1.size() + tmplList2.size() +1, tmpWordList);
             }
+
         }
         else if(categoryTitle.equals("어떤수")){
             for(int i=0; i<tmplList1.size(); i++){
@@ -239,27 +255,27 @@ public class ProblemService {
 
 
         // Problem 테이블에서 완성된 문제 가져오기
-//        Optional<TestPaper> tmpTestPaper = testPaperRepository.findById(testPaperId);
-//
-//        List<Problem> probs = problemRepository.findAllByTestPaper(tmpTestPaper.get());
-//        if(probs.isEmpty()){
-//            throw new BusinessException(ErrorCode.NO_EXIST_PROBLEM);
-//        }
-//        for(int i = 0; i< probs.size(); i++){
-//            Problem tmpProb = probs.get(i);
-//            ProbRes probRes = new ProbRes();
-//
-//            probRes.setTestPaperId(1L);  // 나중에 고쳐야 함!!
-//            probRes.setNum(tmpProb.getProbNum());
-//            probRes.setLevel(tmpProb.getLevel());
-//            probRes.setContent(tmpProb.getContent());
-//            probRes.setExplanation(tmpProb.getExplanation());
-//            probRes.setAnswer(tmpProb.getAnswer());
-//
-//            probList.add(probRes);
-//        }
-//
-//        Collections.sort(probList, new ProbNumComparator());
+        Optional<TestPaper> tmpTestPaper = testPaperRepository.findById(testPaperId);
+
+        List<Problem> probs = problemRepository.findAllByTestPaper(tmpTestPaper.get());
+        if(probs.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_PROBLEM);
+        }
+        for(int i = 0; i< probs.size(); i++){
+            Problem tmpProb = probs.get(i);
+            ProbRes probRes = new ProbRes();
+
+            probRes.setTestPaperId(testPaperId);  // 나중에 고쳐야 함!!
+            probRes.setNum(tmpProb.getProbNum());
+            probRes.setLevel(tmpProb.getLevel());
+            probRes.setContent(tmpProb.getContent());
+            probRes.setExplanation(tmpProb.getExplanation());
+            probRes.setAnswer(tmpProb.getAnswer());
+
+            probList.add(probRes);
+        }
+
+        Collections.sort(probList, new ProbNumComparator());
 
         // 문제 리스트 반환
         return probList;
@@ -319,6 +335,63 @@ public class ProblemService {
         deleteProblem.get().setProbNum((long)probList.size() + 1);
 
         return probList;
+    }
+
+
+    private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList) {
+        // 시험지 객체 찾기
+        TestPaper tmpTestPaper = testPaperRepository.findById(testPaperId).get();
+        // 템플릿을 TemplateDto로 변경
+        TemplateDto templateDto = new TemplateDto(tmplList.get(i));
+        // TemplateDto 내용 ProblemValueStruct에 저장
+        ProblemValueStruct problemValueStruct = templateDto.setProblemValueStruct();
+        // 추가 정보 set
+        problemValueStruct.setProblemTemplate(tmplList.get(i));
+        problemValueStruct.setTestPaper(tmpTestPaper);
+        problemValueStruct.setProbNum((long)(probNum));
+
+        List<Word> wordList = new ArrayList<>();
+        // 랜덤으로 목록 섞기
+        ArrayList<Integer> random1 = new ArrayList<>();
+        for (int j = 0; j < tmpWordList.size(); j++) {
+            random1.add(j);
+        } // tmpList1 사이즈 만큼 int 값 원소에 넣기
+        Collections.shuffle(random1);                            // 랜덤으로 섞기
+        for (int j = 0; j < tmpWordList.size(); j++) {
+            int index = random1.get(j);
+            Word item = tmpWordList.get(index);
+            item.setNumStart(1L);
+            wordList.add(item);
+        }
+        problemValueStruct.setWordListDirect(wordList);
+        random1.clear();
+        wordList.clear();
+        // 나이 문제 생성 객체 만들기
+        CreateAgeProblem createAgeProblem = new CreateAgeProblem(problemValueStruct);
+
+        createAgeProblem.createProblem(problemValueStruct.getTemplate_level());
+
+        // 문제 생성
+        Problem problem = new Problem();
+        problem.setTestPaper(problemValueStruct.getTestPaper());
+        problem.setProbTemp(problemValueStruct.getProblemTemplate());
+        problem.setProbNum(problemValueStruct.getProbNum());
+        problem.setLevel("" + problemValueStruct.getTemplate_level());
+        problem.setContent(problemValueStruct.getReal_content());
+        problem.setExplanation(problemValueStruct.getReal_explanation());
+        problem.setAnswer(problemValueStruct.getReal_answer());
+        problem.setState("A");
+
+        problemRepository.save(problem);
+
+        // ProbWord 객체 생성
+        for (int j = 0; j < problemValueStruct.getWordList().size(); j++) {
+            ProbWord probWord = new ProbWord();
+            probWord.setPosition("");
+            probWord.setWord(problemValueStruct.getWordList().get(j));
+            probWord.setProb(problem);
+            probWordRepository.save(probWord);
+        }
     }
 }
 
