@@ -254,58 +254,53 @@ public abstract class YXExprCategory extends ExprCategory {
         long timeoutInMn = 500;   // timeout 시간
         LocalDateTime startTime = LocalDateTime.now();
 
-//        while(true && ChronoUnit.SECONDS.between(startTime, LocalDateTime.now()) <= timeoutInMn) {
-//            System.out.println("YXEaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-            // name_var1 = name_var2 * var1 +- var2
-            while (name_var1 < name_var1_min_value || name_var1 > name_var1_max_value) {
+        // name_var1 = name_var2 * var1 +- var2
+        while (name_var1 < name_var1_min_value || name_var1 > name_var1_max_value) {
 //                System.out.println("YXEbbbbbbbbbbb?bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-                var1 = getRandomIntValue(var1_min_value, var1_max_value);
-                var2 = getRandomIntValue(var2_min_value, var2_max_value);
-                var3 = getRandomIntValue(var3_min_value, var3_max_value);
-                var4 = getRandomIntValue(var4_min_value, var4_max_value);
+            var1 = getRandomIntValue(var1_min_value, var1_max_value);
+            var2 = getRandomIntValue(var2_min_value, var2_max_value);
+            var3 = getRandomIntValue(var3_min_value, var3_max_value);
+            var4 = getRandomIntValue(var4_min_value, var4_max_value);
 
-                System.out.println("Cesfadfsd " + var1 + " "+var2 + " "+var3 + " "+var4);
+            System.out.println("Cesfadfsd " + var1 + " "+var2 + " "+var3 + " "+var4);
 
-                if (useMult == false) {
-                    var1 = 1;
-                }
-                if (useAddMinus == false) {
-                    var2 = 0;
-                }
-                if (useYear1 == false) {
-                    var3 = 0;
-                }
-                if (useYear2 == false) {
-                    var4 = 0;
-                }
+            if (useMult == false) {
+                var1 = 1;
+            }
+            if (useAddMinus == false) {
+                var2 = 0;
+            }
+            if (useYear1 == false) {
+                var3 = 0;
+            }
+            if (useYear2 == false) {
+                var4 = 0;
+            }
 
-                int name_var2_with_var4 = 0;
-                int name_var1_with_var3 = 0;
-                if (year2_sign == ProblemTokenStruct.PLUS_SIGN) {
-                    name_var2_with_var4 = name_var2 + var4;
-                } else {
-                    name_var2_with_var4 = name_var2 - var4;
-                }
-                if (var_sign == ProblemTokenStruct.PLUS_SIGN) {
-                    name_var1_with_var3 = name_var2_with_var4 * var1 + var2;
-                } else {
-                    name_var1_with_var3 = name_var2_with_var4 * var1 - var2;
-                }
-                if (year1_sign == ProblemTokenStruct.PLUS_SIGN) {
-                    name_var1 = name_var1_with_var3 - var3;
-                } else {
-                    name_var1 = name_var1_with_var3 + var3;
-                }
-                System.out.println("ddddddddddddddd" + name_var1);
+            int name_var2_with_var4 = 0;
+            int name_var1_with_var3 = 0;
+            if (year2_sign == ProblemTokenStruct.PLUS_SIGN) {
+                name_var2_with_var4 = name_var2 + var4;
+            } else {
+                name_var2_with_var4 = name_var2 - var4;
+            }
+            if (var_sign == ProblemTokenStruct.PLUS_SIGN) {
+                name_var1_with_var3 = name_var2_with_var4 * var1 + var2;
+            } else {
+                name_var1_with_var3 = name_var2_with_var4 * var1 - var2;
+            }
+            if (year1_sign == ProblemTokenStruct.PLUS_SIGN) {
+                name_var1 = name_var1_with_var3 - var3;
+            } else {
+                name_var1 = name_var1_with_var3 + var3;
+            }
+            System.out.println("ddddddddddddddd" + name_var1);
             // timeout
             if(ChronoUnit.MILLIS.between(startTime, LocalDateTime.now()) > timeoutInMn){
                 throw new TimeoutException();
             }
-//            }
-
-            return new int[]{name_var1, name_var2, var1, var2, var3, var4};
         }
-        throw new TimeoutException();
+        return new int[]{name_var1, name_var2, var1, var2, var3, var4};
     }
 
 

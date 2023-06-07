@@ -39,7 +39,7 @@ public abstract class ExprCategory {
             System.out.println("ERROR:: getRandomIntValue() : min > max now... should be min <= max");
             return -1;
         } else if(max_value == min_value){
-            return 0;
+            return min_value;
         } else{
             int ret = random.nextInt(max_value-min_value+1) + min_value;
             return ret;
