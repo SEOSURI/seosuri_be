@@ -25,11 +25,14 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -105,11 +108,15 @@ public class TestPaperService {
             mimeMessageHelper.setSubject(SUBJECT);
             mimeMessageHelper.setText(CONTENT, false);
 
-            FileSystemResource testPaperFile = new FileSystemResource(new File("C:\\pdftest\\시험지.pdf"));
-            mimeMessageHelper.addAttachment("Test_Paper.pdf", testPaperFile);
+//            ClassPathResource classPathResource = new ClassPathResource("/pdf/TestPaper.pdf");
+//            FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+            InputStream inputStream = new ClassPathResource("/pdf/TestPaper.pdf").getInputStream();
+            File testPaperFile = File.createTempFile("TestPaper",".pdf");
+            mimeMessageHelper.addAttachment("TestPaper.pdf", testPaperFile);
 
-            FileSystemResource answerFile = new FileSystemResource(new File("C:\\pdftest\\답지.pdf"));
-            mimeMessageHelper.addAttachment("Answer.pdf", answerFile);
+            ClassPathResource classPathResource2 = new ClassPathResource("/pdf/"+"AnswerSheet.pdf");
+            FileSystemResource answerFile = new FileSystemResource(classPathResource2.getFile());
+            mimeMessageHelper.addAttachment("AnswerSheet.pdf", answerFile);
 
             mailSender.send(mail);
 
@@ -117,6 +124,8 @@ public class TestPaperService {
             throw new RuntimeException(e);
         } catch(BusinessException e){
             throw new BusinessException(ErrorCode.FAILED_TO_SEND_EMAIL);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -125,8 +134,13 @@ public class TestPaperService {
         // 도큐먼트 객체 생성
         Document document = new Document(PageSize.A4);
 
+        ClassPathResource classPathResource = new ClassPathResource("/pdf/"+"AnswerSheet.pdf");
+        ClassPathResource classPathResource2 = new ClassPathResource("/pdf/"+"TestPaper.pdf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+//        mimeMessageHelper.addAttachment("TestPaper.pdf", testPaperFile);
+
         if(isAnswer == true){
-            try (FileOutputStream os = new FileOutputStream("C:\\pdftest\\답지.pdf")){
+            try (FileOutputStream os = new FileOutputStream(classPathResource.getFile())){
                 PdfWriter.getInstance(document, os);
                 document.open();
 
@@ -143,7 +157,7 @@ public class TestPaperService {
 
         }
         else{
-            try (FileOutputStream os = new FileOutputStream("C:\\pdftest\\시험지.pdf")){
+            try (FileOutputStream os = new FileOutputStream(classPathResource2.getFile())){
                 PdfWriter.getInstance(document, os);
                 document.open();
 
@@ -169,8 +183,11 @@ public class TestPaperService {
         };
 
         // 한글 폰트
-        String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
-        BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        //String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
+        ClassPathResource fontClassPathResource = new ClassPathResource("/font/"+"malgun.ttf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+        //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
         Font seosuriFont = new Font(bf, 12);
         Font defaultFont = new Font(bf, 10);
 
@@ -211,8 +228,11 @@ public class TestPaperService {
 
 
         // 한글 폰트
-        String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
-        BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        //String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
+        ClassPathResource fontClassPathResource = new ClassPathResource("/font/"+"malgun.ttf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+        //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
         Font seosuriFont = new Font(bf, 12);
         Font defaultFont = new Font(bf, 10);
 
@@ -246,8 +266,11 @@ public class TestPaperService {
 
     private PdfPTable contentTable(ArrayList<String> answers) throws DocumentException, IOException {
         // 한글 폰트
-        String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
-        BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        //String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
+        ClassPathResource fontClassPathResource = new ClassPathResource("/font/"+"malgun.ttf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+        //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
         Font seosuriFont = new Font(bf, 12);
         Font defaultFont = new Font(bf, 10);
 

@@ -28,7 +28,7 @@ public class ClassificationController {
     private final ClassificationService classificationService;
 
     @Operation(summary = "문제 유형 분류", description = "사진을 넘겨주면 상위 유형 3개를 제시")
-    @GetMapping("")
+    @PostMapping("")
     public BaseResponse<String> classification(@RequestBody ProblemPictureReqDto problemPictureReqDto){
         try{
             return new BaseResponse<>("tmp");
