@@ -392,9 +392,86 @@ public class ProblemService {
 
     // 3. 문제 바꾸기 api
     @Transactional
-    public ProbRes changeProblem(Long testPaperId, Long probNum) throws BusinessException{
-        // 전달할 문제는 이렇게 생겼습니다
-        ProbRes probRes = new ProbRes();
+    public List<ProbRes> passProbList(Long testPaperId, Long probNum, boolean isChangeProb) throws BusinessException {
+        ProblemValueStruct newProb = new ProblemValueStruct();
+        // 일단 문제 셋팅
+        if(isChangeProb == true){
+            newProb = changeProblem(testPaperId, probNum);
+        }
+        else{
+            newProb = changeProblemNum(testPaperId, probNum);
+        }
+
+
+        TestPaper testPaper = testPaperRepository.findById(testPaperId).get();
+        List<ProbRes> probList = new ArrayList<>();
+        // List probRes 채우기
+        // 문제 리스트 불러오기
+        List<Problem> probs = problemRepository.findAllByTestPaperAndState(testPaper, "A");
+        if(probs.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_PROBLEM);
+        }
+        for(int i = 0; i< probs.size(); i++){
+            Problem tmpProb = probs.get(i);
+            ProbRes probRes = new ProbRes();
+
+            probRes.setTestPaperId(testPaperId);  // 나중에 고쳐야 함!!
+            probRes.setNum(tmpProb.getProbNum());
+            probRes.setLevel(tmpProb.getLevel());
+            probRes.setContent(tmpProb.getContent());
+            probRes.setExplanation(tmpProb.getExplanation());
+            probRes.setAnswer(tmpProb.getAnswer());
+
+            probList.add(probRes);
+        }
+
+        // 4. 정렬
+        Collections.sort(probList, new ProbNumComparator());
+
+        // 덮어씌우기 ㅋ
+        int idx = probNum.intValue()-1;
+        ProbRes tmpProb = new ProbRes();
+        tmpProb.setTestPaperId(newProb.getTestPaper().getId());
+        tmpProb.setNum(probNum);
+        tmpProb.setContent(newProb.getReal_content());
+        tmpProb.setExplanation(newProb.getReal_explanation());
+        tmpProb.setAnswer(newProb.getReal_answer());
+        tmpProb.setLevel("" + newProb.getTemplate_level());
+        probList.set(idx, tmpProb);
+
+        // 7. 1,2,3 하중상으로 변경
+        for(int i=0; i<probList.size(); i++){
+            if(probList.get(i).getLevel().equals("1")){
+                probList.get(i).setLevel("하");
+            }
+            else if(probList.get(i).getLevel().equals("2")){
+                probList.get(i).setLevel("중");
+            }
+            else{
+                probList.get(i).setLevel("상");
+            }
+        }
+
+        // 8. \n 없애기
+        for(int i=0; i<probList.size(); i++){
+            ProbRes probRes = new ProbRes();
+            String content = probList.get(i).getContent().replaceAll("[\n]", " ");
+
+            probRes.setTestPaperId(probList.get(i).getTestPaperId());  // 나중에 고쳐야 함!!
+            probRes.setNum(probList.get(i).getNum());
+            probRes.setLevel(probList.get(i).getLevel());
+            probRes.setContent(content);
+            probRes.setExplanation(probList.get(i).getExplanation());
+            probRes.setAnswer(probList.get(i).getAnswer());
+
+            probList.set(i, probRes);
+        }
+
+        return probList;
+    }
+
+    // 3. 문제 변경
+    private ProblemValueStruct changeProblem(Long testPaperId, Long probNum) throws BusinessException{
 
         // 시험지 객체 얻기
         TestPaper tmpTestPaper = testPaperRepository.findById(testPaperId).get();
@@ -423,11 +500,11 @@ public class ProblemService {
         // 템플릿을 TemplateDto로 변경
         TemplateDto templateDto = new TemplateDto(newProbTemp);
         // TemplateDto 내용 ProblemValueStruct에 저장
-        ProblemValueStruct problemValueStruct = templateDto.setProblemValueStruct();
+        ProblemValueStruct problemValueStructNEW = templateDto.setProblemValueStruct();
         // 시험지, 템플릿, 문제 번호 정보 problemValueSturct에 저장 (레벨은 템플릿에서 뽑아쓰기)
-        problemValueStruct.setProblemTemplate(newProbTemp);
-        problemValueStruct.setTestPaper(tmpTestPaper);
-        problemValueStruct.setProbNum((long)(probNum));
+        problemValueStructNEW.setProblemTemplate(newProbTemp);
+        problemValueStructNEW.setTestPaper(tmpTestPaper);
+        problemValueStructNEW.setProbNum((long)(probNum));
         // WordList 생성
         String wordType = "인외";
         List<Word> tmpWordList = wordRepository.findByType(wordType);
@@ -441,60 +518,43 @@ public class ProblemService {
             wordSet.add(tmpWordList.get(idx));
         }
         List<Word> wordList = new ArrayList<>(wordSet);
-        problemValueStruct.setWordListDirect(wordList);
+        problemValueStructNEW.setWordListDirect(wordList);
         tmpWordList.clear();
         wordList.clear();
         wordSet.clear();
 
         // CreateAgeProblem 호출
-        CreateAgeProblem createAgeProblem = new CreateAgeProblem(problemValueStruct);
-        createAgeProblem.createProblem(problemValueStruct.getTemplate_level());
+        CreateAgeProblem createAgeProblem = new CreateAgeProblem(problemValueStructNEW);
+        createAgeProblem.createProblem(problemValueStructNEW.getTemplate_level());
 
         // 얻어진 prob_id에 해당하는 prob_word 모두 삭제
         Long count = probWordRepository.deleteByProb(oldProb);
         System.out.println("지워진 word 개수: " + count);
 
         // 얻어진 problemValueStruct 필드 뽑아서 DB 내용 변경
-        problemRepository.updateProbTemp(oldProbId, problemValueStruct.getProblemTemplate());
-        problemRepository.updateContent(oldProbId, problemValueStruct.getReal_content());
-        problemRepository.updateAnswer(oldProbId, problemValueStruct.getReal_answer());
-        problemRepository.updateExplanation(oldProbId, problemValueStruct.getReal_explanation());
-        problemRepository.updateLevel(oldProbId, "" + problemValueStruct.getTemplate_level());
-
-        // probRes 채우기
-        probRes.setNum(probNum);
-        probRes.setAnswer(problemValueStruct.getReal_answer());
-        if(problemValueStruct.getTemplate_level() == 1){
-            probRes.setLevel("하");
-        }
-        else if(problemValueStruct.getTemplate_level() == 2){
-            probRes.setLevel("중");
-        }
-        else{
-            probRes.setLevel("상");
-        }
-        probRes.setExplanation(problemValueStruct.getReal_explanation());
-        probRes.setContent(problemValueStruct.getReal_content().replaceAll("[\n]", " "));
-        probRes.setTestPaperId(testPaperId);
+        problemRepository.updateProbTemp(oldProbId, problemValueStructNEW.getProblemTemplate());
+        problemRepository.updateContent(oldProbId, problemValueStructNEW.getReal_content());
+        problemRepository.updateAnswer(oldProbId, problemValueStructNEW.getReal_answer());
+        problemRepository.updateExplanation(oldProbId, problemValueStructNEW.getReal_explanation());
+        problemRepository.updateLevel(oldProbId, "" + problemValueStructNEW.getTemplate_level());
 
         // prob_word 새로 삽입
-        for (int j = 0; j < problemValueStruct.getWordList().size(); j++) {
+        for (int j = 0; j < problemValueStructNEW.getWordList().size(); j++) {
             ProbWord probWord = new ProbWord();
             probWord.setPosition("");
-            probWord.setWord(problemValueStruct.getWordList().get(j));
+            probWord.setWord(problemValueStructNEW.getWordList().get(j));
             probWord.setProb(oldProb);
             probWordRepository.save(probWord);
         }
-
-        // probRes에 정보 저장해서 return 하기
-        return probRes;
+//
+//        // probRes에 정보 저장해서 return 하기
+        return problemValueStructNEW;
     }
 
     // 4. 숫자 바꾸기 api
-    @Transactional
-    public ProbRes changeProblemNum(Long testPaperId, Long probNum) throws BusinessException{
+    private ProblemValueStruct changeProblemNum(Long testPaperId, Long probNum) throws BusinessException{
         // 전달할 문제는 이렇게 생겼습니다
-        ProbRes probRes = new ProbRes();
+        List<ProbRes> probList = new ArrayList<>();
 
         // 시험지 객체 얻기
         TestPaper tmpTestPaper = testPaperRepository.findById(testPaperId).get();
@@ -553,24 +613,7 @@ public class ProblemService {
         problemRepository.updateExplanation(oldProbId, problemValueStruct.getReal_explanation());
         problemRepository.updateLevel(oldProbId, "" + problemValueStruct.getTemplate_level());
 
-        // probRes 채우기
-        probRes.setNum(probNum);
-        probRes.setAnswer(problemValueStruct.getReal_answer());
-        if(problemValueStruct.getTemplate_level() == 1){
-            probRes.setLevel("하");
-        }
-        else if(problemValueStruct.getTemplate_level() == 2){
-            probRes.setLevel("중");
-        }
-        else{
-            probRes.setLevel("상");
-        }
-        probRes.setExplanation(problemValueStruct.getReal_explanation());
-        probRes.setContent(problemValueStruct.getReal_content().replaceAll("[\n]", " "));
-        probRes.setTestPaperId(testPaperId);
-
-        // probRes에 정보 저장해서 return 하기
-        return probRes;
+        return problemValueStruct;
     }
 
     private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList) throws BusinessException{
