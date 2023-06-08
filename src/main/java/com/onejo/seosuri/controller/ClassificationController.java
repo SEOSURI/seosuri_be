@@ -37,7 +37,7 @@ public class ClassificationController {
     private final ClassificationService classificationService;
 
     @Operation(summary = "문제 유형 분류", description = "사진을 넘겨주면 상위 유형 3개를 제시")
-    @PostMapping(value = "/classification", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<List<CategoryResDto>> classification(@RequestParam("file") MultipartFile multipartFile){
         try{
             String ocrRes = classificationService.ocrImage(multipartFile);
