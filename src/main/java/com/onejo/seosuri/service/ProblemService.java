@@ -100,7 +100,9 @@ public class ProblemService {
         testPaper.setCategory(tmpCategory.get());
         testPaper.setLevel(""+level);
         testPaperRepository.save(testPaper);
-        testPaperId = testPaperRepository.count();
+//        testPaperId = testPaperRepository.count();
+        testPaperId = testPaperRepository.findMaxId();
+        System.out.println("가장 큰 시험지 번호: " + testPaperId);
 
 
         // 상(6 3 1) 중(4 4 2) 하(1 4 5)
@@ -429,6 +431,80 @@ public class ProblemService {
         return probRes;
     }
 
+    // 4. 숫자 바꾸기 api
+    @Transactional
+    public ProbRes changeProblemNum(Long testPaperId, Long probNum){
+        // 전달할 문제는 이렇게 생겼습니다
+        ProbRes probRes = new ProbRes();
+
+        // 시험지 객체 얻기
+        TestPaper tmpTestPaper = testPaperRepository.findById(testPaperId).get();
+        // 시험지, 문제 번호는 인자로 주어짐 -> 이걸로 Problem id 찾기
+        Problem oldProb = problemRepository.findByTestPaperAndProbNum(tmpTestPaper, probNum).get();
+        Long oldProbId = oldProb.getId();
+        // 난이도 정보 얻기 -> 이걸로 template 새로 랜덤 뽑기
+        String oldProbLevel = oldProb.getLevel();
+        Random random = new Random();
+        ProblemTemplate newProbTemp = oldProb.getProbTemp();
+//        if(oldProbLevel.equals("1")){
+//            int tmp = random.nextInt(110)+1;
+//            newProbTemp = problemTemplateRepository.findById((long)tmp).get();
+//        }
+//        else if(oldProbLevel.equals("2")){
+//            int tmp = random.nextInt(18150)+111;
+//            newProbTemp = problemTemplateRepository.findById((long)tmp).get();
+//        }
+//        else{
+//            int tmp = random.nextInt(498880)+18260;
+//            newProbTemp = problemTemplateRepository.findById((long)tmp).get();
+//        }
+
+        System.out.println("템플릿 아이디: "+ newProbTemp.getId());
+
+        // 템플릿을 TemplateDto로 변경
+        TemplateDto templateDto = new TemplateDto(newProbTemp);
+        // TemplateDto 내용 ProblemValueStruct에 저장
+        ProblemValueStruct problemValueStruct = templateDto.setProblemValueStruct();
+        // 시험지, 템플릿, 문제 번호 정보 problemValueSturct에 저장 (레벨은 템플릿에서 뽑아쓰기)
+        problemValueStruct.setProblemTemplate(newProbTemp);
+        problemValueStruct.setTestPaper(tmpTestPaper);
+        problemValueStruct.setProbNum((long)(probNum));
+        // WordList prob Word에서 단어 가져오기
+        List<ProbWord> probWordList = probWordRepository.findByProb(oldProb);
+        if(probWordList.isEmpty()){
+            throw new BusinessException(ErrorCode.NO_EXIST_WORD_TYPE);
+        }
+        List<Word> wordList = new ArrayList<>();
+        for(int i=0; i<probWordList.size(); i++){
+            wordList.add(probWordList.get(i).getWord());
+        }
+        problemValueStruct.setWordListDirect(wordList);
+        probWordList.clear();
+        wordList.clear();
+
+        // CreateAgeProblem 호출
+        CreateAgeProblem createAgeProblem = new CreateAgeProblem(problemValueStruct);
+        createAgeProblem.createProblem(problemValueStruct.getTemplate_level());
+
+
+        // 얻어진 problemValueStruct 필드 뽑아서 DB 내용 변경
+        problemRepository.updateProbTemp(oldProbId, problemValueStruct.getProblemTemplate());
+        problemRepository.updateContent(oldProbId, problemValueStruct.getReal_content());
+        problemRepository.updateAnswer(oldProbId, problemValueStruct.getReal_answer());
+        problemRepository.updateExplanation(oldProbId, problemValueStruct.getReal_explanation());
+        problemRepository.updateLevel(oldProbId, "" + problemValueStruct.getTemplate_level());
+
+        // probRes 채우기
+        probRes.setNum(probNum);
+        probRes.setAnswer(problemValueStruct.getReal_answer());
+        probRes.setLevel("" + problemValueStruct.getTemplate_level());
+        probRes.setExplanation(problemValueStruct.getReal_explanation());
+        probRes.setContent(problemValueStruct.getReal_content());
+        probRes.setTestPaperId(testPaperId);
+
+        // probRes에 정보 저장해서 return 하기
+        return probRes;
+    }
 
     private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList) {
         // 문제에 대한 모든 정보 출력
