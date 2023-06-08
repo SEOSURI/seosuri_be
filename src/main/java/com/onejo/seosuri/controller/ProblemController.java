@@ -51,9 +51,10 @@ public class ProblemController {
 
     @Operation(summary = "문제 변경", description = "새로운 문제로 변경")
     @PutMapping("/change")
-    public BaseResponse<String> change(@RequestBody ChangeProbReq changeProbReq){
+    public BaseResponse<ProbRes> change(@RequestBody ChangeProbReq changeProbReq){
         try{
-            return new BaseResponse<>("tmp");
+            ProbRes probRes = problemService.changeProblem(changeProbReq.getTestPaperId(), changeProbReq.getProbNum());
+            return new BaseResponse<>(probRes);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }
@@ -61,9 +62,10 @@ public class ProblemController {
 
     @Operation(summary = "숫자 변경", description = "문제 1개에 대한 정보를 알려주면 랜덤으로 숫자 변경하여 반환")
     @PatchMapping("/change/number")
-    public BaseResponse<String> changeNumber(@RequestBody ChangeNumReq changeNumReq){
+    public BaseResponse<ProbRes> changeNumber(@RequestBody ChangeNumReq changeNumReq){
         try{
-            return new BaseResponse<>("tmp");
+            ProbRes probRes = problemService.changeProblemNum(changeNumReq.getTestPaperId(), changeNumReq.getProbNum());
+            return new BaseResponse<>(probRes);
         } catch(BusinessException e) {
             return new BaseResponse<>(e.getErrorCode());
         }
