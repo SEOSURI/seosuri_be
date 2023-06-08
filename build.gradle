@@ -51,6 +51,9 @@ dependencies {
 	implementation 'com.itextpdf:itextpdf:5.5.13.1'
 	implementation 'com.itextpdf.tool:xmlworker:5.5.13.1'
 
+	// fileutils
+	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+
 }
 
 tasks.named('test') {
