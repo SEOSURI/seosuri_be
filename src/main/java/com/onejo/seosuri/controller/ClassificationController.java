@@ -37,6 +37,19 @@ public class ClassificationController {
     private final ClassificationService classificationService;
 
     @Operation(summary = "문제 유형 분류", description = "사진을 넘겨주면 상위 유형 3개를 제시")
+    @PostMapping(value = "/classification", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BaseResponse<List<CategoryResDto>> classification(@RequestParam("file") MultipartFile multipartFile){
+        try{
+            String ocrRes = classificationService.ocrImage(multipartFile);
+            List<CategoryResDto> categoryResDtos = classificationService.classification(ocrRes);
+            return new BaseResponse<>(categoryResDtos);
+        } catch(BusinessException e) {
+            return new BaseResponse<>(e.getErrorCode());
+        }
+    }
+
+
+    @Operation(summary = "문제 유형 분류", description = "사진을 넘겨주면 상위 유형 3개를 제시")
     @PostMapping(value = "/ocr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<String> imageToText(@RequestParam("file") MultipartFile multipartFile){
         try{
@@ -48,4 +61,7 @@ public class ClassificationController {
             return new BaseResponse<>(e.getErrorCode());
         }
     }
+
+
+
 }
