@@ -1,7 +1,6 @@
 package com.onejo.seosuri.exception.common;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
@@ -30,7 +29,16 @@ public enum ErrorCode {
     DATABASE_ERROR(false, 4000, "DB에 문제가 발생했습니다."),
     NO_EXIST_CATEGORY_TITLE(false, 4001, "없는 카테고리 입니다."),
     NO_EXIST_PROBLEM(false, 4002, "문제가 존재하지 않습니다."),
-    NO_EXIST_TEST_PAPER(false, 4003, "시험지가 존재하지 않습니다.")
+    NO_EXIST_TEST_PAPER(false, 4003, "시험지가 존재하지 않습니다."),
+
+    /*OCR, 5000*/
+    NO_EXIST_FILE(false, 5001, "없는 파일 입니다."),
+    FILE_IO_ERROR(false, 5002, "사진 파일을 읽는 도중 문제가 발생했습니다."),
+    OCR_CLIENT_CREATION_ERROR(false, 5003, "OCR 클라이언트 생성에 실패했습니다."),
+    OCR_PROCESSING_ERROR(false, 5004, "OCR 프로세싱 과정 중 문제가 발생했습니다."),
+    IMAGE_TO_TEXT_PROCESSING_ERROR(false, 5005, "이미지를 텍스트로 변환하는 도중 문제가 발생했습니다."),
+
+    NO_EXIST_WORD_TYPE(false, 4004, "단어 타입이 존재하지 않습니다.")
 
     ;
 

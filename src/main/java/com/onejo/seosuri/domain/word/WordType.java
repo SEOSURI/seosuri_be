@@ -1,15 +1,15 @@
 package com.onejo.seosuri.domain.word;
 
 public enum WordType {
-    NAME("이름"),
-    FAMILY("가족"),
-    NO_HUMAN("인외"),
-    JOB("직업");
+    이름("이름"),
+    가족("가족"),
+    인외("인외"),
+    직업("직업");
 
 
     private String wordType;
 
-    WordType(String categoryTitle){ this.wordType = categoryTitle; }
+    WordType(String wordType){ this.wordType = wordType; }
 
-    public String getCategoryName() {return this.wordType;}
+    public String getWordType() {return this.wordType;}
 }
