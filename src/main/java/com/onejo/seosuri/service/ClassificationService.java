@@ -49,10 +49,10 @@ public class ClassificationService {
         List<CategoryResDto> res = new ArrayList<>();
 
         // bert로 분류
-        CategoryResDto ageCategoryResDto = new CategoryResDto(CategoryTitle.AGE);
-        CategoryResDto unknownNumCategoryResDto = new CategoryResDto(CategoryTitle.UNKNOWN_NUM);
-        CategoryResDto colorTapeCategoryResDto = new CategoryResDto(CategoryTitle.COLOR_TAPE);
-        CategoryResDto geometryCategoryResDto = new CategoryResDto(CategoryTitle.GEOMETRY_APP_CALC);
+        CategoryResDto ageCategoryResDto = new CategoryResDto(CategoryTitle.AGE.getCategoryName());
+        CategoryResDto unknownNumCategoryResDto = new CategoryResDto(CategoryTitle.UNKNOWN_NUM.getCategoryName());
+        CategoryResDto colorTapeCategoryResDto = new CategoryResDto(CategoryTitle.COLOR_TAPE.getCategoryName());
+        CategoryResDto geometryCategoryResDto = new CategoryResDto(CategoryTitle.GEOMETRY_APP_CALC.getCategoryName());
 
         String[] age_str_ls = new String[] {"나이", "연세", "어머니", "살", "아버지", "나", "동생"};
         String[] unknown_str_ls = new String[] {"어떤 수", "바르게 계산한", "잘못 계산한", "잘못하여", "잘못 계산", "제대로 계산"};

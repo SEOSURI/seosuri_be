@@ -14,5 +14,6 @@ import lombok.Setter;
 @Schema(title="유형 분류 결과")
 public class CategoryResDto {
     @Schema(description = "문제 유형", example = "나이_구하기")
-    CategoryTitle categoryTitle;
+    String categoryTitle;
+
 }
