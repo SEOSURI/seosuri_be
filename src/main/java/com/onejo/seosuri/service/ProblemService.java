@@ -222,7 +222,7 @@ public class ProblemService {
             }
 
             for(int i=0; i<tmplList3.size(); i++){
-                createAgeProblemPart(testPaperId, tmplList2, i, i + tmplList1.size() + tmplList2.size() + 1, tmpWordList);
+                createAgeProblemPart(testPaperId, tmplList3, i, i + tmplList1.size() + tmplList2.size() + 1, tmpWordList);
             }
 
         }

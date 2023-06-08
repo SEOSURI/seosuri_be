@@ -10,7 +10,9 @@ import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.protobuf.ByteString;
 import com.onejo.seosuri.exception.common.BusinessException;
 import com.onejo.seosuri.exception.common.ErrorCode;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,11 +21,11 @@ import java.util.List;
 
 public class ImageToText {
 
-    public String detectText(String filePath) throws BusinessException {
+    public String detectText(File file) throws BusinessException {
         String output = "";
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
-        try (FileInputStream fileInputStream = new FileInputStream(filePath)){
+        try (FileInputStream fileInputStream = new FileInputStream(file)){
             ByteString imgBytes = ByteString.readFrom(fileInputStream);
 
             Image img = Image.newBuilder().setContent(imgBytes).build();
