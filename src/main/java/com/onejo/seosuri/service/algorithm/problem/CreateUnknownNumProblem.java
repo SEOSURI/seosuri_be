@@ -1,7 +1,9 @@
 package com.onejo.seosuri.service.algorithm.problem;
 
+import com.onejo.seosuri.exception.common.BusinessException;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
+import org.hibernate.usertype.BaseUserTypeSupport;
 
 public class CreateUnknownNumProblem extends CreateProblem{
     public CreateUnknownNumProblem(ProblemValueStruct problemValueStruct) {
@@ -9,7 +11,7 @@ public class CreateUnknownNumProblem extends CreateProblem{
     }
 
     @Override
-    public void createProblem(int level)  {
+    public void createProblem(int level) throws BusinessException  {
         int prob_sentence_num = 2;  // 잘못 계산한 수, 바르게 계산한 수
         int var_num_per_sentence = ProblemTokenStruct.UNKNOWNNUM_PROB_VAR_NUM_PER_SENTENCE;
 
