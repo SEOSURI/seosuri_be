@@ -248,10 +248,12 @@ public abstract class YXExprCategory extends ExprCategory {
 
 
     @Override
-    public int[] getRandomValue (int given_name_var2, int var_sign, int year1_sign, int year2_sign, int name_var1_min_value, int name_var1_max_value, int var1_min_value, int var1_max_value, int var2_min_value, int var2_max_value, int var3_min_value, int var3_max_value, int var4_min_value, int var4_max_value, boolean useYear1, boolean useYear2, boolean useAddMinus, boolean useMult) throws TimeoutException, InterruptedException { // name_var2, year given
+    public int[] getRandomValue (int given_name_var2, int var_sign, int year1_sign, int year2_sign, int name_var1_min_value, int name_var1_max_value, int var1_min_value, int var1_max_value, int var2_min_value, int var2_max_value, int var3_min_value, int var3_max_value, int var4_min_value, int var4_max_value, boolean useYear1, boolean useYear2, boolean useAddMinus, boolean useMult) throws TimeoutException{ // name_var2, year given
         int var1=1, var2=0, var3=0, var4=0, name_var1=0, name_var2=given_name_var2;
 
-        long timeoutInMn = 500;   // timeout 시간
+        System.out.println("지옥탈출 최소값: " + name_var1_min_value + "지옥탈출 최대값: " + name_var1_max_value);
+
+        long timeoutInMn = 2000;   // timeout 시간
         LocalDateTime startTime = LocalDateTime.now();
 
         // name_var1 = name_var2 * var1 +- var2
@@ -263,7 +265,6 @@ public abstract class YXExprCategory extends ExprCategory {
             var4 = getRandomIntValue(var4_min_value, var4_max_value);
 
             System.out.println("Cesfadfsd " + var1 + " "+var2 + " "+var3 + " "+var4);
-
             if (useMult == false) {
                 var1 = 1;
             }
@@ -281,25 +282,35 @@ public abstract class YXExprCategory extends ExprCategory {
             int name_var1_with_var3 = 0;
             if (year2_sign == ProblemTokenStruct.PLUS_SIGN) {
                 name_var2_with_var4 = name_var2 + var4;
+                System.out.print("***************************************** ( " + name_var2 + " + " + var4 + " ) ");
             } else {
                 name_var2_with_var4 = name_var2 - var4;
+                System.out.print(" ( " + name_var2 + " - " + var4 + " ) ");
             }
             if (var_sign == ProblemTokenStruct.PLUS_SIGN) {
                 name_var1_with_var3 = name_var2_with_var4 * var1 + var2;
+                System.out.print(" * " + var1 + " + " + var2);
             } else {
                 name_var1_with_var3 = name_var2_with_var4 * var1 - var2;
+                System.out.print(" * " + var1 + " - " + var2);
             }
             if (year1_sign == ProblemTokenStruct.PLUS_SIGN) {
                 name_var1 = name_var1_with_var3 - var3;
+                System.out.println(" = " + name_var1 + " + " + var3);
             } else {
                 name_var1 = name_var1_with_var3 + var3;
+                System.out.println(" = " + name_var1 + " - " + var3);
             }
-            System.out.println("ddddddddddddddd" + name_var1);
+            System.out.println("################보아라 name_var1: " + name_var1);
             // timeout
-            if(ChronoUnit.MILLIS.between(startTime, LocalDateTime.now()) > timeoutInMn){
+            long time_passed = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now());
+            System.out.println("############# 소요 시간 : " + time_passed);
+            if(time_passed > timeoutInMn){
+                System.out.println("YX에서 타임 아웃 발생");
                 throw new TimeoutException();
             }
         }
+        System.out.println("값 다 정했어용 " +  name_var1+  "$"+  name_var2 +  "$"+  var1 +  "$"+  var2 +   "$"+ var3 +   "$"+var4);
         return new int[]{name_var1, name_var2, var1, var2, var3, var4};
     }
 

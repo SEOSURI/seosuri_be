@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
 public abstract class ExprCategory {
+    static Random random = new Random();
 
     @Override
     abstract public String toString();
@@ -29,19 +30,20 @@ public abstract class ExprCategory {
                                          int var3_min_value, int var3_max_value,
                                          int var4_min_value, int var4_max_value,
                                          boolean useYear1, boolean useYear2, boolean useAddMinus, boolean useMult)
-            throws TimeoutException, InterruptedException;
+            throws TimeoutException;
 
     // random int 값 뽑기 - getRandomValue()에서 호출해서 사용
     public static int getRandomIntValue(int min_value, int max_value){
-        Random random = new Random();
-        random.setSeed(System.currentTimeMillis()); //시드값 설정을 따로 할수도 있음
+
         if(max_value < min_value){
             System.out.println("ERROR:: getRandomIntValue() : min > max now... should be min <= max");
             return -1;
         } else if(max_value == min_value){
+            System.out.println("그거 아니..? 최소 최대 같더라 ");
             return min_value;
         } else{
             int ret = random.nextInt(max_value-min_value+1) + min_value;
+            System.out.println("알려줘 나의 명예 랜덤값: " + ret);
             return ret;
         }
     }

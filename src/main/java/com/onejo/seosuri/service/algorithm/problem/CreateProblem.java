@@ -113,28 +113,28 @@ public abstract class CreateProblem {
             int var1_index = i * num_var_per_sentence;
             if(problemValueStruct.useMult_ls[i]) {    // var1
                 problemValueStruct.constant_var_min_value_ls[var1_index] = 2;
-                problemValueStruct.constant_var_max_value_ls[var1_index] = 100;
+                problemValueStruct.constant_var_max_value_ls[var1_index] = 5;
             } else{ // 0~100 =  0~100 * 2 - 100 // 99 *
                 problemValueStruct.constant_var_min_value_ls[var1_index] = 1;
                 problemValueStruct.constant_var_max_value_ls[var1_index] = 1;
             }
             if(problemValueStruct.useAddMinus_ls[i]){ // var2
                 problemValueStruct.constant_var_min_value_ls[var1_index+1] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+1] = 500;
+                problemValueStruct.constant_var_max_value_ls[var1_index+1] = 300;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+1] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+1] = 0;
             }
             if(problemValueStruct.useYear1_ls[i]){
                 problemValueStruct.constant_var_min_value_ls[var1_index+2] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+2] = 500;
+                problemValueStruct.constant_var_max_value_ls[var1_index+2] = 100;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+2] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+2] = 0;
             }
             if(problemValueStruct.useYear2_ls[i]){
                 problemValueStruct.constant_var_min_value_ls[var1_index+3] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+3] = 500;
+                problemValueStruct.constant_var_max_value_ls[var1_index+3] = 100;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+3] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+3] = 0;
@@ -154,7 +154,9 @@ public abstract class CreateProblem {
         int given_age = age0;
         int num_sentence = problemValueStruct.sentence_expr_category_id_ls.length;
         int start_index = num_sentence-1;   // 마지막 상황문장부터 숫자 뽑음
-        for(int i = start_index; i >= 0; i--){
+        //for(int i = start_index; i >= 0; i--){
+        int i = start_index;
+        while(i >= 0){
             System.out.println("가장 밖이에유aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             int age1_index = i;
             int age2_index = (i + 1) % problemValueStruct.variant_var_ls.length;
@@ -178,11 +180,10 @@ public abstract class CreateProblem {
                 problemValueStruct.constant_var_ls[var2_index] = ret_var[3];
                 problemValueStruct.constant_var_ls[year1_index] = ret_var[4];
                 problemValueStruct.constant_var_ls[year2_index] = ret_var[5];
+
+                i--;
             } catch (TimeoutException e){
                 i = start_index;
-                continue;
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
             }
         }
     }
