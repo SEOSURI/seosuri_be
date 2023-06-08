@@ -284,8 +284,16 @@ public class ProblemService {
 
             probRes.setTestPaperId(testPaperId);  // 나중에 고쳐야 함!!
             probRes.setNum(tmpProb.getProbNum());
-            probRes.setLevel(tmpProb.getLevel());
-            probRes.setContent(tmpProb.getContent());
+            if(tmpProb.getLevel().equals("1")){
+                probRes.setLevel("하");
+            }
+            else if(tmpProb.getLevel().equals("2")){
+                probRes.setLevel("중");
+            }
+            else{
+                probRes.setLevel("상");
+            }
+            probRes.setContent(tmpProb.getContent().replaceAll("[\n]", " "));
             probRes.setExplanation(tmpProb.getExplanation());
             probRes.setAnswer(tmpProb.getAnswer());
 
@@ -350,6 +358,34 @@ public class ProblemService {
 
         // 6. A의 개수 + 1 -> 문제 번호로
         deleteProblem.get().setProbNum((long)probList.size() + 1);
+
+        // 7. 1,2,3 하중상으로 변경
+        for(int i=0; i<probList.size(); i++){
+            if(probList.get(i).getLevel().equals("1")){
+                probList.get(i).setLevel("하");
+            }
+            else if(probList.get(i).getLevel().equals("2")){
+                probList.get(i).setLevel("중");
+            }
+            else{
+                probList.get(i).setLevel("상");
+            }
+        }
+
+        // 8. \n 없애기
+        for(int i=0; i<probList.size(); i++){
+            ProbRes probRes = new ProbRes();
+            String content = probList.get(i).getContent().replaceAll("[\n]", " ");
+
+            probRes.setTestPaperId(probList.get(i).getTestPaperId());  // 나중에 고쳐야 함!!
+            probRes.setNum(probList.get(i).getNum());
+            probRes.setLevel(probList.get(i).getLevel());
+            probRes.setContent(content);
+            probRes.setExplanation(probList.get(i).getExplanation());
+            probRes.setAnswer(probList.get(i).getAnswer());
+
+            probList.set(i, probRes);
+        }
 
         return probList;
     }
@@ -428,9 +464,17 @@ public class ProblemService {
         // probRes 채우기
         probRes.setNum(probNum);
         probRes.setAnswer(problemValueStruct.getReal_answer());
-        probRes.setLevel("" + problemValueStruct.getTemplate_level());
+        if(problemValueStruct.getTemplate_level() == 1){
+            probRes.setLevel("하");
+        }
+        else if(problemValueStruct.getTemplate_level() == 2){
+            probRes.setLevel("중");
+        }
+        else{
+            probRes.setLevel("상");
+        }
         probRes.setExplanation(problemValueStruct.getReal_explanation());
-        probRes.setContent(problemValueStruct.getReal_content());
+        probRes.setContent(problemValueStruct.getReal_content().replaceAll("[\n]", " "));
         probRes.setTestPaperId(testPaperId);
 
         // prob_word 새로 삽입
@@ -512,9 +556,17 @@ public class ProblemService {
         // probRes 채우기
         probRes.setNum(probNum);
         probRes.setAnswer(problemValueStruct.getReal_answer());
-        probRes.setLevel("" + problemValueStruct.getTemplate_level());
+        if(problemValueStruct.getTemplate_level() == 1){
+            probRes.setLevel("하");
+        }
+        else if(problemValueStruct.getTemplate_level() == 2){
+            probRes.setLevel("중");
+        }
+        else{
+            probRes.setLevel("상");
+        }
         probRes.setExplanation(problemValueStruct.getReal_explanation());
-        probRes.setContent(problemValueStruct.getReal_content());
+        probRes.setContent(problemValueStruct.getReal_content().replaceAll("[\n]", " "));
         probRes.setTestPaperId(testPaperId);
 
         // probRes에 정보 저장해서 return 하기
