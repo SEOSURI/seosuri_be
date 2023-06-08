@@ -293,7 +293,7 @@ public class ProblemService {
             else{
                 probRes.setLevel("상");
             }
-            probRes.setContent(tmpProb.getContent());
+            probRes.setContent(tmpProb.getContent().replaceAll("[\n]", " "));
             probRes.setExplanation(tmpProb.getExplanation());
             probRes.setAnswer(tmpProb.getAnswer());
 
@@ -374,7 +374,17 @@ public class ProblemService {
 
         // 8. \n 없애기
         for(int i=0; i<probList.size(); i++){
-            probList.get(i).getContent().replaceAll("[\n]]", " ");
+            ProbRes probRes = new ProbRes();
+            String content = probList.get(i).getContent().replaceAll("[\n]", " ");
+
+            probRes.setTestPaperId(probList.get(i).getTestPaperId());  // 나중에 고쳐야 함!!
+            probRes.setNum(probList.get(i).getNum());
+            probRes.setLevel(probList.get(i).getLevel());
+            probRes.setContent(content);
+            probRes.setExplanation(probList.get(i).getExplanation());
+            probRes.setAnswer(probList.get(i).getAnswer());
+
+            probList.set(i, probRes);
         }
 
         return probList;
