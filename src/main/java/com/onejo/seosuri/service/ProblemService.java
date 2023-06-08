@@ -226,19 +226,19 @@ public class ProblemService {
             }
 
         }
-        else if(categoryTitle.equals("어떤수")){
-            for(int i=0; i<tmplList1.size(); i++){
-
-            }
-
-            for(int i=0; i<tmplList2.size(); i++){
-
-            }
-
-            for(int i=0; i<tmplList3.size(); i++){
-
-            }
-        }
+//        else if(categoryTitle.equals("어떤수")){
+//            for(int i=0; i<tmplList1.size(); i++){
+//
+//            }
+//
+//            for(int i=0; i<tmplList2.size(); i++){
+//
+//            }
+//
+//            for(int i=0; i<tmplList3.size(); i++){
+//
+//            }
+//        }
 //        else if(categoryTitle.equals("이은_색테이프")){
 //            for(int i=0; i<tmplList1.size(); i++){
 //
