@@ -24,12 +24,17 @@ import com.onejo.seosuri.exception.common.ErrorCode;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -69,6 +74,15 @@ public class TestPaperService {
 
         // 시험지 레벨
         String testPaperLevel = tmpTestPaper.get().getLevel();
+        if(testPaperLevel.equals("1")){
+            testPaperLevel = "하";
+        }
+        else if(testPaperLevel.equals("2")){
+            testPaperLevel = "중";
+        }
+        else{
+            testPaperLevel = "상";
+        }
 
         // 문제 번호 정렬
         Collections.sort(probList, new ProbNumComparatorTestPaper());
@@ -77,17 +91,18 @@ public class TestPaperService {
         for(int i=0; i<probList.size(); i++){
             String prob = "";
             String ans = "";
-            prob += probList.get(i).getProbNum() + ". " + probList.get(i).getContent();
-            ans += probList.get(i).getProbNum() + ". \n" + probList.get(i).getExplanation() + "\n\n 답: " + probList.get(i).getAnswer();
+            String content = probList.get(i).getContent().replaceAll("[\n]", " ");
+            prob += probList.get(i).getProbNum() + ".  " + content +"\n\n";
+            ans += probList.get(i).getProbNum() + ". \n\n" + probList.get(i).getExplanation() + "\n\n 답: " + probList.get(i).getAnswer();
 
             problems.add(prob);
             answers.add(ans);
         }
 
         // 시험지 생성
-        createPdf(problems, testPaperLevel, category, false);
+        File testPaperFile = createPdf(problems, testPaperLevel, category, false);
         // 해설지 생성
-        createPdf(answers, testPaperLevel, category, true);
+        File answerPaperFile = createPdf(answers, testPaperLevel, category, true);
 
         // ## 2. 이메일 발송
         try{
@@ -105,11 +120,33 @@ public class TestPaperService {
             mimeMessageHelper.setSubject(SUBJECT);
             mimeMessageHelper.setText(CONTENT, false);
 
-            FileSystemResource testPaperFile = new FileSystemResource(new File("C:\\pdftest\\시험지.pdf"));
-            mimeMessageHelper.addAttachment("Test_Paper.pdf", testPaperFile);
+//            ClassPathResource classPathResource = new ClassPathResource("/pdf/TestPaper.pdf");
+//            FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+            /*ClassPathResource classPathResource = new ClassPathResource("/pdf/TestPaper.pdf");
+            InputStream inputStream = classPathResource.getInputStream();
+            File testPaperFile = File.createTempFile("TestPaper",".pdf");
+            try {
+                FileUtils.copyInputStreamToFile(inputStream, testPaperFile);
+            } finally {
+                IOUtils.closeQuietly(inputStream);
+            }*/
 
-            FileSystemResource answerFile = new FileSystemResource(new File("C:\\pdftest\\답지.pdf"));
-            mimeMessageHelper.addAttachment("Answer.pdf", answerFile);
+//            InputStream inputStream = new ClassPathResource("/pdf/TestPaper.pdf").getInputStream();
+//            File testPaperFile = File.createTempFile("TestPaper",".pdf");
+            mimeMessageHelper.addAttachment("TestPaper.pdf", testPaperFile);
+
+            /*ClassPathResource classPathResource2 = new ClassPathResource("/pdf/"+"AnswerSheet.pdf");
+            InputStream inputStream2 = classPathResource2.getInputStream();
+            File answerPaperFile = File.createTempFile("AnswerSheet", ".pdf");
+            try{
+                FileUtils.copyInputStreamToFile(inputStream2, answerPaperFile);
+            } finally {
+                IOUtils.closeQuietly(inputStream2);
+            }*/
+            mimeMessageHelper.addAttachment("AnswerSheet.pdf", answerPaperFile);
+
+//            FileSystemResource answerFile = new FileSystemResource(classPathResource2.getFile());
+//            mimeMessageHelper.addAttachment("AnswerSheet.pdf", answerFile);
 
             mailSender.send(mail);
 
@@ -118,24 +155,45 @@ public class TestPaperService {
         } catch(BusinessException e){
             throw new BusinessException(ErrorCode.FAILED_TO_SEND_EMAIL);
         }
+        /*catch (IOException e) {
+            throw new RuntimeException(e);
+        }*/
     }
 
 
-    public void createPdf(ArrayList<String> content, String level, String category, boolean isAnswer) {
+    public File createPdf(ArrayList<String> content, String level, String category, boolean isAnswer) {
         // 도큐먼트 객체 생성
         Document document = new Document(PageSize.A4);
 
+//        ClassPathResource classPathResource = new ClassPathResource("/pdf/"+"AnswerSheet.pdf");
+//        ClassPathResource classPathResource2 = new ClassPathResource("/pdf/"+"TestPaper.pdf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+//        mimeMessageHelper.addAttachment("TestPaper.pdf", testPaperFile);
+
         if(isAnswer == true){
-            try (FileOutputStream os = new FileOutputStream("C:\\pdftest\\답지.pdf")){
-                PdfWriter.getInstance(document, os);
-                document.open();
+//            try (FileOutputStream os = new FileOutputStream(classPathResource.getFile())){
+            try {
+                ClassPathResource classPathResource = new ClassPathResource("/pdf/"+"AnswerSheet.pdf");
+                InputStream inputStream = classPathResource.getInputStream();
+                File answerPaperFile = File.createTempFile("AnswerSheet",".pdf");
+                try {
+                    FileUtils.copyInputStreamToFile(inputStream, answerPaperFile);
+                    FileOutputStream os = new FileOutputStream(answerPaperFile);
 
-                // 테이블 생성
-                document.addTitle("서수리 답지");
-                document.add(answerTable(level, category));
-                document.add(contentTable(content));
+                    PdfWriter.getInstance(document, os);
+                    document.open();
 
-                document.close();
+                    // 테이블 생성
+                    document.addTitle("서수리 답지");
+                    document.add(answerTable(level, category));
+                    document.add(contentTableA(content));
+
+                    document.close();
+                    os.close();
+                    return answerPaperFile;
+                } finally {
+                    IOUtils.closeQuietly(inputStream);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -143,99 +201,135 @@ public class TestPaperService {
 
         }
         else{
-            try (FileOutputStream os = new FileOutputStream("C:\\pdftest\\시험지.pdf")){
-                PdfWriter.getInstance(document, os);
-                document.open();
+//            try (FileOutputStream os = new FileOutputStream(classPathResource2.getFile())){
+            try{
+                ClassPathResource classPathResource = new ClassPathResource("/pdf/TestPaper.pdf");
+                InputStream inputStream = classPathResource.getInputStream();
+                File testPaperFile = File.createTempFile("TestPaper",".pdf");
+                try {
+                    FileUtils.copyInputStreamToFile(inputStream, testPaperFile);
+                    FileOutputStream os = new FileOutputStream(testPaperFile);
 
-                // 테이블 생성
-                document.addTitle("서수리 시험지");
-                document.add(testPaperTable(level, category));
-                document.add(contentTable(content));
+                    PdfWriter.getInstance(document, os);
+                    document.open();
 
-                document.close();
+                    // 테이블 생성
+                    document.addTitle("서수리 시험지");
+                    document.add(testPaperTable(level, category));
+                    document.add(contentTable(content));
+
+                    document.close();
+                    os.close();
+                    return testPaperFile;
+                } finally {
+                    IOUtils.closeQuietly(inputStream);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
+        throw new BusinessException(ErrorCode.FAILED_TO_CREATE_PDF);
     }
 
     private PdfPTable testPaperTable(String level, String category) throws DocumentException, IOException {
         // 시험지 헤더
         String[][] titles = new String[][]{
-                {"반:", "서수리", "난이도: " + level},
-                {"이름:", "유형: " + category, "점수:"}
+                {"서수리\n\n" + category + " 유형 문제" + " (" + level+ ")", "이름: \n\n점수:"}
         };
 
         // 한글 폰트
-        String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
-        BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-        Font seosuriFont = new Font(bf, 12);
-        Font defaultFont = new Font(bf, 10);
+        //String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
+        ClassPathResource fontClassPathResource = new ClassPathResource("/font/"+"malgun.ttf");
+        InputStream inputStream = fontClassPathResource.getInputStream();
+        File fontFile = File.createTempFile("malgun", ".ttf");
+        try {
+            FileUtils.copyInputStreamToFile(inputStream, fontFile);
+            BaseFont bf = BaseFont.createFont(fontFile.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+
+//        ClassPathResource fontClassPathResource = new ClassPathResource("/font/"+"malgun.ttf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+            //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+//        BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            Font seosuriFont = new Font(bf, 17);
+            Font defaultFont = new Font(bf, 13);
 
 
-        // 시험지 헤더 테이블 생성 (열: 3개, 폭: 90%)
-        PdfPTable table = new PdfPTable(3);
-        table.setWidthPercentage(90);
+            // 시험지 헤더 테이블 생성 (열: 3개, 폭: 90%)
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(90);
 
-        // 시험지 헤더 테이블 컬럼 폭
-        float[] colwidth = new float[]{30f, 40f, 30f};
-        table.setWidths(colwidth);
+            // 시험지 헤더 테이블 컬럼 폭
+            float[] colwidth = new float[]{70f, 30f};
+            table.setWidths(colwidth);
 
-        // 시험지 헤더 생성
-        for(String[] row : titles){
-            for(String data : row){
-                Phrase phrase = new Phrase(data, defaultFont);
-                PdfPCell cell = new PdfPCell(phrase);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setPaddingTop(20);
-                cell.setPaddingRight(30);
-                cell.setPaddingLeft(30);
-                cell.setPaddingBottom(20);
-                cell.setBorderColor(new BaseColor(0,0,0));
-                table.addCell(cell);
+            // 시험지 헤더 생성
+            for (String[] row : titles) {
+                for (String data : row) {
+                    if(data.substring(0,3).equals("서수리")){
+                        Phrase phrase = new Phrase(data, seosuriFont);
+                        PdfPCell cell = new PdfPCell(phrase);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setPaddingTop(20);
+                        cell.setPaddingRight(30);
+                        cell.setPaddingLeft(30);
+                        cell.setPaddingBottom(20);
+                        cell.setBorderColor(new BaseColor(255, 255, 255));
+                        table.addCell(cell);
+                    }
+                    else{
+                        Phrase phrase = new Phrase(data, defaultFont);
+                        PdfPCell cell = new PdfPCell(phrase);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setPaddingTop(20);
+                        cell.setPaddingRight(30);
+                        cell.setPaddingLeft(30);
+                        cell.setPaddingBottom(20);
+                        cell.setBorderColor(new BaseColor(255, 255, 255));
+                        table.addCell(cell);
+                    }
+                }
             }
-            table.completeRow();
-        }
+            return table;
 
-        return table;
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
     }
 
     private PdfPTable answerTable(String level, String category) throws DocumentException, IOException {
         // 시험지 헤더
         String[][] titles = new String[][]{
-                {"반:", "서수리", "난이도: " + level},
-                {"이름:", "유형: " + category, "점수:"}
+                {"답지"}
         };
 
 
         // 한글 폰트
-        String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
-        BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-        Font seosuriFont = new Font(bf, 12);
+        //String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
+        ClassPathResource fontClassPathResource = new ClassPathResource("/font/"+"malgun.ttf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+        //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        Font seosuriFont = new Font(bf, 20);
         Font defaultFont = new Font(bf, 10);
 
 
         // 시험지 헤더 테이블 생성 (열: 3개, 폭: 90%)
-        PdfPTable table = new PdfPTable(3);
+        PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(90);
-
-        // 시험지 헤더 테이블 컬럼 폭
-        float[] colwidth = new float[]{30f, 40f, 30f};
-        table.setWidths(colwidth);
 
         // 시험지 헤더 생성
         for(String[] row : titles){
             for(String data : row){
-                Phrase phrase = new Phrase(data, defaultFont);
+                Phrase phrase = new Phrase(data, seosuriFont);
                 PdfPCell cell = new PdfPCell(phrase);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setPaddingTop(20);
                 cell.setPaddingRight(30);
                 cell.setPaddingLeft(30);
                 cell.setPaddingBottom(20);
-                cell.setBorderColor(new BaseColor(0,0,0));
+                cell.setBorderColor(new BaseColor(255,255,255));
                 table.addCell(cell);
             }
             table.completeRow();
@@ -246,8 +340,55 @@ public class TestPaperService {
 
     private PdfPTable contentTable(ArrayList<String> answers) throws DocumentException, IOException {
         // 한글 폰트
-        String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
-        BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        //String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
+        ClassPathResource fontClassPathResource = new ClassPathResource("/font/"+"malgun.ttf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+        //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        Font seosuriFont = new Font(bf, 12);
+        Font defaultFont = new Font(bf, 10);
+
+
+        // 시험지 헤더 테이블 생성 (열: 3개, 폭: 90%)
+        PdfPTable table = new PdfPTable(1);
+        table.setWidthPercentage(90);
+
+
+        // 문제 테이블 생성
+        for(int i=0; i<answers.size(); i++){
+            PdfPCell cell = new PdfPCell();
+            //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setPaddingTop(20);
+            cell.setPaddingRight(30);
+            cell.setPaddingLeft(30);
+            cell.setPaddingBottom(20);
+            cell.setPhrase(new Phrase(answers.get(i)+"\n\n\n\n\n\n\n\n\n\n", defaultFont));	// 셀에 글자 작성.
+            cell.setBorderColor(new BaseColor(255, 255, 255));
+            table.addCell(cell);
+
+//            table.completeRow();
+//            Phrase phrase2 = new Phrase("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", defaultFont);
+//            PdfPCell cell2 = new PdfPCell(phrase2);
+//            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//            cell2.setPaddingTop(20);
+//            cell2.setPaddingRight(30);
+//            cell2.setPaddingLeft(30);
+//            cell2.setPaddingBottom(20);
+//            cell2.setBorderColor(new BaseColor(255, 255, 255));
+//            table.addCell(cell2);
+        }
+        table.completeRow();
+
+        return table;
+    }
+
+    private PdfPTable contentTableA(ArrayList<String> answers) throws DocumentException, IOException {
+        // 한글 폰트
+        //String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
+        ClassPathResource fontClassPathResource = new ClassPathResource("/font/"+"malgun.ttf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+        //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
         Font seosuriFont = new Font(bf, 12);
         Font defaultFont = new Font(bf, 10);
 
@@ -266,6 +407,7 @@ public class TestPaperService {
             cell.setPaddingLeft(30);
             cell.setPaddingBottom(20);
             cell.setPhrase(new Phrase(answers.get(i), defaultFont));	// 셀에 글자 작성.
+            cell.setBorderColor(new BaseColor(255,255,255));
             table.addCell(cell);
         }
         table.completeRow();
