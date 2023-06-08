@@ -37,7 +37,7 @@ public class ProblemService {
 
 
     @Transactional
-    public List<ProbRes> createProblem(String categoryTitle, String level_){
+    public List<ProbRes> createProblem(String categoryTitle, String level_) throws BusinessException{
         // 나이 구하기 문제 알고리즘 -> 실제 문제 생성: 결과: varElementary5th.real_content, real_explanation, real_answer에 저장됨
         // 0-0. 시험지 만들기
         // 0-1. 서비스 단에서 시험지 레벨 받아오면, 시험지 레벨 맞춰서 각 문제 별 난이도 개수 정하기
@@ -147,32 +147,32 @@ public class ProblemService {
         List<Integer> midRandNumList = new ArrayList<>(midRandNumSet);
         List<Integer> highRandNumList = new ArrayList<>(highRandNumSet);
 
-//        for(int i=0; i<lowRandNumList.size(); i++){
-//            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)lowRandNumList.get(i));
-//            tmplList1.add(tmpProblemTemplate.get());
-//        }
-//        for(int i=0; i<midRandNumList.size(); i++){
-//            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)midRandNumList.get(i));
-//            tmplList2.add(tmpProblemTemplate.get());
-//        }
-//        for(int i=0; i<highRandNumList.size(); i++){
-//            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)highRandNumList.get(i));
-//            tmplList3.add(tmpProblemTemplate.get());
-//        }
-
-        ////// ####################### test 특정 템플릿 테스트 ##############################
         for(int i=0; i<lowRandNumList.size(); i++){
-            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById(55L);
+            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)lowRandNumList.get(i));
             tmplList1.add(tmpProblemTemplate.get());
         }
         for(int i=0; i<midRandNumList.size(); i++){
-            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById(55L);
+            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)midRandNumList.get(i));
             tmplList2.add(tmpProblemTemplate.get());
         }
         for(int i=0; i<highRandNumList.size(); i++){
-            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById(55L);
+            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById((long)highRandNumList.get(i));
             tmplList3.add(tmpProblemTemplate.get());
         }
+
+        ////// ####################### test 특정 템플릿 테스트 ##############################
+//        for(int i=0; i<lowRandNumList.size(); i++){
+//            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById(55L);
+//            tmplList1.add(tmpProblemTemplate.get());
+//        }
+//        for(int i=0; i<midRandNumList.size(); i++){
+//            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById(55L);
+//            tmplList2.add(tmpProblemTemplate.get());
+//        }
+//        for(int i=0; i<highRandNumList.size(); i++){
+//            Optional<ProblemTemplate> tmpProblemTemplate = problemTemplateRepository.findById(55L);
+//            tmplList3.add(tmpProblemTemplate.get());
+//        }
         ////// ####################### test ##############################
 
         ////// ####################### test 용 출력 ##############################
@@ -312,7 +312,7 @@ public class ProblemService {
 
     // 2. 문항 삭제 api
     @Transactional
-    public List<ProbRes> deleteProb(Long testPaperId, Long probNum){
+    public List<ProbRes> deleteProb(Long testPaperId, Long probNum) {
 
         List<ProbRes> probList = new ArrayList<>();  // 완성된 문제
 
@@ -368,7 +368,7 @@ public class ProblemService {
 
     // 3. 문제 바꾸기 api
     @Transactional
-    public ProbRes changeProblem(Long testPaperId, Long probNum){
+    public ProbRes changeProblem(Long testPaperId, Long probNum) throws BusinessException{
         // 전달할 문제는 이렇게 생겼습니다
         ProbRes probRes = new ProbRes();
 
@@ -460,7 +460,7 @@ public class ProblemService {
 
     // 4. 숫자 바꾸기 api
     @Transactional
-    public ProbRes changeProblemNum(Long testPaperId, Long probNum){
+    public ProbRes changeProblemNum(Long testPaperId, Long probNum) throws BusinessException{
         // 전달할 문제는 이렇게 생겼습니다
         ProbRes probRes = new ProbRes();
 
@@ -533,7 +533,7 @@ public class ProblemService {
         return probRes;
     }
 
-    private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList) {
+    private void createAgeProblemPart(Long testPaperId, List<ProblemTemplate> tmplList, int i, int probNum, List<Word> tmpWordList) throws BusinessException{
         // 문제에 대한 모든 정보 출력
         System.out.println("---------------###################################");
         System.out.println("시험지번호: " + testPaperId);

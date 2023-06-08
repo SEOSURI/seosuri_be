@@ -253,7 +253,7 @@ public abstract class YXExprCategory extends ExprCategory {
 
         System.out.println("지옥탈출 최소값: " + name_var1_min_value + "지옥탈출 최대값: " + name_var1_max_value);
 
-        long timeoutInMn = 2000;   // timeout 시간
+        long timeoutInMn = 200;   // timeout 시간
         LocalDateTime startTime = LocalDateTime.now();
 
         // name_var1 = name_var2 * var1 +- var2

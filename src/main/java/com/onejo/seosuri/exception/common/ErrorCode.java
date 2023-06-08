@@ -32,6 +32,7 @@ public enum ErrorCode {
     NO_EXIST_PROBLEM(false, 4002, "문제가 존재하지 않습니다."),
     NO_EXIST_TEST_PAPER(false, 4003, "시험지가 존재하지 않습니다."),
     NO_EXIST_WORD_TYPE(false, 4004, "단어 타입이 존재하지 않습니다."),
+    TIMEOUT_EXCEPTION(false, 4005, "문제를 생성하는데 시간이 오래 소요됩니다"),
 
     /*OCR, 5000*/
     NO_EXIST_FILE(false, 5001, "없는 파일 입니다."),

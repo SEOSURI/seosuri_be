@@ -187,7 +187,7 @@ public class SumDiffExprCategory extends ExprCategory {
         int age1 = 0;
         int age2 = given_name_var2;
 
-        long timeoutInMn = 500;   // timeout 시간
+        long timeoutInMn = 200;   // timeout 시간
         LocalDateTime startTime = LocalDateTime.now();
 
         int var1 = -1;

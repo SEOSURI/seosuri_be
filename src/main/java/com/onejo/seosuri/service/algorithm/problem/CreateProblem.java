@@ -7,12 +7,16 @@ import com.onejo.seosuri.domain.word.Word;
 import com.onejo.seosuri.domain.word.WordRepository;
 import com.onejo.seosuri.domain.word.WordType;
 import com.onejo.seosuri.exception.common.BusinessException;
+import com.onejo.seosuri.exception.common.ErrorCode;
 import com.onejo.seosuri.service.algorithm.ProblemTokenStruct;
 import com.onejo.seosuri.service.algorithm.ProblemValueStruct;
 import com.onejo.seosuri.service.algorithm.exprCategory.ExprCategory;
 import com.onejo.seosuri.service.algorithm.exprCategory.YXAgeExprCategory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -125,21 +129,21 @@ public abstract class CreateProblem {
             }
             if(problemValueStruct.useAddMinus_ls[i]){ // var2
                 problemValueStruct.constant_var_min_value_ls[var1_index+1] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+1] = 100;
+                problemValueStruct.constant_var_max_value_ls[var1_index+1] = 50;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+1] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+1] = 0;
             }
             if(problemValueStruct.useYear1_ls[i]){
                 problemValueStruct.constant_var_min_value_ls[var1_index+2] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+2] = 50;
+                problemValueStruct.constant_var_max_value_ls[var1_index+2] = 20;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+2] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+2] = 0;
             }
             if(problemValueStruct.useYear2_ls[i]){
                 problemValueStruct.constant_var_min_value_ls[var1_index+3] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+3] = 50;
+                problemValueStruct.constant_var_max_value_ls[var1_index+3] = 20;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+3] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+3] = 0;
@@ -151,7 +155,7 @@ public abstract class CreateProblem {
     // 나이 문제 숫자 뽑기 - DB에서 가져왔던 값 이용
     // input : name_var_min_value_ls, name_value_max_value_ls, sentence_category_id_ls, var_sign_ls, var_min_value_ls, var_max_value_ls, useYear_ls, useMult_ls, useAddMinus_ls
     // output : name_var_ls, var_ls
-    protected void setVar(int variable_var_num, int constant_var_num, int num_constant_var_per_sentence){
+    protected void setVar(int variable_var_num, int constant_var_num, int num_constant_var_per_sentence) {
         problemValueStruct.variant_var_ls = new int[variable_var_num];
         problemValueStruct.constant_var_ls = new int[constant_var_num];
 
@@ -159,9 +163,16 @@ public abstract class CreateProblem {
         int given_age = ageN;
         int num_sentence = problemValueStruct.sentence_expr_category_id_ls.length;
         int start_index = num_sentence-1;   // 마지막 상황문장부터 숫자 뽑음 : 0, 1 / 1, 2 / 2, 3(given)
+
+
         //for(int i = start_index; i >= 0; i--){
         int i = start_index;    // 0, 1, ..., N 까지의 name_var 중 N-1에 해당하는 값: start_index    상황문장 N-1(마지막, start_index) : N-1, N name_var index
-        while(i >= 0){
+
+        long timeoutInMn = 1000;   // timeout 시간
+        LocalDateTime totalStartTime = LocalDateTime.now();
+        LocalDateTime startTime = LocalDateTime.now();
+
+        while (i >= 0) {
             System.out.println("가장 밖이에유aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             int age1_index = i;
             int age2_index = (i + 1) % problemValueStruct.variant_var_ls.length;
@@ -187,10 +198,27 @@ public abstract class CreateProblem {
                 problemValueStruct.constant_var_ls[year2_index] = ret_var[5];
 
                 i--;
-            } catch (TimeoutException e){
+            } catch (TimeoutException e) {
                 i = start_index;
             }
+
+            // timeout
+            LocalDateTime now = LocalDateTime.now();
+            long time_passed = ChronoUnit.MILLIS.between(startTime, now);
+            long total_time_passed = ChronoUnit.MILLIS.between(totalStartTime, now);
+            System.out.println("############# 문제 하나 뽑기 타임아웃 소요 시간 : " + time_passed);
+            if(time_passed > timeoutInMn){
+                System.out.println("문제 하나 뽑기에서 타임 아웃 발생 - age0 부터 다시 뽑읍시다~~~~~~~~~~~~~~~~~~~~~~``");
+                ageN = ExprCategory.getRandomIntValue(problemValueStruct.variant_var_min_value_ls[variable_var_num - 1], problemValueStruct.variant_var_max_value_ls[variable_var_num - 1]);
+                given_age = ageN;
+                i = start_index;
+                startTime = LocalDateTime.now();
+            }
+            if(total_time_passed > 10000){
+                throw new BusinessException(ErrorCode.TIMEOUT_EXCEPTION);
+            }
         }
+
     }
 
 
@@ -274,6 +302,8 @@ public abstract class CreateProblem {
             for(int l = 0; l < name_inx; l++) {
                 problemValueStruct.variant_var_max_value_ls[name_inx] /= 5;
             }
+            problemValueStruct.variant_var_max_value_ls[name_inx] += 50;
+            problemValueStruct.variant_var_min_value_ls[name_inx] = 30;
         }
         System.out.println(name_var_num);
     }
