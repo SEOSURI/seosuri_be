@@ -42,6 +42,9 @@ public abstract class CreateProblem {
         // 변수 string, 변수 var 결정 - 변수 ex) 변수 string(어머니, 동생), 변수 var(어머니 나이가 51살일 경우, 바로 51이 변수 var)
         setVariantVarMinMaxLsAndStringLs(variable_var_num); // name_ls, name_var_min_value_ls, name_var_max_value_ls 설정
 
+        // 변수 var 범위 미세 조정
+        fixVariantVarRange();
+
         // 상수 var 범위 설정 -> 문제 숫자 값 랜덤 뽑기 시 이용됨 ex) 5를 더한다에서 5가 바로 상수 var
         setConstantVarMinMaxLs(prob_sentence_num, var_num_per_sentence);    // var_min_value_ls, var_max_value_ls 설정
 
@@ -122,21 +125,21 @@ public abstract class CreateProblem {
             }
             if(problemValueStruct.useAddMinus_ls[i]){ // var2
                 problemValueStruct.constant_var_min_value_ls[var1_index+1] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+1] = 300;
+                problemValueStruct.constant_var_max_value_ls[var1_index+1] = 100;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+1] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+1] = 0;
             }
             if(problemValueStruct.useYear1_ls[i]){
                 problemValueStruct.constant_var_min_value_ls[var1_index+2] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+2] = 100;
+                problemValueStruct.constant_var_max_value_ls[var1_index+2] = 50;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+2] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+2] = 0;
             }
             if(problemValueStruct.useYear2_ls[i]){
                 problemValueStruct.constant_var_min_value_ls[var1_index+3] = 1;
-                problemValueStruct.constant_var_max_value_ls[var1_index+3] = 100;
+                problemValueStruct.constant_var_max_value_ls[var1_index+3] = 50;
             } else{
                 problemValueStruct.constant_var_min_value_ls[var1_index+3] = 0;
                 problemValueStruct.constant_var_max_value_ls[var1_index+3] = 0;
@@ -152,12 +155,12 @@ public abstract class CreateProblem {
         problemValueStruct.variant_var_ls = new int[variable_var_num];
         problemValueStruct.constant_var_ls = new int[constant_var_num];
 
-        int age0 = ExprCategory.getRandomIntValue(problemValueStruct.variant_var_min_value_ls[0], problemValueStruct.variant_var_max_value_ls[0]);
-        int given_age = age0;
+        int ageN = ExprCategory.getRandomIntValue(problemValueStruct.variant_var_min_value_ls[variable_var_num - 1], problemValueStruct.variant_var_max_value_ls[variable_var_num - 1]);
+        int given_age = ageN;
         int num_sentence = problemValueStruct.sentence_expr_category_id_ls.length;
-        int start_index = num_sentence-1;   // 마지막 상황문장부터 숫자 뽑음
+        int start_index = num_sentence-1;   // 마지막 상황문장부터 숫자 뽑음 : 0, 1 / 1, 2 / 2, 3(given)
         //for(int i = start_index; i >= 0; i--){
-        int i = start_index;
+        int i = start_index;    // 0, 1, ..., N 까지의 name_var 중 N-1에 해당하는 값: start_index    상황문장 N-1(마지막, start_index) : N-1, N name_var index
         while(i >= 0){
             System.out.println("가장 밖이에유aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             int age1_index = i;
@@ -257,6 +260,22 @@ public abstract class CreateProblem {
             }
         }
         return res;
+    }
+
+    // variant var 범위 수정 - template에 따라
+    private void fixVariantVarRange() {
+        int num_sentence = problemValueStruct.sentence_expr_category_id_ls.length;
+        // 마지막 상황문장부터 숫자 뽑음 : name0 name1(given) / name1 name2(given) / name2 name3(given)
+        int name_var_num = num_sentence + 1;
+        // name3 < name2 < name1 < name0 식이어야 템플릿 구조에 따른 무한 루프 방지 가능
+        // 최소 2배 이상 씩 방지해야
+        // name0 : max/(temp^(prob_num - name_index))
+        for(int name_inx = 0; name_inx < name_var_num; name_inx++){ // 각 name_var 값에 대해서 max value 미세 조정
+            for(int l = 0; l < name_inx; l++) {
+                problemValueStruct.variant_var_max_value_ls[name_inx] /= 5;
+            }
+        }
+        System.out.println(name_var_num);
     }
 
 }
