@@ -413,7 +413,7 @@ public class ProblemService {
         Set<Word> wordSet = new HashSet<>();
         Random wordRandom = new Random();
         while(wordSet.size() < 50){
-            int idx = wordRandom.nextInt(tmpWordList.size())+1;
+            int idx = wordRandom.nextInt(tmpWordList.size());
             wordSet.add(tmpWordList.get(idx));
         }
         List<Word> wordList = new ArrayList<>(wordSet);
