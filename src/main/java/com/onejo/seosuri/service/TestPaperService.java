@@ -74,6 +74,15 @@ public class TestPaperService {
 
         // 시험지 레벨
         String testPaperLevel = tmpTestPaper.get().getLevel();
+        if(testPaperLevel.equals("1")){
+            testPaperLevel = "하";
+        }
+        else if(testPaperLevel.equals("2")){
+            testPaperLevel = "중";
+        }
+        else{
+            testPaperLevel = "상";
+        }
 
         // 문제 번호 정렬
         Collections.sort(probList, new ProbNumComparatorTestPaper());
@@ -82,8 +91,9 @@ public class TestPaperService {
         for(int i=0; i<probList.size(); i++){
             String prob = "";
             String ans = "";
-            prob += probList.get(i).getProbNum() + ". " + probList.get(i).getContent();
-            ans += probList.get(i).getProbNum() + ". \n" + probList.get(i).getExplanation() + "\n\n 답: " + probList.get(i).getAnswer();
+            String content = probList.get(i).getContent().replaceAll("[\n]", " ");
+            prob += probList.get(i).getProbNum() + ".  " + content +"\n\n";
+            ans += probList.get(i).getProbNum() + ". \n\n" + probList.get(i).getExplanation() + "\n\n 답: " + probList.get(i).getAnswer();
 
             problems.add(prob);
             answers.add(ans);
@@ -176,7 +186,7 @@ public class TestPaperService {
                     // 테이블 생성
                     document.addTitle("서수리 답지");
                     document.add(answerTable(level, category));
-                    document.add(contentTable(content));
+                    document.add(contentTableA(content));
 
                     document.close();
                     os.close();
@@ -226,8 +236,7 @@ public class TestPaperService {
     private PdfPTable testPaperTable(String level, String category) throws DocumentException, IOException {
         // 시험지 헤더
         String[][] titles = new String[][]{
-                {"반:", "서수리", "난이도: " + level},
-                {"이름:", "유형: " + category, "점수:"}
+                {"서수리\n\n" + category + " 유형 문제" + " (" + level+ ")", "이름: \n\n점수:"}
         };
 
         // 한글 폰트
@@ -243,32 +252,44 @@ public class TestPaperService {
 //        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
             //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
 //        BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-            Font seosuriFont = new Font(bf, 12);
-            Font defaultFont = new Font(bf, 10);
+            Font seosuriFont = new Font(bf, 17);
+            Font defaultFont = new Font(bf, 13);
 
 
             // 시험지 헤더 테이블 생성 (열: 3개, 폭: 90%)
-            PdfPTable table = new PdfPTable(3);
+            PdfPTable table = new PdfPTable(2);
             table.setWidthPercentage(90);
 
             // 시험지 헤더 테이블 컬럼 폭
-            float[] colwidth = new float[]{30f, 40f, 30f};
+            float[] colwidth = new float[]{70f, 30f};
             table.setWidths(colwidth);
 
             // 시험지 헤더 생성
             for (String[] row : titles) {
                 for (String data : row) {
-                    Phrase phrase = new Phrase(data, defaultFont);
-                    PdfPCell cell = new PdfPCell(phrase);
-                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    cell.setPaddingTop(20);
-                    cell.setPaddingRight(30);
-                    cell.setPaddingLeft(30);
-                    cell.setPaddingBottom(20);
-                    cell.setBorderColor(new BaseColor(0, 0, 0));
-                    table.addCell(cell);
+                    if(data.substring(0,3).equals("서수리")){
+                        Phrase phrase = new Phrase(data, seosuriFont);
+                        PdfPCell cell = new PdfPCell(phrase);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setPaddingTop(20);
+                        cell.setPaddingRight(30);
+                        cell.setPaddingLeft(30);
+                        cell.setPaddingBottom(20);
+                        cell.setBorderColor(new BaseColor(255, 255, 255));
+                        table.addCell(cell);
+                    }
+                    else{
+                        Phrase phrase = new Phrase(data, defaultFont);
+                        PdfPCell cell = new PdfPCell(phrase);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setPaddingTop(20);
+                        cell.setPaddingRight(30);
+                        cell.setPaddingLeft(30);
+                        cell.setPaddingBottom(20);
+                        cell.setBorderColor(new BaseColor(255, 255, 255));
+                        table.addCell(cell);
+                    }
                 }
-                table.completeRow();
             }
             return table;
 
@@ -280,8 +301,7 @@ public class TestPaperService {
     private PdfPTable answerTable(String level, String category) throws DocumentException, IOException {
         // 시험지 헤더
         String[][] titles = new String[][]{
-                {"반:", "서수리", "난이도: " + level},
-                {"이름:", "유형: " + category, "점수:"}
+                {"답지"}
         };
 
 
@@ -291,29 +311,25 @@ public class TestPaperService {
 //        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
         //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
         BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-        Font seosuriFont = new Font(bf, 12);
+        Font seosuriFont = new Font(bf, 20);
         Font defaultFont = new Font(bf, 10);
 
 
         // 시험지 헤더 테이블 생성 (열: 3개, 폭: 90%)
-        PdfPTable table = new PdfPTable(3);
+        PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(90);
-
-        // 시험지 헤더 테이블 컬럼 폭
-        float[] colwidth = new float[]{30f, 40f, 30f};
-        table.setWidths(colwidth);
 
         // 시험지 헤더 생성
         for(String[] row : titles){
             for(String data : row){
-                Phrase phrase = new Phrase(data, defaultFont);
+                Phrase phrase = new Phrase(data, seosuriFont);
                 PdfPCell cell = new PdfPCell(phrase);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setPaddingTop(20);
                 cell.setPaddingRight(30);
                 cell.setPaddingLeft(30);
                 cell.setPaddingBottom(20);
-                cell.setBorderColor(new BaseColor(0,0,0));
+                cell.setBorderColor(new BaseColor(255,255,255));
                 table.addCell(cell);
             }
             table.completeRow();
@@ -346,7 +362,52 @@ public class TestPaperService {
             cell.setPaddingRight(30);
             cell.setPaddingLeft(30);
             cell.setPaddingBottom(20);
+            cell.setPhrase(new Phrase(answers.get(i)+"\n\n\n\n\n\n\n\n\n\n", defaultFont));	// 셀에 글자 작성.
+            cell.setBorderColor(new BaseColor(255, 255, 255));
+            table.addCell(cell);
+
+//            table.completeRow();
+//            Phrase phrase2 = new Phrase("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", defaultFont);
+//            PdfPCell cell2 = new PdfPCell(phrase2);
+//            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//            cell2.setPaddingTop(20);
+//            cell2.setPaddingRight(30);
+//            cell2.setPaddingLeft(30);
+//            cell2.setPaddingBottom(20);
+//            cell2.setBorderColor(new BaseColor(255, 255, 255));
+//            table.addCell(cell2);
+        }
+        table.completeRow();
+
+        return table;
+    }
+
+    private PdfPTable contentTableA(ArrayList<String> answers) throws DocumentException, IOException {
+        // 한글 폰트
+        //String fontPath = "C:\\springboot\\seosuri\\src\\main\\java\\com\\onejo\\seosuri\\util\\font\\malgun.ttf";
+        ClassPathResource fontClassPathResource = new ClassPathResource("/font/"+"malgun.ttf");
+//        FileSystemResource testPaperFile = new FileSystemResource(classPathResource.getFile());
+        //BaseFont bf = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        BaseFont bf = BaseFont.createFont(fontClassPathResource.getPath(), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        Font seosuriFont = new Font(bf, 12);
+        Font defaultFont = new Font(bf, 10);
+
+
+        // 시험지 헤더 테이블 생성 (열: 3개, 폭: 90%)
+        PdfPTable table = new PdfPTable(1);
+        table.setWidthPercentage(90);
+
+
+        // 문제 테이블 생성
+        for(int i=0; i<answers.size(); i++){
+            PdfPCell cell = new PdfPCell();
+            //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setPaddingTop(20);
+            cell.setPaddingRight(30);
+            cell.setPaddingLeft(30);
+            cell.setPaddingBottom(20);
             cell.setPhrase(new Phrase(answers.get(i), defaultFont));	// 셀에 글자 작성.
+            cell.setBorderColor(new BaseColor(255,255,255));
             table.addCell(cell);
         }
         table.completeRow();
