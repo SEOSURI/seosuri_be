@@ -214,27 +214,15 @@ public class ProblemService {
         // 카테고리에 따른 CreateProblem 진행
         if(categoryTitle.equals("나이_구하기")){
             for(int i=0; i<tmplList1.size(); i++){
-                try {
-                    createAgeProblemPart(testPaperId, tmplList1, i, i + 1, tmpWordList);
-                } catch(BusinessException e){
-
-                }
+                createAgeProblemPart(testPaperId, tmplList1, i, i + 1, tmpWordList);
             }
 
             for(int i=0; i<tmplList2.size(); i++){
-                try {
-                    createAgeProblemPart(testPaperId, tmplList2, i, i + tmplList1.size() + 1, tmpWordList);
-                } catch(BusinessException e){
-
-                }
+                createAgeProblemPart(testPaperId, tmplList2, i, i + tmplList1.size() + 1, tmpWordList);
             }
 
             for(int i=0; i<tmplList3.size(); i++){
-                try {
-                    createAgeProblemPart(testPaperId, tmplList2, i, i + tmplList1.size() + tmplList2.size() + 1, tmpWordList);
-                } catch(BusinessException e){
-
-                }
+                createAgeProblemPart(testPaperId, tmplList2, i, i + tmplList1.size() + tmplList2.size() + 1, tmpWordList);
             }
 
         }
